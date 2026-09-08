@@ -1,9 +1,20 @@
 import Link from "next/link";
-import { Bug, ShieldAlert, Sparkles, MapPin, Activity, ArrowRight, Layers, FileText, CheckCircle2 } from "lucide-react";
+import { Bug, ShieldAlert, Sparkles, MapPin, Activity, ArrowRight, Layers, FileText, CheckCircle2, AlertTriangle } from "lucide-react";
 
 export default function HomePage() {
   return (
     <div className="space-y-6 py-4">
+      {/* Alpha Testing Disclaimer Callout */}
+      <div className="bento-card bg-amber-50 border-amber-300 border-l-4 border-l-amber-500 p-4 flex items-start gap-3">
+        <AlertTriangle className="w-5 h-5 text-amber-600 flex-shrink-0 mt-0.5" />
+        <div className="space-y-1 text-xs text-amber-950">
+          <p className="font-extrabold text-sm">Alpha Release - Testing & Evaluation Purposes Only</p>
+          <p className="leading-relaxed">
+            BiteID is an early-stage experimental software prototype. It is designed exclusively for technical testing, algorithmic evaluation, and user experience feedback. It is <strong>not a medical device</strong> and must not be used for actual clinical medical diagnosis or treatment decisions.
+          </p>
+        </div>
+      </div>
+
       {/* Header Title & Subtitle */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-200 pb-4">
         <div>

@@ -128,6 +128,7 @@ def evaluate_regional_likelihood(state, month_idx, habitat, sensation):
 
 # UI Header
 st.title("🦟 BiteID: Multimodal Insect & Spider Bite Triage")
+st.warning("⚠️ **ALPHA RELEASE - FOR TESTING PURPOSES ONLY**: BiteID is an experimental prototype built for testing, evaluation, and user experience feedback. It is NOT intended for clinical medical diagnosis or treatment decisions.")
 st.caption("AI-powered bite assessment combining lesion photo analysis, geo-seasonal endemic data, and red-flag safety interception.")
 
 st.markdown("---")

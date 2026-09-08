@@ -385,8 +385,8 @@ export default function ResultsPage() {
           <p className="leading-relaxed">{result.summary}</p>
         </div>
 
-        <p className="text-[10px] text-slate-400 italic">
-          Disclaimer: {result.disclaimer}
+        <p className="text-[10px] text-amber-800 font-semibold italic bg-amber-50 p-2 rounded-lg border border-amber-200">
+          ⚠️ ALPHA RELEASE DISCLAIMER: BiteID is an experimental alpha prototype intended strictly for technical testing and educational evaluation. It is NOT a clinical medical diagnosis.
         </p>
       </div>
 

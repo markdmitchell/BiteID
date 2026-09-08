@@ -54,6 +54,14 @@ pnpm dev
 
 ---
 
+## ⚠️ Alpha Release & Testing Disclaimer
+
+> [!CAUTION]
+> **FOR TESTING AND EVALUATION PURPOSES ONLY**  
+> BiteID is an early-stage **alpha prototype** software application. It is designed strictly for technical testing, algorithmic evaluation, and user interface feedback. It is **not a medical device** and must **not be used for actual clinical medical diagnosis or treatment decisions**.
+
+---
+
 ## 📄 Medical Disclaimer
 
 BiteID is an educational prototype assistant and does not provide professional medical diagnosis. In cases of severe systemic reactions or expanding skin infections, consult a licensed healthcare provider or seek emergency care immediately.
