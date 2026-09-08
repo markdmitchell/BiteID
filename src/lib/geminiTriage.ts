@@ -4,6 +4,9 @@ import {
   AnalysisResult,
   DermatologicalMorphology,
   VisionAnalysis,
+  VisionAnalysisSchema,
+  EntomologistNodeSchema,
+  DermatologistNodeSchema,
 } from "./schema";
 import { VECTOR_DATABASE, evaluateRegionalLikelihood } from "./geoPestFilter";
 
@@ -78,11 +81,18 @@ Output MUST be valid JSON strictly adhering to:
 
     const text = response.text || "";
     const jsonMatch = text.match(/```json\s*([\s\S]*?)\s*```/) || text.match(/({[\s\S]*})/);
-    const parsed = JSON.parse(jsonMatch ? jsonMatch[1] : text);
-    return {
-      bugPhotoProvided: true,
-      identifiedBugTaxonomy: parsed.identifiedBugTaxonomy || null,
-    };
+    if (!jsonMatch) {
+      throw new Error(`Entomologist Node A returned non-JSON response: ${text}`);
+    }
+
+    const rawParsed = JSON.parse(jsonMatch[1] || jsonMatch[0]);
+    const validation = EntomologistNodeSchema.safeParse(rawParsed);
+
+    if (!validation.success) {
+      throw new Error(`Entomologist Node A output failed Zod schema validation: ${validation.error.message}`);
+    }
+
+    return validation.data;
   } catch (err: any) {
     console.error("Entomologist Node A execution failed:", err);
     throw new Error(`Entomologist vision node failed: ${err.message || err}`);
@@ -130,10 +140,18 @@ Output MUST be valid JSON strictly adhering to:
 
     const text = response.text || "";
     const jsonMatch = text.match(/```json\s*([\s\S]*?)\s*```/) || text.match(/({[\s\S]*})/);
-    const parsed = JSON.parse(jsonMatch ? jsonMatch[1] : text);
-    return {
-      lesionMorphology: parsed.lesionMorphology || "other",
-    };
+    if (!jsonMatch) {
+      throw new Error(`Dermatologist Node B returned non-JSON response: ${text}`);
+    }
+
+    const rawParsed = JSON.parse(jsonMatch[1] || jsonMatch[0]);
+    const validation = DermatologistNodeSchema.safeParse(rawParsed);
+
+    if (!validation.success) {
+      throw new Error(`Dermatologist Node B output failed Zod schema validation: ${validation.error.message}`);
+    }
+
+    return validation.data;
   } catch (err: any) {
     console.error("Dermatologist Node B execution failed:", err);
     throw new Error(`Dermatologist vision node failed: ${err.message || err}`);
@@ -230,12 +248,19 @@ function synthesizeTriageResult(
 
   const topMatch = rankedCandidates[0];
 
-  const visionAnalysis: VisionAnalysis = {
+  const rawVisionAnalysis = {
     bugPhotoProvided: nodeA.bugPhotoProvided,
     identifiedBugTaxonomy: nodeA.identifiedBugTaxonomy,
     lesionMorphology: nodeB.lesionMorphology,
     primarySuspectedCause: topMatch.name,
   };
+
+  const visionValidation = VisionAnalysisSchema.safeParse(rawVisionAnalysis);
+  if (!visionValidation.success) {
+    throw new Error(`VisionAnalysisSchema failed Zod validation: ${visionValidation.error.message}`);
+  }
+
+  const visionAnalysis: VisionAnalysis = visionValidation.data;
 
   return {
     isEmergencyRedirect: false,

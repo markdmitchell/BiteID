@@ -114,7 +114,11 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // 2. EXECUTE TRIAGE PIPELINE
+    // 3. LOG IMAGE BYTE LENGTHS BEFORE INFERENCE
+    console.log("[BiteID API] Lesion Image bytes:", lesionBuffer.length);
+    console.log("[BiteID API] Culprit Image bytes:", culpritBuffer ? culpritBuffer.length : 0);
+
+    // 4. EXECUTE TRIAGE PIPELINE
     const result = await analyzeBiteWithGemini(
       lesionBuffer,
       culpritBuffer,

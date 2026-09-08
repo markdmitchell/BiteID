@@ -105,7 +105,24 @@ export const CandidateCulpritSchema = z.object({
 
 export type CandidateCulprit = z.infer<typeof CandidateCulpritSchema>;
 export const CandidateResultSchema = CandidateCulpritSchema;
-export type CandidateResult = CandidateCulprit;
+export const EntomologistNodeSchema = z.object({
+  bugPhotoProvided: z.boolean(),
+  identifiedBugTaxonomy: z.string().nullable(),
+});
+
+export type EntomologistNodeOutput = z.infer<typeof EntomologistNodeSchema>;
+
+export const DermatologistNodeSchema = z.object({
+  lesionMorphology: z.enum([
+    "annular_target",
+    "edematous_wheal",
+    "linear_cluster",
+    "necrotic_macule",
+    "other",
+  ]),
+});
+
+export type DermatologistNodeOutput = z.infer<typeof DermatologistNodeSchema>;
 
 export const VisionAnalysisSchema = z.object({
   bugPhotoProvided: z.boolean(),
