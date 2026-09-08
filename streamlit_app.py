@@ -55,6 +55,25 @@ VECTOR_DATABASE = {
         ],
         "warning_signs": ["Expanding circular target/bullseye rash (Erythema Migrans hallmark of Lyme disease).", "Fever, joint pain, or fatigue within 3-30 days."]
     },
+    "lone_star_tick": {
+        "name": "Lone Star Tick",
+        "scientific_name": "Amblyomma americanum",
+        "endemic_states": ["US-VA", "US-NC", "US-SC", "US-GA", "US-FL", "US-AL", "US-MS", "US-TN", "US-KY", "US-WV", "US-MD", "US-DE", "US-NJ", "US-PA", "US-NY", "US-OH", "US-IN", "US-IL", "US-MO", "US-AR", "US-LA", "US-TX", "US-OK", "US-KS"],
+        "non_endemic_states": ["US-WA", "US-OR", "US-CA", "US-NV", "US-AZ", "US-UT", "US-ID", "US-MT", "US-WY", "US-AK", "US-HI"],
+        "seasonal": [0.05, 0.1, 0.4, 0.8, 1.0, 1.0, 1.0, 0.9, 0.6, 0.3, 0.1, 0.05],
+        "habitat": {"tall_grass_woods": 1.0, "yard_garden": 0.9, "outdoor_other": 0.7, "garage_shed": 0.3, "indoor_other": 0.1, "bed": 0.1},
+        "sensation": {"painless": 0.9, "mild_itch": 1.0, "intense_itch": 0.8, "moderate_pain": 0.4, "severe_pain": 0.1},
+        "base_weight": 0.25,
+        "associated_pathogens": ["Ehrlichiosis (Ehrlichia chaffeensis)", "STARI (Southern Tick-Associated Rash Illness)", "Heartland Virus"],
+        "delayed_risks": ["Alpha-gal syndrome (red meat allergy)", "Secondary bacterial skin infection"],
+        "first_aid": [
+            "Remove attached tick with fine-tipped tweezers by pulling straight up.",
+            "Disinfect bite site with rubbing alcohol or soap and water.",
+            "Save tick photo or seal in container for potential identification.",
+            "Monitor for fever, chills, body aches, or expanding rash over 30 days."
+        ],
+        "warning_signs": ["Delayed allergic reaction (hives, severe stomach pain) 3-8h after eating red meat/dairy (Alpha-gal syndrome).", "Fever, chills, severe headache within 1-2 weeks."]
+    },
     "bed_bug": {
         "name": "Bed Bug",
         "scientific_name": "Cimex lectularius",
@@ -268,6 +287,14 @@ if st.button("🚀 Run BiteID Triage Assessment", type="primary", use_container_
         st.write("**Delayed / Long-Term Risks:**")
         for risk in top_vector.get("delayed_risks", []):
             st.warning(f"⚠️ {risk}")
+
+    if any(k == "lone_star_tick" for k, _ in sorted_probs[:3]) or any("alpha-gal" in r.lower() for r in top_vector.get("delayed_risks", [])):
+        st.error("""
+        ### 🥩 Special Alert: Alpha-gal Syndrome (AGS) Red Meat Allergy Risk
+        **Trigger & 3-8 Hour Delayed Onset:** Lone Star tick (*Amblyomma americanum*) bites transmit galactose-alpha-1,3-galactose sugar molecules, which can cause an IgE-mediated allergic reaction to mammalian meat (beef, pork, lamb, venison) or dairy occurring **3 to 8 hours after consumption**.
+        
+        **Symptoms & Next Steps:** Causes hives, facial swelling, and isolated severe GI distress (cramps, nausea, diarrhea). If delayed reactions occur after eating red meat, request a **specific IgE blood test for Alpha-gal antibodies** from a physician.
+        """)
 
     # First Aid & Warnings
     fa_col, warn_col = st.columns(2)

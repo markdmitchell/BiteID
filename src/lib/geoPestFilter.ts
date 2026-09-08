@@ -111,6 +111,54 @@ export const VECTOR_DATABASE: Record<string, VectorInfo> = {
       "Fever, chills, body aches, fatigue, or joint pain occurring within 3-30 days post-exposure.",
     ],
   },
+  lone_star_tick: {
+    id: "lone_star_tick",
+    name: "Lone Star Tick",
+    scientificName: "Amblyomma americanum",
+    endemicStates: [
+      "US-VA", "US-NC", "US-SC", "US-GA", "US-FL", "US-AL", "US-MS", "US-TN",
+      "US-KY", "US-WV", "US-MD", "US-DE", "US-NJ", "US-PA", "US-NY", "US-OH",
+      "US-IN", "US-IL", "US-MO", "US-AR", "US-LA", "US-TX", "US-OK", "US-KS"
+    ],
+    nonEndemicStates: ["US-WA", "US-OR", "US-CA", "US-NV", "US-AZ", "US-UT", "US-ID", "US-MT", "US-WY", "US-AK", "US-HI"],
+    seasonalMultiplier: [0.05, 0.1, 0.4, 0.8, 1.0, 1.0, 1.0, 0.9, 0.6, 0.3, 0.1, 0.05],
+    habitatScores: {
+      tall_grass_woods: 1.0,
+      yard_garden: 0.9,
+      outdoor_other: 0.7,
+      garage_shed: 0.3,
+      indoor_other: 0.1,
+      bed: 0.1,
+    },
+    sensationScores: {
+      painless: 0.9,
+      mild_itch: 1.0,
+      intense_itch: 0.8,
+      moderate_pain: 0.4,
+      severe_pain: 0.1,
+    },
+    baseWeight: 0.25,
+    associatedPathogens: [
+      "Ehrlichiosis (Ehrlichia chaffeensis)",
+      "STARI (Southern Tick-Associated Rash Illness)",
+      "Heartland Virus",
+      "Bourbon Virus",
+    ],
+    delayedRisks: [
+      "Alpha-gal syndrome (red meat allergy)",
+      "Secondary bacterial skin infection",
+    ],
+    firstAidAdvice: [
+      "If tick is attached, use fine-tipped tweezers to grasp as close to skin as possible and pull straight up.",
+      "Clean bite area thoroughly with rubbing alcohol or soap and water.",
+      "Save the tick in a sealed container or photo for potential identification.",
+      "Monitor for fever, chills, body aches, or expanding rash over the next 30 days.",
+    ],
+    warningSigns: [
+      "Delayed allergic reaction (hives, severe stomach pain, swelling) 3-8 hours after consuming red meat or dairy (Alpha-gal syndrome).",
+      "Fever, chills, severe headache, muscle pain, or fatigue within 1-2 weeks (Ehrlichiosis screening).",
+    ],
+  },
   bed_bug: {
     id: "bed_bug",
     name: "Bed Bug",
@@ -382,8 +430,14 @@ export function evaluateRegionalLikelihood(
     let score = vector.baseWeight * geoFactor * seasonalFactor * habitatFactor * sensationFactor;
 
     // Entomologist bug taxonomy override if bug photo detected tick
-    if (bugTaxonomy && bugTaxonomy.toLowerCase().includes("ixodes") && key === "blacklegged_tick") {
-      score *= 10.0;
+    if (bugTaxonomy) {
+      const lower = bugTaxonomy.toLowerCase();
+      if (lower.includes("ixodes") && key === "blacklegged_tick") {
+        score *= 10.0;
+      }
+      if ((lower.includes("amblyomma") || lower.includes("lone star")) && key === "lone_star_tick") {
+        score *= 10.0;
+      }
     }
 
     // 5. Morphological Overrides & Multipliers

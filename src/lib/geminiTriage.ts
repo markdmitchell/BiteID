@@ -49,7 +49,10 @@ async function runEntomologistNode(
 
   try {
     const prompt = `You are Node A (The Entomologist), a world-class entomologist.
-Analyze the provided bug photo. Determine the scientific taxonomy of the specimen (e.g. Ixodes scapularis, Cimex lectularius, Culicidae, Loxosceles reclusa).
+Analyze the provided bug photo. Determine the scientific taxonomy of the specimen (e.g. Amblyomma americanum, Ixodes scapularis, Cimex lectularius, Culicidae, Loxosceles reclusa).
+Pay close attention to key morphological identification hallmarks:
+- Amblyomma americanum (Lone Star Tick): Adult females feature a distinct single central white or silver spot on the scutum (shield). Adult males feature inverted white horseshoe or white festoon markings along the posterior edge of the scutum.
+- Ixodes scapularis (Blacklegged/Deer Tick): Dark brownish-black scutum without white spots or festoon markings, oval teardrop abdomen.
 If no clear insect/spider is identified, set identifiedBugTaxonomy to null.
 
 Output MUST be valid JSON strictly adhering to:
@@ -186,6 +189,10 @@ function synthesizeTriageResult(
 
     if ((nodeB.lesionMorphology === "annular_target" || pattern === "annular_target") && key === "blacklegged_tick") {
       matchedFactors.push("Classic Erythema Migrans (annular targetoid rash) indicative of Blacklegged Tick exposure");
+    }
+
+    if (key === "lone_star_tick" && nodeA.identifiedBugTaxonomy && (nodeA.identifiedBugTaxonomy.toLowerCase().includes("amblyomma") || nodeA.identifiedBugTaxonomy.toLowerCase().includes("lone star"))) {
+      matchedFactors.push("Entomologist confirmed Amblyomma americanum (Lone Star Tick) morphology with Alpha-gal syndrome risk");
     }
 
     if (nodeA.identifiedBugTaxonomy && index === 0) {

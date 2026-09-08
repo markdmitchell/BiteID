@@ -126,8 +126,15 @@ export default function ResultsPage() {
 
   const topMatch = result.rankedCandidates[0];
 
+  const hasAlphaGalRisk = result.rankedCandidates.some(
+    (c) =>
+      c.pestName.toLowerCase().includes("lone star") ||
+      c.delayedRisks?.some((r) => r.toLowerCase().includes("alpha-gal"))
+  );
+
   const mapPestNameToId = (name: string): string => {
     const lower = name.toLowerCase();
+    if (lower.includes("lone star") || lower.includes("amblyomma")) return "lone_star_tick";
     if (lower.includes("tick")) return "blacklegged_tick";
     if (lower.includes("mosquito")) return "mosquito";
     if (lower.includes("bed bug")) return "bed_bug";
@@ -341,6 +348,52 @@ export default function ResultsPage() {
             </div>
           </div>
         )}
+
+      {/* Alpha-gal Syndrome Clinical Warning Card */}
+      {hasAlphaGalRisk && (
+        <div className="bento-card bg-rose-900 text-white border-2 border-rose-700 space-y-4 shadow-xl">
+          <div className="flex items-center gap-3 border-b border-rose-800 pb-3">
+            <div className="w-10 h-10 bg-rose-800/80 rounded-2xl flex items-center justify-center text-rose-300">
+              <ShieldAlert className="w-6 h-6" />
+            </div>
+            <div>
+              <span className="text-[11px] font-extrabold uppercase tracking-wider text-rose-300">Special Clinical Alert</span>
+              <h2 className="text-base font-extrabold text-white">Alpha-gal Syndrome (AGS) Delayed Red Meat Allergy</h2>
+            </div>
+          </div>
+
+          <p className="text-xs text-rose-100 font-medium leading-relaxed">
+            Lone Star tick (<em>Amblyomma americanum</em>) bites can transmit galactose-alpha-1,3-galactose (&quot;alpha-gal&quot;) sugar molecules into the bloodstream, triggering a specialized IgE-mediated immune sensitization.
+          </p>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs">
+            <div className="bg-rose-950/80 p-3.5 rounded-2xl border border-rose-800 space-y-1.5">
+              <p className="font-extrabold text-rose-300 flex items-center gap-1.5">
+                <span>🥩 The Trigger & Delay</span>
+              </p>
+              <p className="text-rose-200 leading-relaxed">
+                Reactions do NOT occur immediately. Symptoms manifest <strong>3 to 8 hours after consuming mammalian meat</strong> (beef, pork, lamb, venison) or dairy products containing alpha-gal.
+              </p>
+            </div>
+
+            <div className="bg-rose-950/80 p-3.5 rounded-2xl border border-rose-800 space-y-1.5">
+              <p className="font-extrabold text-rose-300 flex items-center gap-1.5">
+                <span>🩺 Clinical Symptoms</span>
+              </p>
+              <p className="text-rose-200 leading-relaxed">
+                Presents as hives, severe itching, facial swelling (angioedema), and <strong>isolated severe GI symptoms</strong> (abdominal cramping, nausea, vomiting, severe pain).
+              </p>
+            </div>
+          </div>
+
+          <div className="bg-rose-800/50 p-3 rounded-xl border border-rose-700 text-xs text-rose-100 flex items-start gap-2">
+            <Info className="w-4 h-4 text-rose-300 shrink-0 mt-0.5" />
+            <span>
+              <strong>Medical Next Steps:</strong> If you experience delayed GI pain or hives after eating red meat in the coming weeks/months, consult an allergist or healthcare provider to order a <strong>specific IgE blood test for Alpha-gal antibodies</strong>.
+            </span>
+          </div>
+        </div>
+      )}
 
       {/* First Aid Checklist Bento Tile */}
       {topMatch && topMatch.firstAidAdvice.length > 0 && (

@@ -46,7 +46,7 @@ describe("geoPestFilter Engine", () => {
     const juneProbs = evaluateRegionalLikelihood(juneContext);
     const janProbs = evaluateRegionalLikelihood(janContext);
 
-    expect(juneProbs.blacklegged_tick).toBeGreaterThan(0.5);
+    expect(juneProbs.blacklegged_tick).toBeGreaterThan(0.4);
     expect(juneProbs.blacklegged_tick).toBeGreaterThan(janProbs.blacklegged_tick);
   });
 
@@ -99,5 +99,54 @@ describe("geoPestFilter Engine", () => {
 
     const probs = evaluateRegionalLikelihood(bedContext);
     expect(probs.bed_bug).toBeGreaterThan(0.3);
+  });
+
+  it("penalizes Lone Star Tick to 0.0 in non-endemic state (US-WA) and scores high in US-VA", () => {
+    const vaContext: TriageContext = {
+      usState: "US-VA",
+      monthIndex: 5, // June
+      incidentLocation: "yard_garden",
+      timeElapsed: "under_2h",
+      primarySensation: "mild_itch",
+      emergencyScreening: {
+        difficultyBreathing: false,
+        facialSwelling: false,
+        dizzinessOrConfusion: false,
+        spreadingHives: false,
+      },
+    };
+
+    const waContext: TriageContext = {
+      ...vaContext,
+      usState: "US-WA",
+    };
+
+    const vaProbs = evaluateRegionalLikelihood(vaContext);
+    const waProbs = evaluateRegionalLikelihood(waContext);
+
+    expect(waProbs.lone_star_tick).toBe(0);
+    expect(vaProbs.lone_star_tick).toBeGreaterThan(0.1);
+  });
+
+  it("escalates Lone Star Tick to top rank when Entomologist detects Amblyomma americanum taxonomy", () => {
+    const context: TriageContext = {
+      usState: "US-NC",
+      monthIndex: 6, // July
+      incidentLocation: "tall_grass_woods",
+      timeElapsed: "under_2h",
+      primarySensation: "painless",
+      emergencyScreening: {
+        difficultyBreathing: false,
+        facialSwelling: false,
+        dizzinessOrConfusion: false,
+        spreadingHives: false,
+      },
+    };
+
+    const probs = evaluateRegionalLikelihood(context, undefined, "Amblyomma americanum");
+    const topKey = Object.entries(probs).sort((a, b) => b[1] - a[1])[0][0];
+
+    expect(topKey).toBe("lone_star_tick");
+    expect(probs.lone_star_tick).toBeGreaterThan(0.4);
   });
 });
