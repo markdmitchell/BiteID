@@ -69,4 +69,49 @@ describe("API /api/analyze route handler", () => {
     expect(json.rankedCandidates.length).toBeGreaterThan(0);
     expect(json.rankedCandidates[0].name).toContain("Tick");
   });
+
+  it("enforces deterministic Mid-Atlantic rule for annular_target morphology, resolving to Tick >90% and capping Mosquito <= 5%", async () => {
+    const context = {
+      usState: "US-VA", // Mid-Atlantic
+      coordinates: { lat: 38.9056, lng: -77.3995 }, // McNair, VA
+      monthIndex: 5,
+      incidentLocation: "yard_garden",
+      timeElapsed: "1_to_2_days",
+      primarySensation: "intense_itch",
+      lesionMorphology: "annular_target",
+      emergencyScreening: {
+        difficultyBreathing: false,
+        facialSwelling: false,
+        dizzinessOrConfusion: false,
+        spreadingHives: false,
+      },
+    };
+
+    const req = new NextRequest("http://localhost:3000/api/analyze", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        context,
+        lesionImageBase64: "ZmFrZS1pbWFnZS1ieXRlcw==",
+      }),
+    });
+
+    const res = await POST(req);
+    const json = await res.json();
+
+    expect(res.status).toBe(200);
+    expect(json.isEmergencyRedirect).toBe(false);
+    expect(json.rankedCandidates.length).toBeGreaterThan(0);
+
+    const topCandidate = json.rankedCandidates[0];
+    expect(topCandidate.name).toContain("Tick");
+    expect(topCandidate.probability).toBeGreaterThan(0.9);
+
+    const mosquitoCandidate = json.rankedCandidates.find((c: any) => c.name.toLowerCase().includes("mosquito"));
+    if (mosquitoCandidate) {
+      expect(mosquitoCandidate.probability).toBeLessThanOrEqual(0.05);
+    }
+  });
 });

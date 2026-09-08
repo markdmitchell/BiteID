@@ -232,9 +232,26 @@ export const VECTOR_DATABASE: Record<string, VectorInfo> = {
   },
 };
 
+export const DEFAULT_MCNAIR_VA_COORDINATES = {
+  lat: 38.9056,
+  lng: -77.3995,
+};
+
+export const MID_ATLANTIC_STATES = [
+  "US-VA",
+  "US-MD",
+  "US-PA",
+  "US-NJ",
+  "US-DE",
+  "US-DC",
+  "US-WV",
+  "US-NC",
+];
+
 export function evaluateRegionalLikelihood(
   context: TriageContext,
-  morphology?: DermatologicalMorphology
+  morphology?: DermatologicalMorphology | string,
+  bugTaxonomy?: string | null
 ): Record<string, number> {
   const rawScores: Record<string, number> = {};
 
@@ -242,6 +259,49 @@ export function evaluateRegionalLikelihood(
   const month = typeof context.monthIndex === "number" ? context.monthIndex : new Date().getMonth();
   const location = context.incidentLocation || "yard_garden";
   const sensation = context.primarySensation || "intense_itch";
+
+  const isMidAtlantic = MID_ATLANTIC_STATES.includes(state);
+
+  // Normalize morphology input
+  let morphObj: DermatologicalMorphology | undefined;
+  let isAnnularTarget = false;
+
+  if (typeof morphology === "string") {
+    if (morphology === "annular_target") {
+      isAnnularTarget = true;
+      morphObj = {
+        pattern: "annular_target",
+        centralFeatures: "punctum_bite_mark",
+        primaryReaction: "expanding_erythema",
+      };
+    } else if (morphology === "edematous_wheal") {
+      morphObj = {
+        pattern: "solitary_wheal",
+        centralFeatures: "punctum_bite_mark",
+        primaryReaction: "urticarial_hive",
+      };
+    } else if (morphology === "linear_cluster") {
+      morphObj = {
+        pattern: "linear_grouped",
+        centralFeatures: "clear_halo",
+        primaryReaction: "urticarial_hive",
+      };
+    } else if (morphology === "necrotic_macule") {
+      morphObj = {
+        pattern: "indurated_plaque",
+        centralFeatures: "necrotic_ulcer",
+        primaryReaction: "ischemic_purpura",
+      };
+    }
+  } else if (morphology) {
+    morphObj = morphology;
+    if (
+      morphology.pattern === "annular_target" ||
+      morphology.primaryReaction === "expanding_erythema"
+    ) {
+      isAnnularTarget = true;
+    }
+  }
 
   for (const [key, vector] of Object.entries(VECTOR_DATABASE)) {
     // 1. Geographic factor
@@ -268,27 +328,28 @@ export function evaluateRegionalLikelihood(
     // Calculate composite base score
     let score = vector.baseWeight * geoFactor * seasonalFactor * habitatFactor * sensationFactor;
 
+    // Entomologist bug taxonomy override if bug photo detected tick
+    if (bugTaxonomy && bugTaxonomy.toLowerCase().includes("ixodes") && key === "blacklegged_tick") {
+      score *= 10.0;
+    }
+
     // 5. Morphological Overrides & Multipliers
-    if (morphology) {
-      // Linear grouped pattern ('breakfast, lunch, dinner') -> Bed Bug / Flea
-      if (morphology.pattern === "linear_grouped") {
+    if (morphObj) {
+      if (morphObj.pattern === "linear_grouped") {
         if (key === "bed_bug") score *= 5.0;
         if (key === "flea") score *= 3.0;
       }
-      // Solitary wheal + punctum bite mark -> Mosquito / Stings
-      if (morphology.pattern === "solitary_wheal" && morphology.centralFeatures === "punctum_bite_mark") {
+      if (morphObj.pattern === "solitary_wheal" && morphObj.centralFeatures === "punctum_bite_mark") {
         if (key === "mosquito") score *= 3.0;
       }
-      // Scattered papules or excoriated papule -> Flea / Bed Bug
-      if (morphology.pattern === "scattered_papules" || morphology.primaryReaction === "excoriated_papule") {
+      if (morphObj.pattern === "scattered_papules" || morphObj.primaryReaction === "excoriated_papule") {
         if (key === "flea") score *= 4.0;
         if (key === "bed_bug") score *= 2.0;
       }
-      // Necrotic ulcer or ischemic purpura -> Brown Recluse
       if (
-        morphology.centralFeatures === "necrotic_ulcer" ||
-        morphology.primaryReaction === "ischemic_purpura" ||
-        morphology.pattern === "indurated_plaque"
+        morphObj.centralFeatures === "necrotic_ulcer" ||
+        morphObj.primaryReaction === "ischemic_purpura" ||
+        morphObj.pattern === "indurated_plaque"
       ) {
         if (key === "brown_recluse") score *= 8.0;
       }
@@ -298,12 +359,7 @@ export function evaluateRegionalLikelihood(
   }
 
   // Mandatory Precedence Override for Erythema Migrans (Lyme Disease / Blacklegged Tick)
-  if (
-    morphology &&
-    morphology.pattern === "annular_target" &&
-    morphology.primaryReaction === "expanding_erythema"
-  ) {
-    // Automatically set Deer Tick / Lyme Disease likelihood to >= 0.90 regardless of minor sensory inputs
+  if (isAnnularTarget) {
     const otherSum = Object.entries(rawScores)
       .filter(([k]) => k !== "blacklegged_tick")
       .reduce((sum, [, val]) => sum + val, 0);
@@ -314,17 +370,34 @@ export function evaluateRegionalLikelihood(
   // Normalize scores to probabilities summing to 1.0
   const totalScore = Object.values(rawScores).reduce((sum, val) => sum + val, 0);
 
-  const probabilities: Record<string, number> = {};
+  let probabilities: Record<string, number> = {};
   if (totalScore <= 0) {
     const count = Object.keys(VECTOR_DATABASE).length;
     for (const key of Object.keys(VECTOR_DATABASE)) {
       probabilities[key] = 1 / count;
     }
-    return probabilities;
+  } else {
+    for (const [key, score] of Object.entries(rawScores)) {
+      probabilities[key] = Math.round((score / totalScore) * 1000) / 1000;
+    }
   }
 
-  for (const [key, score] of Object.entries(rawScores)) {
-    probabilities[key] = Math.round((score / totalScore) * 1000) / 1000;
+  // HARD DETERMINISTIC MID-ATLANTIC OVERRIDE RULE
+  // Rule Logic: If region is Mid-Atlantic AND lesionMorphology equals annular_target,
+  // cap mosquito probability at <= 5% and escalate tick probability to > 90%.
+  if (isMidAtlantic && isAnnularTarget) {
+    probabilities["blacklegged_tick"] = 0.92;
+    probabilities["mosquito"] = 0.03;
+
+    // Scale remaining keys to fill 0.05
+    const remainingKeys = Object.keys(probabilities).filter(
+      (k) => k !== "blacklegged_tick" && k !== "mosquito"
+    );
+    const remCount = remainingKeys.length || 1;
+    const remShare = 0.05 / remCount;
+    for (const key of remainingKeys) {
+      probabilities[key] = Math.round(remShare * 1000) / 1000;
+    }
   }
 
   return probabilities;

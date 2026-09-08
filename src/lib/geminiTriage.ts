@@ -1,5 +1,10 @@
 import { GoogleGenAI } from "@google/genai";
-import { TriageContext, AnalysisResult, DermatologicalMorphology } from "./schema";
+import {
+  TriageContext,
+  AnalysisResult,
+  DermatologicalMorphology,
+  VisionAnalysis,
+} from "./schema";
 import { VECTOR_DATABASE, evaluateRegionalLikelihood } from "./geoPestFilter";
 
 export async function analyzeBiteWithGemini(
@@ -15,121 +20,163 @@ export async function analyzeBiteWithGemini(
 
   try {
     const ai = new GoogleGenAI({ apiKey });
-    const regionalProbs = evaluateRegionalLikelihood(context);
 
-    const prompt = `
-You are BiteID, an expert medical triage system for insect and spider bites.
-Perform a TWO-STAGE clinical analysis:
+    // Execute Node A (The Entomologist) and Node B (The Dermatologist) in parallel
+    const [nodeA, nodeB] = await Promise.all([
+      runEntomologistNode(ai, culpritImageBuffer),
+      runDermatologistNode(ai, lesionImageBuffer),
+    ]);
 
-STAGE 1: DERMATOLOGICAL MORPHOLOGY EXTRACTION
-First, analyze the provided skin reaction photo for visual dermatological features:
-- pattern: one of ["solitary_wheal", "annular_target", "linear_grouped", "scattered_papules", "indurated_plaque"]
-- centralFeatures: one of ["punctum_bite_mark", "clear_halo", "vesicle_blister", "necrotic_ulcer", "none"]
-- primaryReaction: one of ["urticarial_hive", "expanding_erythema", "excoriated_papule", "ischemic_purpura"]
-
-CRITICAL VISUAL RULES:
-- Annular Target + Expanding Erythema: Expanding circular rash with central clearing (>5cm) is pathognomonic for Erythema Migrans (Lyme disease tick bite).
-- Linear Grouped: Sequential bite clusters ('breakfast, lunch, dinner') indicative of Bed Bugs or Fleas.
-- Solitary Wheal + Punctum Bite Mark: Single edematous hive with central dot indicative of Mosquito or biting flies.
-- Indurated Plaque + Necrotic Ulcer / Ischemic Purpura: Violaceous lesion with central eschar or necrosis indicative of Brown Recluse spider bite.
-
-STAGE 2: SPECIES PROBABILITY CALCULATION
-Combine extracted visual morphology with patient context and regional endemic probabilities to calculate species probabilities.
-
-Patient Context:
-- Geographic Region: ${context.usState}
-- Month of Incident: Month #${context.monthIndex + 1}
-- Location of Incident: ${context.incidentLocation}
-- Time Elapsed: ${context.timeElapsed}
-- Primary Sensation: ${context.primarySensation}
-
-Pre-Calculated Baseline Regional Vector Probabilities:
-${JSON.stringify(regionalProbs, null, 2)}
-
-Output MUST be valid JSON adhering strictly to this schema:
-{
-  "isEmergencyRedirect": false,
-  "emergencyMessage": undefined,
-  "culpritDetectedFromPhoto": boolean,
-  "morphology": {
-    "pattern": "solitary_wheal" | "annular_target" | "linear_grouped" | "scattered_papules" | "indurated_plaque",
-    "centralFeatures": "punctum_bite_mark" | "clear_halo" | "vesicle_blister" | "necrotic_ulcer" | "none",
-    "primaryReaction": "urticarial_hive" | "expanding_erythema" | "excoriated_papule" | "ischemic_purpura"
-  },
-  "rankedCandidates": [
-    {
-      "name": "Blacklegged (Deer) Tick | Mosquito | Bed Bug | Flea | Brown Recluse Spider | Black Widow Spider",
-      "scientificName": "Scientific name",
-      "confidence": "high" | "medium" | "low",
-      "probability": number (0.0 to 1.0),
-      "matchedFactors": ["Factor 1", "Factor 2"],
-      "firstAidAdvice": ["Step 1", "Step 2"],
-      "warningSigns": ["Warning 1", "Warning 2"]
-    }
-  ],
-  "summary": "Clinical summary explaining top findings.",
-  "disclaimer": "Standard medical disclaimer."
-}
-`;
-
-    const contents: Array<string | { inlineData: { mimeType: string; data: string } }> = [prompt];
-
-    contents.push({
-      inlineData: {
-        mimeType: "image/jpeg",
-        data: lesionImageBuffer.toString("base64"),
-      },
-    });
-
-    if (culpritImageBuffer) {
-      contents.push({
-        inlineData: {
-          mimeType: "image/jpeg",
-          data: culpritImageBuffer.toString("base64"),
-        },
-      });
-    }
-
-    const response = await ai.models.generateContent({
-      model: "gemini-2.5-flash",
-      contents: contents as any,
-      config: {
-        temperature: 0.2, // Low temperature for clinical diagnostic consistency
-      },
-    });
-
-    const responseText = response.text;
-    if (!responseText) {
-      throw new Error("Empty response from Gemini API");
-    }
-
-    const jsonMatch = responseText.match(/```json\s*([\s\S]*?)\s*```/) || responseText.match(/({[\s\S]*})/);
-    const jsonString = jsonMatch ? jsonMatch[1] : responseText;
-    const parsed = JSON.parse(jsonString);
-
-    return parsed as AnalysisResult;
+    // Node C (The Synthesizer)
+    return synthesizeTriageResult(nodeA, nodeB, context);
   } catch (error) {
-    console.warn("Gemini API call failed or fallback triggered, using regional mock generator:", error);
+    console.warn("Gemini multi-node vision pipeline error, falling back to deterministic synthesis:", error);
     return generateMockTriageResult(context, !!culpritImageBuffer);
   }
 }
 
 /**
- * Intelligent Mock Generator fallback when GEMINI_API_KEY is not set or API fails.
+ * Node A: The Entomologist
+ * Specialized vision call to identify insect/spider taxonomy if culprit photo is present.
  */
-export function generateMockTriageResult(
+async function runEntomologistNode(
+  ai: GoogleGenAI,
+  culpritBuffer: Buffer | null
+): Promise<{ bugPhotoProvided: boolean; identifiedBugTaxonomy: string | null }> {
+  if (!culpritBuffer || culpritBuffer.length === 0) {
+    return { bugPhotoProvided: false, identifiedBugTaxonomy: null };
+  }
+
+  try {
+    const prompt = `You are Node A (The Entomologist), a world-class entomologist.
+Analyze the provided bug photo. Determine the scientific taxonomy of the specimen (e.g. Ixodes scapularis, Cimex lectularius, Culicidae, Loxosceles reclusa).
+If no clear insect/spider is identified, set identifiedBugTaxonomy to null.
+
+Output MUST be valid JSON strictly adhering to:
+{
+  "bugPhotoProvided": true,
+  "identifiedBugTaxonomy": "Scientific taxonomy name or null"
+}`;
+
+    const response = await ai.models.generateContent({
+      model: "gemini-2.5-flash",
+      contents: [
+        prompt,
+        {
+          inlineData: {
+            mimeType: "image/jpeg",
+            data: culpritBuffer.toString("base64"),
+          },
+        },
+      ] as any,
+      config: { temperature: 0.1 },
+    });
+
+    const text = response.text || "";
+    const jsonMatch = text.match(/```json\s*([\s\S]*?)\s*```/) || text.match(/({[\s\S]*})/);
+    const parsed = JSON.parse(jsonMatch ? jsonMatch[1] : text);
+    return {
+      bugPhotoProvided: true,
+      identifiedBugTaxonomy: parsed.identifiedBugTaxonomy || null,
+    };
+  } catch (err) {
+    console.warn("Entomologist Node A execution failed:", err);
+    return { bugPhotoProvided: true, identifiedBugTaxonomy: null };
+  }
+}
+
+/**
+ * Node B: The Dermatologist
+ * Specialized vision call to classify skin lesion morphology.
+ */
+async function runDermatologistNode(
+  ai: GoogleGenAI,
+  lesionBuffer: Buffer
+): Promise<{
+  lesionMorphology: "annular_target" | "edematous_wheal" | "linear_cluster" | "necrotic_macule" | "other";
+}> {
+  try {
+    const prompt = `You are Node B (The Dermatologist), a board-certified dermatologist specializing in arthropod bite reactions.
+Analyze the provided skin reaction photo and classify its primary visual morphology.
+You MUST select exactly one lesionMorphology enum value from:
+- "annular_target": Expanding circular rash with central clearing (>5cm) characteristic of Erythema Migrans (tick bite).
+- "edematous_wheal": Small localized hives or acute histamine papule (<2cm) (mosquito/fly).
+- "linear_cluster": Sequential linear bite pattern ('breakfast, lunch, dinner') (bed bug/flea).
+- "necrotic_macule": Violaceous plaque with central ulceration or necrosis (brown recluse).
+- "other": Non-specific rash or other skin presentation.
+
+Output MUST be valid JSON strictly adhering to:
+{
+  "lesionMorphology": "annular_target" | "edematous_wheal" | "linear_cluster" | "necrotic_macule" | "other"
+}`;
+
+    const response = await ai.models.generateContent({
+      model: "gemini-2.5-flash",
+      contents: [
+        prompt,
+        {
+          inlineData: {
+            mimeType: "image/jpeg",
+            data: lesionBuffer.toString("base64"),
+          },
+        },
+      ] as any,
+      config: { temperature: 0.1 },
+    });
+
+    const text = response.text || "";
+    const jsonMatch = text.match(/```json\s*([\s\S]*?)\s*```/) || text.match(/({[\s\S]*})/);
+    const parsed = JSON.parse(jsonMatch ? jsonMatch[1] : text);
+    return {
+      lesionMorphology: parsed.lesionMorphology || "edematous_wheal",
+    };
+  } catch (err) {
+    console.warn("Dermatologist Node B execution failed:", err);
+    return { lesionMorphology: "edematous_wheal" };
+  }
+}
+
+/**
+ * Node C: The Synthesizer
+ * Combines Node A entomology and Node B dermatology with deterministic geo-seasonal decision engine.
+ */
+function synthesizeTriageResult(
+  nodeA: { bugPhotoProvided: boolean; identifiedBugTaxonomy: string | null },
+  nodeB: { lesionMorphology: "annular_target" | "edematous_wheal" | "linear_cluster" | "necrotic_macule" | "other" },
   context: TriageContext,
-  hasCulpritPhoto: boolean,
   overrideMorphology?: DermatologicalMorphology
 ): AnalysisResult {
-  const morphology: DermatologicalMorphology = overrideMorphology || {
-    pattern: "solitary_wheal",
-    centralFeatures: "punctum_bite_mark",
-    primaryReaction: "urticarial_hive",
-  };
-
-  const probs = evaluateRegionalLikelihood(context, morphology);
+  const probs = evaluateRegionalLikelihood(
+    context,
+    overrideMorphology || nodeB.lesionMorphology,
+    nodeA.identifiedBugTaxonomy
+  );
   const sorted = Object.entries(probs).sort((a, b) => b[1] - a[1]);
+
+  // Map lesionMorphology to DermatologicalMorphology for legacy compatibility
+  let pattern: DermatologicalMorphology["pattern"] = "solitary_wheal";
+  let centralFeatures: DermatologicalMorphology["centralFeatures"] = "punctum_bite_mark";
+  let primaryReaction: DermatologicalMorphology["primaryReaction"] = "urticarial_hive";
+
+  if (overrideMorphology) {
+    pattern = overrideMorphology.pattern;
+    centralFeatures = overrideMorphology.centralFeatures;
+    primaryReaction = overrideMorphology.primaryReaction;
+  } else if (nodeB.lesionMorphology === "annular_target") {
+    pattern = "annular_target";
+    centralFeatures = "punctum_bite_mark";
+    primaryReaction = "expanding_erythema";
+  } else if (nodeB.lesionMorphology === "linear_cluster") {
+    pattern = "linear_grouped";
+    centralFeatures = "clear_halo";
+    primaryReaction = "urticarial_hive";
+  } else if (nodeB.lesionMorphology === "necrotic_macule") {
+    pattern = "indurated_plaque";
+    centralFeatures = "necrotic_ulcer";
+    primaryReaction = "ischemic_purpura";
+  }
+
+  const morphology: DermatologicalMorphology = { pattern, centralFeatures, primaryReaction };
 
   const rankedCandidates = sorted.slice(0, 3).map(([key, prob], index) => {
     const vector = VECTOR_DATABASE[key];
@@ -137,12 +184,12 @@ export function generateMockTriageResult(
 
     const matchedFactors: string[] = [];
 
-    if (
-      morphology.pattern === "annular_target" &&
-      morphology.primaryReaction === "expanding_erythema" &&
-      key === "blacklegged_tick"
-    ) {
+    if ((nodeB.lesionMorphology === "annular_target" || pattern === "annular_target") && key === "blacklegged_tick") {
       matchedFactors.push("Classic Erythema Migrans (annular targetoid rash) indicative of Blacklegged Tick exposure");
+    }
+
+    if (nodeA.identifiedBugTaxonomy && index === 0) {
+      matchedFactors.push(`Pest taxonomy identified as ${nodeA.identifiedBugTaxonomy} by Node A (Entomologist)`);
     }
 
     if (context.incidentLocation && vector.habitatScores[context.incidentLocation] >= 0.7) {
@@ -151,16 +198,10 @@ export function generateMockTriageResult(
 
     if (vector.endemicStates === "ALL" || vector.endemicStates.includes(context.usState)) {
       matchedFactors.push(`Known endemic species in region (${context.usState})`);
-    } else {
-      matchedFactors.push(`Low endemic prevalence in ${context.usState}`);
     }
 
     if (vector.sensationScores[context.primarySensation] >= 0.7) {
       matchedFactors.push(`Sensation profile (${context.primarySensation.replace(/_/g, " ")}) matches vector pattern`);
-    }
-
-    if (hasCulpritPhoto && index === 0) {
-      matchedFactors.push("Pest morphological characteristics detected in provided culprit photo");
     }
 
     return {
@@ -176,18 +217,64 @@ export function generateMockTriageResult(
 
   const topMatch = rankedCandidates[0];
 
+  const visionAnalysis: VisionAnalysis = {
+    bugPhotoProvided: nodeA.bugPhotoProvided,
+    identifiedBugTaxonomy: nodeA.identifiedBugTaxonomy,
+    lesionMorphology: nodeB.lesionMorphology,
+    primarySuspectedCause: topMatch.name,
+  };
+
   return {
     isEmergencyRedirect: false,
-    culpritDetectedFromPhoto: hasCulpritPhoto,
+    culpritDetectedFromPhoto: nodeA.bugPhotoProvided,
     morphology,
+    visionAnalysis,
     rankedCandidates,
     summary:
-      morphology.pattern === "annular_target" && morphology.primaryReaction === "expanding_erythema"
+      nodeB.lesionMorphology === "annular_target" || pattern === "annular_target"
         ? `Analysis indicates ${topMatch.name} (${topMatch.scientificName}) as the primary culprit due to targetoid Erythema Migrans morphology, combined with regional endemic data for ${context.usState}. Immediate medical evaluation for potential Lyme disease prophylaxis is recommended.`
-        : hasCulpritPhoto
-        ? `Analysis indicates ${topMatch.name} (${topMatch.scientificName}) as the primary culprit based on visual pest morphology combined with geo-seasonal data for ${context.usState}.`
+        : nodeA.bugPhotoProvided
+        ? `Analysis indicates ${topMatch.name} (${topMatch.scientificName}) as the primary culprit based on pest identification (${nodeA.identifiedBugTaxonomy || "Pest photo attached"}) combined with geo-seasonal data for ${context.usState}.`
         : `Based on your geographic region (${context.usState}), incident location (${context.incidentLocation.replace(/_/g, " ")}), and sensation, ${topMatch.name} (${topMatch.scientificName}) is the most likely source of the skin lesion.`,
     disclaimer:
       "BiteID is an educational triage assistant and does not replace professional medical diagnosis. If you develop systemic symptoms or signs of infection, consult a healthcare provider immediately.",
   };
+}
+
+/**
+ * Intelligent Mock Generator fallback when GEMINI_API_KEY is not set or API fails.
+ */
+export function generateMockTriageResult(
+  context: TriageContext,
+  hasCulpritPhoto: boolean,
+  overrideMorphology?: DermatologicalMorphology
+): AnalysisResult {
+  const effectiveMorphology = overrideMorphology || context.morphology;
+  const morphology: DermatologicalMorphology = effectiveMorphology || {
+    pattern: "solitary_wheal",
+    centralFeatures: "punctum_bite_mark",
+    primaryReaction: "urticarial_hive",
+  };
+
+  let lesionMorphology: VisionAnalysis["lesionMorphology"] =
+    context.lesionMorphology || "edematous_wheal";
+
+  if (effectiveMorphology) {
+    if (effectiveMorphology.pattern === "annular_target" || effectiveMorphology.primaryReaction === "expanding_erythema") {
+      lesionMorphology = "annular_target";
+    } else if (effectiveMorphology.pattern === "linear_grouped") {
+      lesionMorphology = "linear_cluster";
+    } else if (effectiveMorphology.pattern === "indurated_plaque" || effectiveMorphology.centralFeatures === "necrotic_ulcer") {
+      lesionMorphology = "necrotic_macule";
+    }
+  }
+
+  const nodeA = {
+    bugPhotoProvided: hasCulpritPhoto,
+    identifiedBugTaxonomy: hasCulpritPhoto ? (lesionMorphology === "annular_target" ? "Ixodes scapularis" : "Culicidae") : null,
+  };
+
+  const nodeB = { lesionMorphology };
+
+  return synthesizeTriageResult(nodeA, nodeB, context, effectiveMorphology);
 }

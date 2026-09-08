@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { TriageContextSchema, AnalysisResult } from "@/lib/schema";
 import { analyzeBiteWithGemini } from "@/lib/geminiTriage";
+import { DEFAULT_MCNAIR_VA_COORDINATES } from "@/lib/geoPestFilter";
 
 export async function POST(req: NextRequest) {
   try {
@@ -44,6 +45,10 @@ export async function POST(req: NextRequest) {
       if (body.culpritImageBase64) {
         culpritBuffer = Buffer.from(body.culpritImageBase64, "base64");
       }
+    }
+
+    if (!rawContext.coordinates) {
+      rawContext.coordinates = DEFAULT_MCNAIR_VA_COORDINATES;
     }
 
     const parsedContext = TriageContextSchema.parse(rawContext);

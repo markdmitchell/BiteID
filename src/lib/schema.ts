@@ -73,6 +73,10 @@ export const TriageContextSchema = z.object({
   incidentLocation: IncidentLocationEnum.default("yard_garden"),
   timeElapsed: TimeElapsedEnum.default("under_2h"),
   primarySensation: PrimarySensationEnum.default("intense_itch"),
+  lesionMorphology: z
+    .enum(["annular_target", "edematous_wheal", "linear_cluster", "necrotic_macule", "other"])
+    .optional(),
+  morphology: DermatologicalMorphologySchema.optional(),
   emergencyScreening: EmergencySymptomSchema,
 });
 
@@ -88,13 +92,30 @@ export const CandidateResultSchema = z.object({
   warningSigns: z.array(z.string()),
 });
 
-export type CandidateResult = z.infer<typeof CandidateResultSchema>;
+export const VisionAnalysisSchema = z.object({
+  bugPhotoProvided: z.boolean(),
+  identifiedBugTaxonomy: z
+    .string()
+    .nullable()
+    .describe("Scientific name of the insect in the bug photo, if provided"),
+  lesionMorphology: z.enum([
+    "annular_target",
+    "edematous_wheal",
+    "linear_cluster",
+    "necrotic_macule",
+    "other",
+  ]),
+  primarySuspectedCause: z.string(),
+});
+
+export type VisionAnalysis = z.infer<typeof VisionAnalysisSchema>;
 
 export const AnalysisResultSchema = z.object({
   isEmergencyRedirect: z.boolean(),
   emergencyMessage: z.string().optional(),
   culpritDetectedFromPhoto: z.boolean(),
   morphology: DermatologicalMorphologySchema.optional(),
+  visionAnalysis: VisionAnalysisSchema.optional(),
   rankedCandidates: z.array(CandidateResultSchema),
   summary: z.string(),
   disclaimer: z.string(),
