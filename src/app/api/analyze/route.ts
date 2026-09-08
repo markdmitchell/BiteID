@@ -8,43 +8,72 @@ export async function POST(req: NextRequest) {
     const contentType = req.headers.get("content-type") || "";
 
     let rawContext: any;
-    let lesionBuffer: Buffer = Buffer.from("");
+    let lesionBuffer: Buffer | null = null;
     let culpritBuffer: Buffer | null = null;
 
     if (contentType.includes("multipart/form-data") || contentType.includes("urlencoded")) {
       const formData = await req.formData();
-      const contextJson = formData.get("context") as string;
+      const contextJson = formData.get("context") as string | null;
       if (!contextJson) {
         return NextResponse.json(
-          { error: "Missing triage context payload" },
+          { error: "Missing triage context payload." },
           { status: 400 }
         );
       }
-      rawContext = JSON.parse(contextJson);
+      try {
+        rawContext = JSON.parse(contextJson);
+      } catch {
+        return NextResponse.json(
+          { error: "Invalid JSON format in context payload." },
+          { status: 400 }
+        );
+      }
 
       const lesionFile = formData.get("lesionImage") as File | null;
       const culpritFile = formData.get("culpritImage") as File | null;
 
-      if (lesionFile && lesionFile.size > 0) {
-        const arrayBuffer = await lesionFile.arrayBuffer();
-        lesionBuffer = Buffer.from(arrayBuffer);
+      if (!lesionFile || lesionFile.size === 0) {
+        return NextResponse.json(
+          { error: "Lesion image is required." },
+          { status: 400 }
+        );
       }
 
+      const arrayBuffer = await lesionFile.arrayBuffer();
+      lesionBuffer = Buffer.from(arrayBuffer);
+
       if (culpritFile && culpritFile.size > 0) {
-        const arrayBuffer = await culpritFile.arrayBuffer();
-        culpritBuffer = Buffer.from(arrayBuffer);
+        const culpritArrayBuffer = await culpritFile.arrayBuffer();
+        culpritBuffer = Buffer.from(culpritArrayBuffer);
       }
     } else {
       // JSON body format support
       const body = await req.json();
+      if (!body) {
+        return NextResponse.json(
+          { error: "Request body is required." },
+          { status: 400 }
+        );
+      }
+
       rawContext = body.context || body;
 
-      if (body.lesionImageBase64) {
-        lesionBuffer = Buffer.from(body.lesionImageBase64, "base64");
+      const lesionBase64 = body.lesionImageBase64 || body.lesionImage;
+      const culpritBase64 = body.culpritImageBase64 || body.culpritImage;
+
+      if (lesionBase64) {
+        lesionBuffer = Buffer.from(lesionBase64, "base64");
       }
-      if (body.culpritImageBase64) {
-        culpritBuffer = Buffer.from(body.culpritImageBase64, "base64");
+      if (culpritBase64) {
+        culpritBuffer = Buffer.from(culpritBase64, "base64");
       }
+    }
+
+    if (!rawContext || typeof rawContext !== "object") {
+      return NextResponse.json(
+        { error: "Missing triage context payload." },
+        { status: 400 }
+      );
     }
 
     if (!rawContext.coordinates) {
@@ -53,13 +82,14 @@ export async function POST(req: NextRequest) {
 
     const parsedContext = TriageContextSchema.parse(rawContext);
 
-    // 1. DETERMINISTIC EMERGENCY SHORT-CIRCUIT
+    // 1. DETERMINISTIC EMERGENCY SHORT-CIRCUIT (Before image enforcement)
     const screening = parsedContext.emergencyScreening;
     if (
-      screening.difficultyBreathing ||
-      screening.facialSwelling ||
-      screening.dizzinessOrConfusion ||
-      screening.spreadingHives
+      screening &&
+      (screening.difficultyBreathing ||
+        screening.facialSwelling ||
+        screening.dizzinessOrConfusion ||
+        screening.spreadingHives)
     ) {
       const emergencyResponse: AnalysisResult = {
         isEmergencyRedirect: true,
@@ -74,6 +104,14 @@ export async function POST(req: NextRequest) {
       };
 
       return NextResponse.json(emergencyResponse, { status: 200 });
+    }
+
+    // 2. ENFORCE LESION IMAGE PRESENCE FOR NON-EMERGENCY ANALYSIS
+    if (!lesionBuffer || lesionBuffer.length === 0) {
+      return NextResponse.json(
+        { error: "Lesion image is required." },
+        { status: 400 }
+      );
     }
 
     // 2. EXECUTE TRIAGE PIPELINE

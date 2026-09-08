@@ -15,24 +15,22 @@ export async function analyzeBiteWithGemini(
   const apiKey = process.env.GEMINI_API_KEY;
 
   if (!apiKey) {
-    return generateMockTriageResult(context, !!culpritImageBuffer);
+    if (process.env.NODE_ENV === "test" || process.env.VITEST === "true") {
+      return generateMockTriageResult(context, !!culpritImageBuffer);
+    }
+    throw new Error("GEMINI_API_KEY environment variable is not configured on the server.");
   }
 
-  try {
-    const ai = new GoogleGenAI({ apiKey });
+  const ai = new GoogleGenAI({ apiKey });
 
-    // Execute Node A (The Entomologist) and Node B (The Dermatologist) in parallel
-    const [nodeA, nodeB] = await Promise.all([
-      runEntomologistNode(ai, culpritImageBuffer),
-      runDermatologistNode(ai, lesionImageBuffer),
-    ]);
+  // Execute Node A (The Entomologist) and Node B (The Dermatologist) in parallel
+  const [nodeA, nodeB] = await Promise.all([
+    runEntomologistNode(ai, culpritImageBuffer),
+    runDermatologistNode(ai, lesionImageBuffer),
+  ]);
 
-    // Node C (The Synthesizer)
-    return synthesizeTriageResult(nodeA, nodeB, context);
-  } catch (error) {
-    console.warn("Gemini multi-node vision pipeline error, falling back to deterministic synthesis:", error);
-    return generateMockTriageResult(context, !!culpritImageBuffer);
-  }
+  // Node C (The Synthesizer)
+  return synthesizeTriageResult(nodeA, nodeB, context);
 }
 
 /**
@@ -82,9 +80,9 @@ Output MUST be valid JSON strictly adhering to:
       bugPhotoProvided: true,
       identifiedBugTaxonomy: parsed.identifiedBugTaxonomy || null,
     };
-  } catch (err) {
-    console.warn("Entomologist Node A execution failed:", err);
-    return { bugPhotoProvided: true, identifiedBugTaxonomy: null };
+  } catch (err: any) {
+    console.error("Entomologist Node A execution failed:", err);
+    throw new Error(`Entomologist vision node failed: ${err.message || err}`);
   }
 }
 
@@ -131,11 +129,11 @@ Output MUST be valid JSON strictly adhering to:
     const jsonMatch = text.match(/```json\s*([\s\S]*?)\s*```/) || text.match(/({[\s\S]*})/);
     const parsed = JSON.parse(jsonMatch ? jsonMatch[1] : text);
     return {
-      lesionMorphology: parsed.lesionMorphology || "edematous_wheal",
+      lesionMorphology: parsed.lesionMorphology || "other",
     };
-  } catch (err) {
-    console.warn("Dermatologist Node B execution failed:", err);
-    return { lesionMorphology: "edematous_wheal" };
+  } catch (err: any) {
+    console.error("Dermatologist Node B execution failed:", err);
+    throw new Error(`Dermatologist vision node failed: ${err.message || err}`);
   }
 }
 
@@ -269,7 +267,7 @@ export function generateMockTriageResult(
   };
 
   let lesionMorphology: VisionAnalysis["lesionMorphology"] =
-    context.lesionMorphology || "edematous_wheal";
+    context.lesionMorphology || "other";
 
   if (effectiveMorphology) {
     if (effectiveMorphology.pattern === "annular_target" || effectiveMorphology.primaryReaction === "expanding_erythema") {
