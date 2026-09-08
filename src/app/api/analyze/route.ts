@@ -5,6 +5,9 @@ import { DEFAULT_MCNAIR_VA_COORDINATES } from "@/lib/geoPestFilter";
 
 export async function POST(req: NextRequest) {
   try {
+    const contentLength = req.headers.get("content-length");
+    console.log("Received formData size:", contentLength || "unknown");
+
     const contentType = req.headers.get("content-type") || "";
 
     let rawContext: any;

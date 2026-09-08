@@ -53,10 +53,67 @@ const MONTHS = [
   "July", "August", "September", "October", "November", "December"
 ];
 
+async function compressImage(file: File, maxWidth = 1024, maxHeight = 1024, quality = 0.85): Promise<File> {
+  if (file.type.includes("svg") || file.size < 100 * 1024) {
+    return file;
+  }
+
+  return new Promise((resolve) => {
+    const img = new Image();
+    const url = URL.createObjectURL(file);
+    img.onload = () => {
+      URL.revokeObjectURL(url);
+      let width = img.width;
+      let height = img.height;
+
+      if (width > maxWidth || height > maxHeight) {
+        if (width > height) {
+          height = Math.round((height * maxWidth) / width);
+          width = maxWidth;
+        } else {
+          width = Math.round((width * maxHeight) / height);
+          height = maxHeight;
+        }
+      }
+
+      const canvas = document.createElement("canvas");
+      canvas.width = width;
+      canvas.height = height;
+      const ctx = canvas.getContext("2d");
+      if (!ctx) {
+        resolve(file);
+        return;
+      }
+
+      ctx.drawImage(img, 0, 0, width, height);
+      canvas.toBlob(
+        (blob) => {
+          if (!blob) {
+            resolve(file);
+            return;
+          }
+          const compressedFile = new File([blob], file.name.replace(/\.[^/.]+$/, ".jpg"), {
+            type: "image/jpeg",
+            lastModified: Date.now(),
+          });
+          resolve(compressedFile);
+        },
+        "image/jpeg",
+        quality
+      );
+    };
+    img.onerror = () => {
+      resolve(file);
+    };
+    img.src = url;
+  });
+}
+
 export default function IntakePage() {
   const router = useRouter();
   const [currentStep, setCurrentStep] = useState<1 | 2 | 3>(1);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [apiError, setApiError] = useState<string | null>(null);
 
   // Step 1: Images
   const [lesionPreview, setLesionPreview] = useState<string | null>(null);
@@ -134,6 +191,7 @@ export default function IntakePage() {
       return;
     }
 
+    setApiError(null);
     setIsSubmitting(true);
 
     try {
@@ -149,8 +207,14 @@ export default function IntakePage() {
       const formData = new FormData();
       formData.append("context", JSON.stringify(contextObj));
 
-      if (lesionFile) formData.append("lesionImage", lesionFile);
-      if (culpritFile) formData.append("culpritImage", culpritFile);
+      if (lesionFile) {
+        const compressedLesion = await compressImage(lesionFile);
+        formData.append("lesionImage", compressedLesion);
+      }
+      if (culpritFile) {
+        const compressedCulprit = await compressImage(culpritFile);
+        formData.append("culpritImage", compressedCulprit);
+      }
 
       const response = await fetch("/api/analyze", {
         method: "POST",
@@ -158,13 +222,18 @@ export default function IntakePage() {
       });
 
       const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || `API Request Failed (Status ${response.status})`);
+      }
+
       sessionStorage.setItem("biteid_triage_result", JSON.stringify(data));
       sessionStorage.setItem("biteid_triage_context", JSON.stringify(contextObj));
 
       router.push("/results");
-    } catch (err) {
+    } catch (err: any) {
       console.error("Failed to analyze bite:", err);
-      alert("An error occurred while submitting your assessment. Please try again.");
+      setApiError(err.message || "An error occurred while submitting your assessment.");
     } finally {
       setIsSubmitting(false);
     }
@@ -177,6 +246,16 @@ export default function IntakePage() {
         onClose={() => setShowEmergencyModal(false)}
         symptoms={emergencySymptoms}
       />
+
+      {apiError && (
+        <div className="bento-card bg-red-500/10 border-2 border-red-500 text-red-700 p-4 rounded-2xl flex items-start gap-3 shadow-md animate-in fade-in">
+          <AlertTriangle className="w-5 h-5 text-red-600 shrink-0 mt-0.5" />
+          <div className="space-y-1">
+            <p className="font-extrabold text-sm text-red-900">Analysis Error</p>
+            <p className="text-xs font-semibold leading-relaxed text-red-700">{apiError}</p>
+          </div>
+        </div>
+      )}
 
       {/* Bento Progress Steps Header */}
       <div className="bento-card p-4 sm:p-5">
