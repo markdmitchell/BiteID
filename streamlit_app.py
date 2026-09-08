@@ -43,7 +43,7 @@ Output MUST be valid JSON strictly adhering to:
 }"""
 
 def call_gemini_vision(image_bytes: bytes, mime_type: str, prompt_text: str, api_key: str) -> dict:
-    url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key={api_key}"
+    url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent?key={api_key}"
     base64_image = base64.b64encode(image_bytes).decode("utf-8")
     
     payload = {
