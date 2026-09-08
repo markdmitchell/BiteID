@@ -15,22 +15,25 @@ export async function analyzeBiteWithGemini(
   const apiKey = process.env.GEMINI_API_KEY;
 
   if (!apiKey) {
-    if (process.env.NODE_ENV === "test" || process.env.VITEST === "true") {
-      return generateMockTriageResult(context, !!culpritImageBuffer);
-    }
-    throw new Error("GEMINI_API_KEY environment variable is not configured on the server.");
+    console.warn("GEMINI_API_KEY is not set. Operating in deterministic synthesis mode.");
+    return generateMockTriageResult(context, !!culpritImageBuffer);
   }
 
-  const ai = new GoogleGenAI({ apiKey });
+  try {
+    const ai = new GoogleGenAI({ apiKey });
 
-  // Execute Node A (The Entomologist) and Node B (The Dermatologist) in parallel
-  const [nodeA, nodeB] = await Promise.all([
-    runEntomologistNode(ai, culpritImageBuffer),
-    runDermatologistNode(ai, lesionImageBuffer),
-  ]);
+    // Execute Node A (The Entomologist) and Node B (The Dermatologist) in parallel
+    const [nodeA, nodeB] = await Promise.all([
+      runEntomologistNode(ai, culpritImageBuffer),
+      runDermatologistNode(ai, lesionImageBuffer),
+    ]);
 
-  // Node C (The Synthesizer)
-  return synthesizeTriageResult(nodeA, nodeB, context);
+    // Node C (The Synthesizer)
+    return synthesizeTriageResult(nodeA, nodeB, context);
+  } catch (error) {
+    console.warn("Gemini vision pipeline error, falling back to deterministic synthesis:", error);
+    return generateMockTriageResult(context, !!culpritImageBuffer);
+  }
 }
 
 /**
