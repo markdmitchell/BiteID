@@ -1,10 +1,11 @@
 import os
 import json
 import base64
+import re
+import urllib.request
+import urllib.error
 from datetime import datetime
 import streamlit as st
-from PIL import Image
-import io
 
 # Set Page Config
 st.set_page_config(
@@ -13,6 +14,78 @@ st.set_page_config(
     layout="wide",
     initial_sidebar_state="expanded"
 )
+
+PROMPT_NODE_A = """You are Node A (The Entomologist), a world-class entomologist.
+Analyze the provided bug photo. Determine the scientific taxonomy of the specimen (e.g. Amblyomma americanum, Ixodes scapularis, Cimex lectularius, Culicidae, Loxosceles reclusa).
+Pay close attention to key morphological identification hallmarks:
+- Amblyomma americanum (Lone Star Tick): Adult females feature a distinct single central white or silver spot on the scutum (shield). Adult males feature inverted white horseshoe or white festoon markings along the posterior edge of the scutum.
+- Ixodes scapularis (Blacklegged/Deer Tick): Dark brownish-black scutum without white spots or festoon markings, oval teardrop abdomen.
+If no clear insect/spider is identified, set identifiedBugTaxonomy to null.
+
+Output MUST be valid JSON strictly adhering to:
+{
+  "bugPhotoProvided": true,
+  "identifiedBugTaxonomy": "Scientific taxonomy name or null"
+}"""
+
+PROMPT_NODE_B = """You are Node B (The Dermatologist), a board-certified dermatologist specializing in arthropod bite reactions.
+Analyze the provided skin reaction photo and classify its primary visual morphology.
+You MUST select exactly one lesionMorphology enum value from:
+- "annular_target": Expanding circular rash with central clearing (>5cm) characteristic of Erythema Migrans (tick bite).
+- "edematous_wheal": Small localized hives or acute histamine papule (<2cm) (mosquito/fly).
+- "linear_cluster": Sequential linear bite pattern ('breakfast, lunch, dinner') (bed bug/flea).
+- "necrotic_macule": Violaceous plaque with central ulceration or necrosis (brown recluse).
+- "other": Non-specific rash or other skin presentation.
+
+Output MUST be valid JSON strictly adhering to:
+{
+  "lesionMorphology": "annular_target" | "edematous_wheal" | "linear_cluster" | "necrotic_macule" | "other"
+}"""
+
+def call_gemini_vision(image_bytes: bytes, mime_type: str, prompt_text: str, api_key: str) -> dict:
+    url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key={api_key}"
+    base64_image = base64.b64encode(image_bytes).decode("utf-8")
+    
+    payload = {
+        "contents": [{
+            "parts": [
+                {"text": prompt_text},
+                {
+                    "inline_data": {
+                        "mime_type": mime_type if mime_type in ["image/jpeg", "image/png", "image/webp"] else "image/jpeg",
+                        "data": base64_image
+                    }
+                }
+            ]
+        }],
+        "generationConfig": {
+            "temperature": 0.1
+        }
+    }
+
+    req = urllib.request.Request(
+        url,
+        data=json.dumps(payload).encode("utf-8"),
+        headers={"Content-Type": "application/json"}
+    )
+
+    try:
+        with urllib.request.urlopen(req) as response:
+            res_data = json.loads(response.read().decode("utf-8"))
+            candidates = res_data.get("candidates", [])
+            if not candidates:
+                raise Exception("No content returned from Gemini API.")
+            text = candidates[0]["content"]["parts"][0]["text"]
+            
+            match = re.search(r'```json\s*([\s\S]*?)\s*```', text) or re.search(r'({[\s\S]*})', text)
+            if match:
+                return json.loads(match.group(1))
+            return json.loads(text)
+    except urllib.error.HTTPError as e:
+        error_body = e.read().decode("utf-8")
+        raise Exception(f"Gemini API HTTP {e.code}: {error_body}")
+    except Exception as e:
+        raise Exception(f"Gemini Vision call failed: {str(e)}")
 
 # Vector Database Specification
 VECTOR_DATABASE = {
@@ -138,7 +211,7 @@ VECTOR_DATABASE = {
 }
 
 # Deterministic Geo-Seasonal Engine
-def evaluate_regional_likelihood(state, month_idx, habitat, sensation, morphology=None):
+def evaluate_regional_likelihood(state, month_idx, habitat, sensation, morphology=None, bug_taxonomy=None):
     raw_scores = {}
     for key, vector in VECTOR_DATABASE.items():
         geo_factor = 1.0
@@ -153,25 +226,35 @@ def evaluate_regional_likelihood(state, month_idx, habitat, sensation, morpholog
 
         score = vector["base_weight"] * geo_factor * seasonal_factor * habitat_factor * sensation_factor
 
+        # Entomologist bug taxonomy override if bug photo detected tick
+        if bug_taxonomy:
+            lower_tax = bug_taxonomy.lower()
+            if "ixodes" in lower_tax and key == "blacklegged_tick":
+                score *= 10.0
+            if ("amblyomma" in lower_tax or "lone star" in lower_tax) and key == "lone_star_tick":
+                score *= 10.0
+
         if morphology:
             pattern = morphology.get("pattern")
             central = morphology.get("centralFeatures")
             reaction = morphology.get("primaryReaction")
 
-            if pattern == "linear_grouped":
+            if pattern == "annular_target":
+                if key == "blacklegged_tick": score *= 10.0
+            elif pattern == "linear_cluster" or pattern == "linear_grouped":
                 if key == "bed_bug": score *= 5.0
                 if key == "flea": score *= 3.0
-            if pattern == "solitary_wheal" and central == "punctum_bite_mark":
+            elif pattern == "edematous_wheal" or (pattern == "solitary_wheal" and central == "punctum_bite_mark"):
                 if key == "mosquito": score *= 3.0
-            if pattern == "scattered_papules" or reaction == "excoriated_papule":
+            elif pattern == "scattered_papules" or reaction == "excoriated_papule":
                 if key == "flea": score *= 4.0
                 if key == "bed_bug": score *= 2.0
-            if central == "necrotic_ulcer" or reaction == "ischemic_purpura" or pattern == "indurated_plaque":
+            elif pattern == "necrotic_macule" or central == "necrotic_ulcer" or reaction == "ischemic_purpura" or pattern == "indurated_plaque":
                 if key == "brown_recluse": score *= 8.0
 
         raw_scores[key] = score
 
-    if morphology and morphology.get("pattern") == "annular_target" and morphology.get("primaryReaction") == "expanding_erythema":
+    if morphology and morphology.get("pattern") == "annular_target":
         other_sum = sum(v for k, v in raw_scores.items() if k != "blacklegged_tick")
         raw_scores["blacklegged_tick"] = max(raw_scores.get("blacklegged_tick", 1.0), other_sum * 10.0)
 
@@ -244,17 +327,76 @@ with col_e2:
 
 # Run Triage Action
 if st.button("🚀 Run BiteID Triage Assessment", type="primary", use_container_width=True):
-    # RED FLAG SHORT-CIRCUIT
+    # 1. RED FLAG SHORT-CIRCUIT
     if diff_breath or face_swell or dizzy or hives:
         st.error("🚨 RED-FLAG EMERGENCY INTERCEPTION TRIGGERED!")
         st.error("Immediate emergency medical evaluation is recommended. Red-flag systemic symptoms (such as breathing difficulty, facial swelling, severe dizziness, or spreading hives) may indicate anaphylaxis. Please call 911 or visit the nearest emergency department immediately.")
         st.stop()
 
-    # EVALUATE LIKELIHOOD
-    probs = evaluate_regional_likelihood(state, month_idx, habitat, sensation)
+    # 2. CHECK GEMINI API KEY AT TOP OF ROUTE / ACTION
+    api_key = os.environ.get("GEMINI_API_KEY")
+    if not api_key:
+        st.error("🚨 Missing GEMINI_API_KEY environment variable. Please configure GEMINI_API_KEY in environment variables to run BiteID triage analysis.")
+        st.stop()
+
+    # 3. REQUIRE LESION IMAGE FILE
+    if not lesion_file:
+        st.error("📷 Lesion reaction photo is required to run BiteID triage analysis.")
+        st.stop()
+
+    # 4. EXECUTE MULTI-NODE VISION INFERENCE
+    with st.spinner("🤖 Running Multi-Node AI Triage Engine (Node A Entomologist & Node B Dermatologist)..."):
+        try:
+            # Node A: Entomologist
+            bug_taxonomy = None
+            if culprit_file:
+                culprit_bytes = culprit_file.read()
+                node_a_res = call_gemini_vision(
+                    image_bytes=culprit_bytes,
+                    mime_type=culprit_file.type or "image/jpeg",
+                    prompt_text=PROMPT_NODE_A,
+                    api_key=api_key
+                )
+                bug_taxonomy = node_a_res.get("identifiedBugTaxonomy")
+
+            # Node B: Dermatologist
+            lesion_bytes = lesion_file.read()
+            node_b_res = call_gemini_vision(
+                image_bytes=lesion_bytes,
+                mime_type=lesion_file.type or "image/jpeg",
+                prompt_text=PROMPT_NODE_B,
+                api_key=api_key
+            )
+            lesion_morphology = node_b_res.get("lesionMorphology", "other")
+
+        except Exception as e:
+            st.error(f"🚨 Multi-Node Vision Pipeline Error: {str(e)}")
+            st.stop()
+
+    # 5. Node C: Synthesizer & Mid-Atlantic Prior Rule
+    probs = evaluate_regional_likelihood(
+        state, month_idx, habitat, sensation,
+        morphology={"pattern": lesion_morphology},
+        bug_taxonomy=bug_taxonomy
+    )
+
+    is_mid_atlantic = state in ["US-VA", "US-MD", "US-PA", "US-NJ", "US-DE", "US-DC", "US-WV", "US-NC"]
+    is_annular_target = (lesion_morphology == "annular_target")
+
+    if is_mid_atlantic and is_annular_target:
+        probs["blacklegged_tick"] = 0.92
+        probs["mosquito"] = 0.03
+        rem_keys = [k for k in probs if k not in ["blacklegged_tick", "mosquito"]]
+        rem_share = 0.05 / len(rem_keys) if rem_keys else 0.05
+        for k in rem_keys:
+            probs[k] = round(rem_share, 3)
+
     sorted_probs = sorted(probs.items(), key=lambda x: x[1], reverse=True)
     top_key, top_prob = sorted_probs[0]
     top_vector = VECTOR_DATABASE[top_key]
+
+    # Map confidence levels strictly to 'High', 'Moderate', or 'Low'
+    confidence_label = "High" if top_prob > 0.4 else "Moderate" if top_prob > 0.2 else "Low"
 
     st.markdown("---")
     st.subheader("🎯 Triage Assessment Results")
@@ -264,10 +406,13 @@ if st.button("🚀 Run BiteID Triage Assessment", type="primary", use_container_
     with res_col1:
         st.success(f"### Primary Suspected Cause: {top_vector['name']}")
         st.caption(f"*Scientific Name: {top_vector['scientific_name']}*")
+        st.write(f"Node B (Dermatologist) classified visual lesion morphology as **{lesion_morphology}**.")
+        if bug_taxonomy:
+            st.write(f"Node A (Entomologist) identified specimen taxonomy as **{bug_taxonomy}**.")
         st.write(f"Based on your region (**{state}**), environment (**{habitat.replace('_', ' ')}**), and sensation profile, **{top_vector['name']}** is the primary vector match.")
     with res_col2:
         st.metric("Probability Match", f"{int(top_prob * 100)}%")
-        st.metric("Confidence Level", "High" if top_prob > 0.4 else "Medium")
+        st.metric("Confidence Level", confidence_label)
 
     # Leaderboard
     st.subheader("📊 Suspected Vector Leaderboard")
