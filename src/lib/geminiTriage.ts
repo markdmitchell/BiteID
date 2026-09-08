@@ -205,12 +205,17 @@ function synthesizeTriageResult(
     }
 
     return {
+      pestName: vector.name,
       name: vector.name,
       scientificName: vector.scientificName,
       confidence: confidence as "high" | "medium" | "low",
+      probabilityScore: prob,
       probability: prob,
       matchedFactors,
+      associatedPathogens: vector.associatedPathogens || [],
+      delayedRisks: vector.delayedRisks || [],
       firstAidAdvice: vector.firstAidAdvice,
+      warningSignsToWatch: vector.warningSigns,
       warningSigns: vector.warningSigns,
     };
   });

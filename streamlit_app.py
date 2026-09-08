@@ -25,6 +25,8 @@ VECTOR_DATABASE = {
         "habitat": {"yard_garden": 1.0, "outdoor_other": 0.9, "tall_grass_woods": 0.8, "garage_shed": 0.4, "indoor_other": 0.3, "bed": 0.2},
         "sensation": {"intense_itch": 1.0, "mild_itch": 0.9, "painless": 0.3, "moderate_pain": 0.2, "severe_pain": 0.1},
         "base_weight": 0.25,
+        "associated_pathogens": ["West Nile Virus", "Dengue Virus", "Zika Virus", "Eastern Equine Encephalitis"],
+        "delayed_risks": ["Secondary bacterial skin infection (Impetigo/Cellulitis)", "Post-viral fatigue syndrome"],
         "first_aid": [
             "Wash gently with soap and water.",
             "Apply ice pack for 10 mins to reduce edema and itching.",
@@ -42,6 +44,8 @@ VECTOR_DATABASE = {
         "habitat": {"tall_grass_woods": 1.0, "yard_garden": 0.7, "outdoor_other": 0.5, "garage_shed": 0.2, "indoor_other": 0.1, "bed": 0.1},
         "sensation": {"painless": 1.0, "mild_itch": 0.9, "intense_itch": 0.5, "moderate_pain": 0.3, "severe_pain": 0.1},
         "base_weight": 0.25,
+        "associated_pathogens": ["Lyme Disease (Borrelia burgdorferi)", "Anaplasmosis", "Babesiosis", "Powassan Virus"],
+        "delayed_risks": ["Alpha-gal syndrome (red meat allergy)", "Post-Treatment Lyme Disease Syndrome (PTLDS)", "Chronic Lyme Arthritis & Lyme Carditis"],
         "first_aid": [
             "Remove attached tick with fine-tipped tweezers by pulling straight up.",
             "Disinfect bite site with rubbing alcohol or soap and water.",
@@ -60,6 +64,8 @@ VECTOR_DATABASE = {
         "habitat": {"bed": 1.0, "indoor_other": 0.9, "garage_shed": 0.2, "yard_garden": 0.1, "tall_grass_woods": 0.05, "outdoor_other": 0.05},
         "sensation": {"intense_itch": 1.0, "mild_itch": 0.8, "painless": 0.6, "moderate_pain": 0.2, "severe_pain": 0.05},
         "base_weight": 0.2,
+        "associated_pathogens": ["Not known to transmit human pathogens directly"],
+        "delayed_risks": ["Bullous cutaneous eruptions", "Secondary bacterial skin infection", "Chronic sleep disturbance"],
         "first_aid": [
             "Wash bites with mild soap and warm water.",
             "Apply OTC anti-itch cream or take antihistamines.",
@@ -77,6 +83,8 @@ VECTOR_DATABASE = {
         "habitat": {"bed": 0.9, "yard_garden": 0.8, "indoor_other": 0.8, "tall_grass_woods": 0.5, "outdoor_other": 0.5, "garage_shed": 0.4},
         "sensation": {"intense_itch": 1.0, "mild_itch": 0.8, "moderate_pain": 0.2, "painless": 0.2, "severe_pain": 0.1},
         "base_weight": 0.15,
+        "associated_pathogens": ["Bartonella henselae (Cat Scratch Disease)", "Rickettsia typhi (Murine Typhus)"],
+        "delayed_risks": ["Papular urticaria", "Post-inflammatory hyperpigmentation"],
         "first_aid": ["Wash bites with antiseptic soap.", "Apply cold compress.", "Use calamine lotion for itch relief."],
         "warning_signs": ["Pus-filled blisters or secondary bacterial infection."]
     },
@@ -89,6 +97,8 @@ VECTOR_DATABASE = {
         "habitat": {"garage_shed": 1.0, "indoor_other": 0.8, "bed": 0.5, "yard_garden": 0.3, "outdoor_other": 0.3, "tall_grass_woods": 0.2},
         "sensation": {"severe_pain": 1.0, "moderate_pain": 0.9, "painless": 0.5, "mild_itch": 0.3, "intense_itch": 0.2},
         "base_weight": 0.1,
+        "associated_pathogens": ["Direct cytotoxic necrotoxin (Sphingomyelinase D venom)"],
+        "delayed_risks": ["Necrotic eschar skin ulceration", "Systemic loxoscelism (hemolytic anemia, renal injury)"],
         "first_aid": ["Clean bite area with soap and water.", "Apply ice pack (10m on, 10m off).", "Elevate limb.", "Keep calm."],
         "warning_signs": ["Central bluish/purplish ulceration or necrotic tissue.", "Nausea, fever, dark urine (loxoscelism)."]
     },
@@ -101,6 +111,8 @@ VECTOR_DATABASE = {
         "habitat": {"garage_shed": 1.0, "yard_garden": 0.8, "outdoor_other": 0.7, "indoor_other": 0.4, "tall_grass_woods": 0.4, "bed": 0.1},
         "sensation": {"severe_pain": 1.0, "moderate_pain": 0.8, "intense_itch": 0.2, "mild_itch": 0.1, "painless": 0.1},
         "base_weight": 0.1,
+        "associated_pathogens": ["Alpha-latrotoxin neurovenom"],
+        "delayed_risks": ["Recurrent latrodectism muscle spasms", "Persistent localized neuropathic pain"],
         "first_aid": ["Wash site with soap and water.", "Apply ice pack to slow venom absorption.", "Seek medical evaluation for antivenom if needed."],
         "warning_signs": ["Severe abdominal muscle rigidity, chest pain, or cramps.", "Difficulty breathing or hypertension."]
     }
@@ -244,6 +256,18 @@ if st.button("🚀 Run BiteID Triage Assessment", type="primary", use_container_
         vec = VECTOR_DATABASE[key]
         st.write(f"**{vec['name']}** ({vec['scientific_name']}) — **{int(prob * 100)}%**")
         st.progress(prob)
+
+    # Associated Pathogens & Delayed Risks
+    st.subheader("🛡️ Associated Pathogens & Long-Term Delayed Risks")
+    p_col1, p_col2 = st.columns(2)
+    with p_col1:
+        st.write("**Transmissible Pathogens:**")
+        for path in top_vector.get("associated_pathogens", []):
+            st.info(f"🧬 {path}")
+    with p_col2:
+        st.write("**Delayed / Long-Term Risks:**")
+        for risk in top_vector.get("delayed_risks", []):
+            st.warning(f"⚠️ {risk}")
 
     # First Aid & Warnings
     fa_col, warn_col = st.columns(2)

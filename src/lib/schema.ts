@@ -82,15 +82,30 @@ export const TriageContextSchema = z.object({
 
 export type TriageContext = z.infer<typeof TriageContextSchema>;
 
-export const CandidateResultSchema = z.object({
-  name: z.string(),
-  scientificName: z.string(),
-  confidence: z.enum(["high", "medium", "low"]),
-  probability: z.number().min(0).max(1),
-  matchedFactors: z.array(z.string()),
-  firstAidAdvice: z.array(z.string()),
-  warningSigns: z.array(z.string()),
+export const CandidateCulpritSchema = z.object({
+  pestName: z.string().default("Unknown Pest"),
+  name: z.string().default("Unknown Vector"),
+  scientificName: z.string().default(""),
+  confidence: z.enum(["high", "medium", "moderate", "low"]).default("low"),
+  probabilityScore: z.number().min(0).max(1).default(0),
+  probability: z.number().min(0).max(1).default(0),
+  matchedFactors: z.array(z.string()).default([]),
+  associatedPathogens: z
+    .array(z.string())
+    .default([])
+    .describe('e.g., "Lyme Disease", "Rocky Mountain Spotted Fever"'),
+  delayedRisks: z
+    .array(z.string())
+    .default([])
+    .describe('e.g., "Alpha-gal syndrome (red meat allergy)"'),
+  firstAidAdvice: z.array(z.string()).default([]),
+  warningSignsToWatch: z.array(z.string()).default([]),
+  warningSigns: z.array(z.string()).default([]),
 });
+
+export type CandidateCulprit = z.infer<typeof CandidateCulpritSchema>;
+export const CandidateResultSchema = CandidateCulpritSchema;
+export type CandidateResult = CandidateCulprit;
 
 export const VisionAnalysisSchema = z.object({
   bugPhotoProvided: z.boolean(),

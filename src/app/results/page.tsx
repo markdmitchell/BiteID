@@ -16,6 +16,7 @@ import {
   Info,
   FileText,
   Eye,
+  ShieldAlert,
 } from "lucide-react";
 import { AnalysisResult, TriageContext } from "@/lib/schema";
 import { ReferenceComparisonModal } from "@/components/ReferenceComparisonModal";
@@ -302,6 +303,44 @@ export default function ResultsPage() {
           })}
         </div>
       </div>
+
+      {/* Associated Pathogens & Long-Term Delayed Risks Bento Tile */}
+      {topMatch &&
+        ((topMatch.associatedPathogens && topMatch.associatedPathogens.length > 0) ||
+          (topMatch.delayedRisks && topMatch.delayedRisks.length > 0)) && (
+          <div className="bento-card bg-slate-900 text-white space-y-4">
+            <h2 className="text-sm font-extrabold flex items-center gap-2 text-emerald-400 uppercase tracking-wider">
+              <ShieldAlert className="w-4 h-4 text-emerald-400" /> Associated Pathogens & Long-Term Delayed Risks
+            </h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
+              {topMatch.associatedPathogens && topMatch.associatedPathogens.length > 0 && (
+                <div className="bg-slate-800/90 p-4 rounded-2xl border border-slate-700 space-y-2">
+                  <p className="font-extrabold text-slate-200 uppercase tracking-wider text-[11px]">
+                    Transmissible Pathogens:
+                  </p>
+                  <ul className="space-y-1.5 text-slate-300 font-semibold list-disc list-inside">
+                    {topMatch.associatedPathogens.map((pathogen, pIdx) => (
+                      <li key={pIdx}>{pathogen}</li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+
+              {topMatch.delayedRisks && topMatch.delayedRisks.length > 0 && (
+                <div className="bg-slate-800/90 p-4 rounded-2xl border border-slate-700 space-y-2">
+                  <p className="font-extrabold text-amber-400 uppercase tracking-wider text-[11px]">
+                    Delayed / Long-Term Medical Risks:
+                  </p>
+                  <ul className="space-y-1.5 text-slate-300 font-semibold list-disc list-inside">
+                    {topMatch.delayedRisks.map((risk, rIdx) => (
+                      <li key={rIdx}>{risk}</li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
 
       {/* First Aid Checklist Bento Tile */}
       {topMatch && topMatch.firstAidAdvice.length > 0 && (

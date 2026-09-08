@@ -10,6 +10,8 @@ export interface VectorInfo {
   habitatScores: Record<string, number>;
   sensationScores: Record<string, number>;
   baseWeight: number;
+  associatedPathogens: string[];
+  delayedRisks: string[];
   firstAidAdvice: string[];
   warningSigns: string[];
 }
@@ -38,6 +40,16 @@ export const VECTOR_DATABASE: Record<string, VectorInfo> = {
       severe_pain: 0.1,
     },
     baseWeight: 0.25,
+    associatedPathogens: [
+      "West Nile Virus",
+      "Dengue Virus",
+      "Zika Virus",
+      "Eastern Equine Encephalitis",
+    ],
+    delayedRisks: [
+      "Secondary bacterial skin infection (Impetigo/Cellulitis)",
+      "Post-viral fatigue syndrome",
+    ],
     firstAidAdvice: [
       "Wash the area gently with soap and water.",
       "Apply an ice pack for 10 minutes to decrease swelling and itch.",
@@ -76,6 +88,17 @@ export const VECTOR_DATABASE: Record<string, VectorInfo> = {
       severe_pain: 0.1,
     },
     baseWeight: 0.25,
+    associatedPathogens: [
+      "Lyme Disease (Borrelia burgdorferi)",
+      "Anaplasmosis (Anaplasma phagocytophilum)",
+      "Babesiosis (Babesia microti)",
+      "Powassan Virus",
+    ],
+    delayedRisks: [
+      "Alpha-gal syndrome (red meat allergy)",
+      "Post-Treatment Lyme Disease Syndrome (PTLDS)",
+      "Chronic Lyme Arthritis & Lyme Carditis",
+    ],
     firstAidAdvice: [
       "If tick is attached, use fine-tipped tweezers to grasp as close to skin as possible and pull straight up.",
       "Clean bite area thoroughly with rubbing alcohol or soap and water.",
@@ -111,6 +134,14 @@ export const VECTOR_DATABASE: Record<string, VectorInfo> = {
       severe_pain: 0.05,
     },
     baseWeight: 0.2,
+    associatedPathogens: [
+      "Not known to transmit human pathogens directly",
+    ],
+    delayedRisks: [
+      "Bullous cutaneous eruptions & severe allergic hypersensitivity",
+      "Secondary bacterial skin infection from scratching",
+      "Chronic sleep disturbance & psychological distress",
+    ],
     firstAidAdvice: [
       "Wash bites with soap and warm water.",
       "Apply OTC anti-itch cream (hydrocortisone) or take oral antihistamine.",
@@ -145,6 +176,14 @@ export const VECTOR_DATABASE: Record<string, VectorInfo> = {
       severe_pain: 0.1,
     },
     baseWeight: 0.15,
+    associatedPathogens: [
+      "Bartonella henselae (Cat Scratch Disease)",
+      "Rickettsia typhi (Murine Typhus)",
+    ],
+    delayedRisks: [
+      "Papular urticaria (recurrent hypersensitivity papules)",
+      "Post-inflammatory hyperpigmentation",
+    ],
     firstAidAdvice: [
       "Wash bites thoroughly with antiseptic soap.",
       "Apply ice or cold compress to reduce swelling.",
@@ -185,6 +224,13 @@ export const VECTOR_DATABASE: Record<string, VectorInfo> = {
       intense_itch: 0.2,
     },
     baseWeight: 0.1,
+    associatedPathogens: [
+      "Direct cytotoxic necrotoxin (Sphingomyelinase D venom)",
+    ],
+    delayedRisks: [
+      "Necrotic eschar skin ulceration requiring surgical debridement",
+      "Systemic loxoscelism (hemolytic anemia, intravascular coagulation, renal injury)",
+    ],
     firstAidAdvice: [
       "Clean the bite area thoroughly with mild soap and water.",
       "Apply a cold compress or ice pack wrapped in a cloth (10 min on, 10 min off).",
@@ -219,6 +265,13 @@ export const VECTOR_DATABASE: Record<string, VectorInfo> = {
       painless: 0.1,
     },
     baseWeight: 0.1,
+    associatedPathogens: [
+      "Alpha-latrotoxin neurovenom",
+    ],
+    delayedRisks: [
+      "Recurrent latrodectism muscle spasms & autonomic dysfunction",
+      "Persistent localized neuropathic pain",
+    ],
     firstAidAdvice: [
       "Wash the bite site with soap and water immediately.",
       "Apply an ice pack to slow venom absorption and ease pain.",
