@@ -1,0 +1,71 @@
+import { describe, it, expect } from "vitest";
+import { evaluateRegionalLikelihood } from "../src/lib/geoPestFilter";
+import { TriageContext } from "../src/lib/schema";
+
+describe("geoPestFilter Engine", () => {
+  it("penalizes Brown Recluse probability to 0.0 in Washington State (US-WA)", () => {
+    const context: TriageContext = {
+      usState: "US-WA",
+      monthIndex: 6, // July
+      incidentLocation: "garage_shed",
+      timeElapsed: "under_2h",
+      primarySensation: "severe_pain",
+      emergencyScreening: {
+        difficultyBreathing: false,
+        facialSwelling: false,
+        dizzinessOrConfusion: false,
+        spreadingHives: false,
+      },
+    };
+
+    const probabilities = evaluateRegionalLikelihood(context);
+
+    expect(probabilities.brown_recluse).toBe(0);
+  });
+
+  it("calculates high Tick probability in Virginia (US-VA) in June vs lower in January", () => {
+    const juneContext: TriageContext = {
+      usState: "US-VA",
+      monthIndex: 5, // June
+      incidentLocation: "tall_grass_woods",
+      timeElapsed: "1_to_2_days",
+      primarySensation: "painless",
+      emergencyScreening: {
+        difficultyBreathing: false,
+        facialSwelling: false,
+        dizzinessOrConfusion: false,
+        spreadingHives: false,
+      },
+    };
+
+    const janContext: TriageContext = {
+      ...juneContext,
+      monthIndex: 0, // January
+    };
+
+    const juneProbs = evaluateRegionalLikelihood(juneContext);
+    const janProbs = evaluateRegionalLikelihood(janContext);
+
+    expect(juneProbs.blacklegged_tick).toBeGreaterThan(0.5);
+    expect(juneProbs.blacklegged_tick).toBeGreaterThan(janProbs.blacklegged_tick);
+  });
+
+  it("boosts Bed Bug probability significantly when incident location is bed", () => {
+    const bedContext: TriageContext = {
+      usState: "US-NY",
+      monthIndex: 1, // Feb
+      incidentLocation: "bed",
+      timeElapsed: "under_2h",
+      primarySensation: "intense_itch",
+      emergencyScreening: {
+        difficultyBreathing: false,
+        facialSwelling: false,
+        dizzinessOrConfusion: false,
+        spreadingHives: false,
+      },
+    };
+
+    const probs = evaluateRegionalLikelihood(bedContext);
+    expect(probs.bed_bug).toBeGreaterThan(0.3);
+  });
+});

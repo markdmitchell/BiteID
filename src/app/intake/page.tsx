@@ -1,0 +1,611 @@
+"use client";
+
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import {
+  Camera,
+  Upload,
+  Sparkles,
+  MapPin,
+  Calendar,
+  Clock,
+  Activity,
+  AlertTriangle,
+  CheckCircle2,
+  ChevronRight,
+  ChevronLeft,
+  X,
+  FileImage,
+  Bug,
+} from "lucide-react";
+import {
+  EmergencySymptoms,
+  IncidentLocation,
+  TimeElapsed,
+  PrimarySensation,
+} from "@/lib/schema";
+import { EmergencyModal } from "@/components/EmergencyModal";
+
+const SAMPLE_LESION_DATA_URL =
+  "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='400' height='300' viewBox='0 0 400 300'><rect width='400' height='300' fill='%23fecdd3'/><circle cx='200' cy='150' r='50' fill='%23f43f5e' opacity='0.7'/><circle cx='200' cy='150' r='10' fill='%23881337'/></svg>";
+
+const SAMPLE_CULPRIT_DATA_URL =
+  "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='400' height='300' viewBox='0 0 400 300'><rect width='400' height='300' fill='%23e2e8f0'/><ellipse cx='200' cy='150' rx='25' ry='35' fill='%23451a03'/><line x1='175' y1='130' x2='150' y2='110' stroke='%23451a03' stroke-width='4'/><line x1='225' y1='130' x2='250' y2='110' stroke='%23451a03' stroke-width='4'/><line x1='175' y1='150' x2='145' y2='150' stroke='%23451a03' stroke-width='4'/><line x1='225' y1='150' x2='255' y2='150' stroke='%23451a03' stroke-width='4'/><line x1='175' y1='170' x2='150' y2='190' stroke='%23451a03' stroke-width='4'/><line x1='225' y1='170' x2='250' y2='190' stroke='%23451a03' stroke-width='4'/></svg>";
+
+const US_STATES = [
+  { code: "US-VA", name: "Virginia" },
+  { code: "US-WA", name: "Washington State" },
+  { code: "US-NY", name: "New York" },
+  { code: "US-TX", name: "Texas" },
+  { code: "US-CA", name: "California" },
+  { code: "US-FL", name: "Florida" },
+  { code: "US-MA", name: "Massachusetts" },
+  { code: "US-IL", name: "Illinois" },
+  { code: "US-NC", name: "North Carolina" },
+  { code: "US-GA", name: "Georgia" },
+  { code: "US-PA", name: "Pennsylvania" },
+  { code: "US-OH", name: "Ohio" },
+];
+
+const MONTHS = [
+  "January", "February", "March", "April", "May", "June",
+  "July", "August", "September", "October", "November", "December"
+];
+
+export default function IntakePage() {
+  const router = useRouter();
+  const [currentStep, setCurrentStep] = useState<1 | 2 | 3>(1);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // Step 1: Images
+  const [lesionPreview, setLesionPreview] = useState<string | null>(null);
+  const [lesionFile, setLesionFile] = useState<File | null>(null);
+  const [culpritPreview, setCulpritPreview] = useState<string | null>(null);
+  const [culpritFile, setCulpritFile] = useState<File | null>(null);
+
+  // Step 2: Context
+  const [usState, setUsState] = useState<string>("US-VA");
+  const [monthIndex, setMonthIndex] = useState<number>(new Date().getMonth());
+  const [incidentLocation, setIncidentLocation] = useState<IncidentLocation>("tall_grass_woods");
+  const [timeElapsed, setTimeElapsed] = useState<TimeElapsed>("under_2h");
+
+  // Step 3: Symptoms & Safety
+  const [primarySensation, setPrimarySensation] = useState<PrimarySensation>("intense_itch");
+  const [emergencySymptoms, setEmergencySymptoms] = useState<EmergencySymptoms>({
+    difficultyBreathing: false,
+    facialSwelling: false,
+    dizzinessOrConfusion: false,
+    spreadingHives: false,
+  });
+
+  const [showEmergencyModal, setShowEmergencyModal] = useState(false);
+
+  const hasRedFlags = Object.values(emergencySymptoms).some(Boolean);
+
+  const handleToggleEmergency = (key: keyof EmergencySymptoms) => {
+    const updated = { ...emergencySymptoms, [key]: !emergencySymptoms[key] };
+    setEmergencySymptoms(updated);
+    if (Object.values(updated).some(Boolean)) {
+      setShowEmergencyModal(true);
+    }
+  };
+
+  const handleLesionUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setLesionFile(file);
+      setLesionPreview(URL.createObjectURL(file));
+    }
+  };
+
+  const handleCulpritUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setCulpritFile(file);
+      setCulpritPreview(URL.createObjectURL(file));
+    }
+  };
+
+  const handleUseSampleLesion = () => {
+    setLesionPreview(SAMPLE_LESION_DATA_URL);
+    const blob = new Blob(["sample-lesion-image"], { type: "image/svg+xml" });
+    setLesionFile(new File([blob], "sample_lesion.svg", { type: "image/svg+xml" }));
+  };
+
+  const handleUseSampleCulprit = () => {
+    setCulpritPreview(SAMPLE_CULPRIT_DATA_URL);
+    const blob = new Blob(["sample-culprit-image"], { type: "image/svg+xml" });
+    setCulpritFile(new File([blob], "sample_culprit.svg", { type: "image/svg+xml" }));
+  };
+
+  const handleGeoLocate = () => {
+    if ("geolocation" in navigator) {
+      navigator.geolocation.getCurrentPosition(
+        () => setUsState("US-VA"),
+        () => setUsState("US-VA")
+      );
+    }
+  };
+
+  const handleSubmit = async () => {
+    if (hasRedFlags) {
+      setShowEmergencyModal(true);
+      return;
+    }
+
+    setIsSubmitting(true);
+
+    try {
+      const contextObj = {
+        usState,
+        monthIndex,
+        incidentLocation,
+        timeElapsed,
+        primarySensation,
+        emergencyScreening: emergencySymptoms,
+      };
+
+      const formData = new FormData();
+      formData.append("context", JSON.stringify(contextObj));
+
+      if (lesionFile) formData.append("lesionImage", lesionFile);
+      if (culpritFile) formData.append("culpritImage", culpritFile);
+
+      const response = await fetch("/api/analyze", {
+        method: "POST",
+        body: formData,
+      });
+
+      const data = await response.json();
+      sessionStorage.setItem("biteid_triage_result", JSON.stringify(data));
+      sessionStorage.setItem("biteid_triage_context", JSON.stringify(contextObj));
+
+      router.push("/results");
+    } catch (err) {
+      console.error("Failed to analyze bite:", err);
+      alert("An error occurred while submitting your assessment. Please try again.");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  return (
+    <div className="max-w-3xl mx-auto space-y-6">
+      <EmergencyModal
+        isOpen={showEmergencyModal}
+        onClose={() => setShowEmergencyModal(false)}
+        symptoms={emergencySymptoms}
+      />
+
+      {/* Progress Steps Header */}
+      <div className="glass-card rounded-3xl p-4 sm:p-6 shadow-sm">
+        <div className="flex items-center justify-between max-w-xl mx-auto">
+          <div className={`flex items-center gap-2 ${currentStep >= 1 ? "text-emerald-600 font-bold" : "text-slate-400"}`}>
+            <div className={`w-8 h-8 rounded-xl flex items-center justify-center text-sm font-extrabold shadow-sm ${
+              currentStep >= 1 ? "bg-emerald-600 text-white" : "bg-slate-200/60"
+            }`}>
+              1
+            </div>
+            <span className="hidden sm:inline">Photos</span>
+          </div>
+
+          <div className={`h-1 flex-1 mx-3 rounded-full ${currentStep >= 2 ? "bg-emerald-600" : "bg-slate-200/60"}`} />
+
+          <div className={`flex items-center gap-2 ${currentStep >= 2 ? "text-emerald-600 font-bold" : "text-slate-400"}`}>
+            <div className={`w-8 h-8 rounded-xl flex items-center justify-center text-sm font-extrabold shadow-sm ${
+              currentStep >= 2 ? "bg-emerald-600 text-white" : "bg-slate-200/60"
+            }`}>
+              2
+            </div>
+            <span className="hidden sm:inline">Context</span>
+          </div>
+
+          <div className={`h-1 flex-1 mx-3 rounded-full ${currentStep >= 3 ? "bg-emerald-600" : "bg-slate-200/60"}`} />
+
+          <div className={`flex items-center gap-2 ${currentStep === 3 ? "text-emerald-600 font-bold" : "text-slate-400"}`}>
+            <div className={`w-8 h-8 rounded-xl flex items-center justify-center text-sm font-extrabold shadow-sm ${
+              currentStep === 3 ? "bg-emerald-600 text-white" : "bg-slate-200/60"
+            }`}>
+              3
+            </div>
+            <span className="hidden sm:inline">Symptoms & Safety</span>
+          </div>
+        </div>
+      </div>
+
+      {/* STEP 1: PHOTO CAPTURE */}
+      {currentStep === 1 && (
+        <div className="space-y-6 animate-in fade-in duration-200">
+          <div className="glass-card rounded-3xl p-6 sm:p-8 space-y-6">
+            <div>
+              <h2 className="text-xl font-extrabold text-slate-900">Step 1: Upload Bite Photos</h2>
+              <p className="text-sm text-slate-500">Provide a clear photo of the skin bite lesion and an optional photo of the insect/spider.</p>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {/* CARD A: Lesion Image (Required) */}
+              <div className="border-2 border-dashed border-slate-300/80 rounded-3xl p-5 hover:border-emerald-500 transition-all bg-white/40 flex flex-col items-center justify-center text-center relative">
+                <span className="absolute top-3 left-3 bg-slate-900 text-white text-[10px] font-extrabold px-2.5 py-0.5 rounded-full shadow-sm">
+                  Required
+                </span>
+
+                {lesionPreview ? (
+                  <div className="w-full space-y-3">
+                    <div className="relative w-full h-48 rounded-2xl overflow-hidden bg-slate-200 shadow-inner">
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img src={lesionPreview} alt="Skin lesion preview" className="w-full h-full object-cover" />
+                      <button
+                        onClick={() => { setLesionPreview(null); setLesionFile(null); }}
+                        className="absolute top-2 right-2 bg-slate-900/80 hover:bg-slate-900 text-white p-1.5 rounded-full shadow-md"
+                      >
+                        <X className="w-4 h-4" />
+                      </button>
+                    </div>
+                    <p className="text-xs text-emerald-700 font-bold flex items-center justify-center gap-1">
+                      <CheckCircle2 className="w-4 h-4" /> Lesion photo attached
+                    </p>
+                  </div>
+                ) : (
+                  <div className="py-6 space-y-3">
+                    <div className="w-12 h-12 rounded-2xl bg-emerald-500/10 text-emerald-600 flex items-center justify-center mx-auto shadow-sm">
+                      <Camera className="w-6 h-6" />
+                    </div>
+                    <div>
+                      <p className="text-sm font-extrabold text-slate-800">Photo of Skin Reaction</p>
+                      <p className="text-xs text-slate-500 mt-1">Upload bite lesion photo</p>
+                    </div>
+                    <label className="inline-flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-extrabold px-4 py-2.5 rounded-xl cursor-pointer shadow-md transition-all">
+                      <Upload className="w-3.5 h-3.5" />
+                      <span>Choose File</span>
+                      <input type="file" accept="image/*" className="hidden" onChange={handleLesionUpload} />
+                    </label>
+
+                    <div className="pt-2">
+                      <button
+                        type="button"
+                        onClick={handleUseSampleLesion}
+                        className="text-xs font-bold text-emerald-700 hover:text-emerald-800 underline flex items-center justify-center gap-1 mx-auto"
+                      >
+                        <FileImage className="w-3.5 h-3.5" />
+                        Use Sample Lesion Photo
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* CARD B: Culprit Image (Optional) */}
+              <div className="border-2 border-dashed border-slate-300/80 rounded-3xl p-5 hover:border-emerald-500 transition-all bg-white/40 flex flex-col items-center justify-center text-center relative">
+                <span className="absolute top-3 left-3 bg-amber-500 text-white text-[10px] font-extrabold px-2.5 py-0.5 rounded-full flex items-center gap-1 shadow-sm">
+                  <Sparkles className="w-3 h-3" /> +80% Accuracy Boost
+                </span>
+
+                {culpritPreview ? (
+                  <div className="w-full space-y-3">
+                    <div className="relative w-full h-48 rounded-2xl overflow-hidden bg-slate-200 shadow-inner">
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img src={culpritPreview} alt="Culprit bug preview" className="w-full h-full object-cover" />
+                      <button
+                        onClick={() => { setCulpritPreview(null); setCulpritFile(null); }}
+                        className="absolute top-2 right-2 bg-slate-900/80 hover:bg-slate-900 text-white p-1.5 rounded-full shadow-md"
+                      >
+                        <X className="w-4 h-4" />
+                      </button>
+                    </div>
+                    <p className="text-xs text-emerald-700 font-bold flex items-center justify-center gap-1">
+                      <CheckCircle2 className="w-4 h-4" /> Culprit photo attached
+                    </p>
+                  </div>
+                ) : (
+                  <div className="py-6 space-y-3">
+                    <div className="w-12 h-12 rounded-2xl bg-amber-500/10 text-amber-600 flex items-center justify-center mx-auto shadow-sm">
+                      <Bug className="w-6 h-6" />
+                    </div>
+                    <div>
+                      <p className="text-sm font-extrabold text-slate-800">Photo of Insect / Spider</p>
+                      <p className="text-xs text-slate-500 mt-1">Optional captured pest photo</p>
+                    </div>
+                    <label className="inline-flex items-center gap-2 bg-slate-900 hover:bg-slate-800 text-white text-xs font-extrabold px-4 py-2.5 rounded-xl cursor-pointer shadow-md transition-all">
+                      <Upload className="w-3.5 h-3.5" />
+                      <span>Choose File</span>
+                      <input type="file" accept="image/*" className="hidden" onChange={handleCulpritUpload} />
+                    </label>
+
+                    <div className="pt-2">
+                      <button
+                        type="button"
+                        onClick={handleUseSampleCulprit}
+                        className="text-xs font-bold text-amber-700 hover:text-amber-800 underline flex items-center justify-center gap-1 mx-auto"
+                      >
+                        <FileImage className="w-3.5 h-3.5" />
+                        Use Sample Tick Photo
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            <div className="flex justify-end pt-4">
+              <button
+                type="button"
+                onClick={() => {
+                  if (!lesionPreview) handleUseSampleLesion();
+                  setCurrentStep(2);
+                }}
+                className="flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold px-6 py-3 rounded-2xl transition-all shadow-md text-sm"
+              >
+                <span>Continue to Context</span>
+                <ChevronRight className="w-4 h-4" />
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* STEP 2: CONTEXT */}
+      {currentStep === 2 && (
+        <div className="space-y-6 animate-in fade-in duration-200">
+          <div className="glass-card rounded-3xl p-6 sm:p-8 space-y-6">
+            <div>
+              <h2 className="text-xl font-extrabold text-slate-900">Step 2: Geographic & Temporal Context</h2>
+              <p className="text-sm text-slate-500">Bite risks vary dramatically by region, active seasonal windows, and exact location.</p>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              {/* State Dropdown */}
+              <div className="space-y-2">
+                <label className="text-xs font-bold text-slate-700 uppercase tracking-wider flex items-center gap-1.5">
+                  <MapPin className="w-4 h-4 text-emerald-600" /> State / Region
+                </label>
+                <div className="flex gap-2">
+                  <select
+                    value={usState}
+                    onChange={(e) => setUsState(e.target.value)}
+                    className="flex-1 rounded-xl border border-slate-300/80 px-3.5 py-2.5 text-sm bg-white/80 backdrop-blur-md focus:ring-2 focus:ring-emerald-500 focus:outline-none shadow-sm"
+                  >
+                    {US_STATES.map((st) => (
+                      <option key={st.code} value={st.code}>
+                        {st.name} ({st.code})
+                      </option>
+                    ))}
+                  </select>
+                  <button
+                    type="button"
+                    onClick={handleGeoLocate}
+                    title="Auto-detect current location"
+                    className="bg-white/80 hover:bg-white text-slate-700 p-2.5 rounded-xl border border-slate-300/80 shadow-sm transition-all"
+                  >
+                    <MapPin className="w-4 h-4 text-emerald-600" />
+                  </button>
+                </div>
+              </div>
+
+              {/* Month Selector */}
+              <div className="space-y-2">
+                <label className="text-xs font-bold text-slate-700 uppercase tracking-wider flex items-center gap-1.5">
+                  <Calendar className="w-4 h-4 text-emerald-600" /> Incident Month
+                </label>
+                <select
+                  value={monthIndex}
+                  onChange={(e) => setMonthIndex(parseInt(e.target.value))}
+                  className="w-full rounded-xl border border-slate-300/80 px-3.5 py-2.5 text-sm bg-white/80 backdrop-blur-md focus:ring-2 focus:ring-emerald-500 focus:outline-none shadow-sm"
+                >
+                  {MONTHS.map((m, idx) => (
+                    <option key={idx} value={idx}>
+                      {m}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </div>
+
+            {/* Location Cards */}
+            <div className="space-y-2">
+              <label className="text-xs font-bold text-slate-700 uppercase tracking-wider">
+                Incident Environment / Habitat
+              </label>
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                {[
+                  { id: "tall_grass_woods", label: "Tall Grass / Woods", icon: "🌲" },
+                  { id: "yard_garden", label: "Yard / Garden", icon: "🏡" },
+                  { id: "bed", label: "Bed / Bedroom", icon: "🛏️" },
+                  { id: "garage_shed", label: "Garage / Shed / Attic", icon: "🛖" },
+                  { id: "indoor_other", label: "Indoor Other", icon: "🏢" },
+                  { id: "outdoor_other", label: "Outdoor Other", icon: "🏞️" },
+                ].map((loc) => (
+                  <button
+                    key={loc.id}
+                    type="button"
+                    onClick={() => setIncidentLocation(loc.id as IncidentLocation)}
+                    className={`p-3.5 rounded-2xl border text-left flex items-start gap-2.5 transition-all ${
+                      incidentLocation === loc.id
+                        ? "border-emerald-500 bg-emerald-500/10 text-emerald-950 font-bold ring-2 ring-emerald-500/30 shadow-md"
+                        : "border-slate-200/80 hover:border-slate-300 text-slate-700 bg-white/60"
+                    }`}
+                  >
+                    <span className="text-xl">{loc.icon}</span>
+                    <span className="text-xs leading-tight">{loc.label}</span>
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Timing Cards */}
+            <div className="space-y-2">
+              <label className="text-xs font-bold text-slate-700 uppercase tracking-wider flex items-center gap-1.5">
+                <Clock className="w-4 h-4 text-emerald-600" /> Time Elapsed Since Bite
+              </label>
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                {[
+                  { id: "under_2h", label: "< 2 hours" },
+                  { id: "2_to_12h", label: "2 - 12 hours" },
+                  { id: "1_to_2_days", label: "1 - 2 days" },
+                  { id: "over_2_days", label: "> 2 days" },
+                ].map((t) => (
+                  <button
+                    key={t.id}
+                    type="button"
+                    onClick={() => setTimeElapsed(t.id as TimeElapsed)}
+                    className={`p-3 rounded-2xl border text-center text-xs transition-all ${
+                      timeElapsed === t.id
+                        ? "border-emerald-500 bg-emerald-500/10 text-emerald-950 font-bold ring-2 ring-emerald-500/30 shadow-sm"
+                        : "border-slate-200/80 hover:border-slate-300 text-slate-700 bg-white/60"
+                    }`}
+                  >
+                    {t.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <div className="flex items-center justify-between pt-4">
+              <button
+                type="button"
+                onClick={() => setCurrentStep(1)}
+                className="flex items-center gap-1.5 text-slate-600 hover:text-slate-900 font-semibold text-sm px-4 py-2.5 rounded-xl transition-colors"
+              >
+                <ChevronLeft className="w-4 h-4" />
+                <span>Back</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setCurrentStep(3)}
+                className="flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold px-6 py-3 rounded-2xl transition-all shadow-md text-sm"
+              >
+                <span>Continue to Safety Screening</span>
+                <ChevronRight className="w-4 h-4" />
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* STEP 3: SYMPTOMS & SAFETY */}
+      {currentStep === 3 && (
+        <div className="space-y-6 animate-in fade-in duration-200">
+          <div className="glass-card rounded-3xl p-6 sm:p-8 space-y-6">
+            <div>
+              <h2 className="text-xl font-extrabold text-slate-900">Step 3: Symptoms & Safety Interception</h2>
+              <p className="text-sm text-slate-500">Provide sensation profile and complete the mandatory emergency red-flag screening.</p>
+            </div>
+
+            {/* Primary Sensation */}
+            <div className="space-y-2">
+              <label className="text-xs font-bold text-slate-700 uppercase tracking-wider flex items-center gap-1.5">
+                <Activity className="w-4 h-4 text-emerald-600" /> Primary Sensation
+              </label>
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                {[
+                  { id: "intense_itch", label: "Intense Itching", sub: "Mosquito, Flea, Bed bug pattern" },
+                  { id: "mild_itch", label: "Mild Itch / Discomfort", sub: "Common skin reaction" },
+                  { id: "painless", label: "Painless / Unnoticed", sub: "Classic tick bite feature" },
+                  { id: "moderate_pain", label: "Sharp Localized Pain", sub: "Pinch or minor sting" },
+                  { id: "severe_pain", label: "Severe Radiating Pain", sub: "Spider venom marker" },
+                ].map((sens) => (
+                  <button
+                    key={sens.id}
+                    type="button"
+                    onClick={() => setPrimarySensation(sens.id as PrimarySensation)}
+                    className={`p-3.5 rounded-2xl border text-left transition-all ${
+                      primarySensation === sens.id
+                        ? "border-emerald-500 bg-emerald-500/10 text-emerald-950 font-bold ring-2 ring-emerald-500/30 shadow-sm"
+                        : "border-slate-200/80 hover:border-slate-300 text-slate-700 bg-white/60"
+                    }`}
+                  >
+                    <p className="text-xs font-extrabold">{sens.label}</p>
+                    <p className="text-[10px] text-slate-500 mt-0.5">{sens.sub}</p>
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* MANDATORY RED-FLAG SAFETY SCREENING */}
+            <div className="bg-red-500/10 border border-red-500/30 rounded-3xl p-5 space-y-4 backdrop-blur-md">
+              <div className="flex items-center gap-2 text-red-800 font-extrabold text-sm">
+                <AlertTriangle className="w-5 h-5 text-red-600 flex-shrink-0" />
+                <span>Emergency Red-Flag Screening (Check any that apply):</span>
+              </div>
+
+              <div className="space-y-3">
+                {[
+                  { key: "difficultyBreathing", label: "Difficulty breathing, wheezing, or tightness in chest" },
+                  { key: "facialSwelling", label: "Swelling of face, lips, tongue, or throat" },
+                  { key: "dizzinessOrConfusion", label: "Severe dizziness, feeling faint, or confusion" },
+                  { key: "spreadingHives", label: "Spreading hives or rash distant from the bite site" },
+                ].map((item) => {
+                  const isChecked = emergencySymptoms[item.key as keyof EmergencySymptoms];
+                  return (
+                    <label
+                      key={item.key}
+                      className={`flex items-start gap-3 p-3.5 rounded-2xl border cursor-pointer transition-all ${
+                        isChecked
+                          ? "bg-red-500/20 border-red-500/50 text-red-950 font-extrabold shadow-sm"
+                          : "bg-white/80 border-red-200 hover:bg-red-50/50 text-slate-800"
+                      }`}
+                    >
+                      <input
+                        type="checkbox"
+                        checked={isChecked}
+                        onChange={() => handleToggleEmergency(item.key as keyof EmergencySymptoms)}
+                        className="mt-0.5 w-4 h-4 text-red-600 rounded border-slate-300 focus:ring-red-500"
+                      />
+                      <span className="text-xs leading-snug">{item.label}</span>
+                    </label>
+                  );
+                })}
+              </div>
+
+              {hasRedFlags && (
+                <div className="p-3.5 bg-red-600 text-white rounded-2xl text-xs font-extrabold flex items-center justify-between shadow-md">
+                  <span>Emergency symptoms flagged - Triage halted for safety.</span>
+                  <button
+                    type="button"
+                    onClick={() => setShowEmergencyModal(true)}
+                    className="underline text-white font-extrabold"
+                  >
+                    View Emergency Contacts
+                  </button>
+                </div>
+              )}
+            </div>
+
+            <div className="flex items-center justify-between pt-4">
+              <button
+                type="button"
+                onClick={() => setCurrentStep(2)}
+                className="flex items-center gap-1.5 text-slate-600 hover:text-slate-900 font-semibold text-sm px-4 py-2.5 rounded-xl transition-colors"
+              >
+                <ChevronLeft className="w-4 h-4" />
+                <span>Back</span>
+              </button>
+
+              <button
+                type="button"
+                disabled={isSubmitting}
+                onClick={handleSubmit}
+                className={`flex items-center gap-2 font-extrabold px-8 py-3.5 rounded-2xl transition-all shadow-lg text-sm ${
+                  hasRedFlags
+                    ? "bg-red-600 hover:bg-red-700 text-white shadow-red-500/20"
+                    : "bg-emerald-600 hover:bg-emerald-700 text-white shadow-emerald-500/20"
+                }`}
+              >
+                {isSubmitting ? (
+                  <span>Analyzing Data...</span>
+                ) : hasRedFlags ? (
+                  <span>Emergency Red-Flag Interception</span>
+                ) : (
+                  <>
+                    <Sparkles className="w-4 h-4" />
+                    <span>Run BiteID Triage</span>
+                  </>
+                )}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
