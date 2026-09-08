@@ -107,7 +107,7 @@ VECTOR_DATABASE = {
 }
 
 # Deterministic Geo-Seasonal Engine
-def evaluate_regional_likelihood(state, month_idx, habitat, sensation, has_targetoid=False):
+def evaluate_regional_likelihood(state, month_idx, habitat, sensation, morphology=None):
     raw_scores = {}
     for key, vector in VECTOR_DATABASE.items():
         geo_factor = 1.0
@@ -122,14 +122,27 @@ def evaluate_regional_likelihood(state, month_idx, habitat, sensation, has_targe
 
         score = vector["base_weight"] * geo_factor * seasonal_factor * habitat_factor * sensation_factor
 
-        # ERYTHEMA MIGRANS TARGETOID PRECEDENCE
-        if has_targetoid:
-            if key == "blacklegged_tick":
-                score *= 5.0
-            elif key in ["mosquito", "flea"]:
-                score *= 0.1
+        if morphology:
+            pattern = morphology.get("pattern")
+            central = morphology.get("centralFeatures")
+            reaction = morphology.get("primaryReaction")
+
+            if pattern == "linear_grouped":
+                if key == "bed_bug": score *= 5.0
+                if key == "flea": score *= 3.0
+            if pattern == "solitary_wheal" and central == "punctum_bite_mark":
+                if key == "mosquito": score *= 3.0
+            if pattern == "scattered_papules" or reaction == "excoriated_papule":
+                if key == "flea": score *= 4.0
+                if key == "bed_bug": score *= 2.0
+            if central == "necrotic_ulcer" or reaction == "ischemic_purpura" or pattern == "indurated_plaque":
+                if key == "brown_recluse": score *= 8.0
 
         raw_scores[key] = score
+
+    if morphology and morphology.get("pattern") == "annular_target" and morphology.get("primaryReaction") == "expanding_erythema":
+        other_sum = sum(v for k, v in raw_scores.items() if k != "blacklegged_tick")
+        raw_scores["blacklegged_tick"] = max(raw_scores.get("blacklegged_tick", 1.0), other_sum * 10.0)
 
     total = sum(raw_scores.values())
     if total <= 0:
@@ -143,10 +156,10 @@ st.caption("AI-powered bite assessment combining lesion photo analysis, geo-seas
 
 st.markdown("---")
 
-# Sidebar Controls & Emergency Notice
+# Sidebar Emergency Guidelines & Contacts
 with st.sidebar:
-    st.header("🚨 Emergency Interception")
-    st.error("Red-Flag Safety Screening Active")
+    st.header("🚨 Emergency Red Flags")
+    st.error("Seek immediate medical care if you experience:")
     
     st.markdown("""
     **If you experience any of these red flags, call 911 immediately:**
@@ -169,7 +182,6 @@ col1, col2 = st.columns(2)
 with col1:
     lesion_file = st.file_uploader("📷 Photo of Skin Reaction (Required)", type=["jpg", "png", "jpeg"])
     culprit_file = st.file_uploader("🐛 Photo of Bug / Pest (Optional +80% Accuracy)", type=["jpg", "png", "jpeg"])
-    has_targetoid = st.checkbox("🎯 Expanding Bullseye / Targetoid Rash Present (Erythema Migrans)")
 
 with col2:
     state_options = ["US-VA", "US-WA", "US-NY", "US-TX", "US-CA", "US-FL", "US-MA", "US-IL", "US-NC", "US-GA", "US-PA", "US-OH"]
@@ -208,7 +220,7 @@ if st.button("🚀 Run BiteID Triage Assessment", type="primary", use_container_
         st.stop()
 
     # EVALUATE LIKELIHOOD
-    probs = evaluate_regional_likelihood(state, month_idx, habitat, sensation, has_targetoid)
+    probs = evaluate_regional_likelihood(state, month_idx, habitat, sensation)
     sorted_probs = sorted(probs.items(), key=lambda x: x[1], reverse=True)
     top_key, top_prob = sorted_probs[0]
     top_vector = VECTOR_DATABASE[top_key]
@@ -221,8 +233,6 @@ if st.button("🚀 Run BiteID Triage Assessment", type="primary", use_container_
     with res_col1:
         st.success(f"### Primary Suspected Cause: {top_vector['name']}")
         st.caption(f"*Scientific Name: {top_vector['scientific_name']}*")
-        if has_targetoid:
-            st.info("🎯 **Targetoid Morphology Detected:** Rash displays expanding Erythema Migrans pattern characteristic of Blacklegged (Deer) Tick bites and early Lyme disease.")
         st.write(f"Based on your region (**{state}**), environment (**{habitat.replace('_', ' ')}**), and sensation profile, **{top_vector['name']}** is the primary vector match.")
     with res_col2:
         st.metric("Probability Match", f"{int(top_prob * 100)}%")

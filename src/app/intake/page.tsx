@@ -72,7 +72,6 @@ export default function IntakePage() {
 
   // Step 3: Symptoms & Safety
   const [primarySensation, setPrimarySensation] = useState<PrimarySensation>("intense_itch");
-  const [hasTargetoidBullseye, setHasTargetoidBullseye] = useState<boolean>(false);
   const [emergencySymptoms, setEmergencySymptoms] = useState<EmergencySymptoms>({
     difficultyBreathing: false,
     facialSwelling: false,
@@ -144,7 +143,6 @@ export default function IntakePage() {
         incidentLocation,
         timeElapsed,
         primarySensation,
-        hasTargetoidBullseye,
         emergencyScreening: emergencySymptoms,
       };
 
@@ -495,27 +493,6 @@ export default function IntakePage() {
               <span className="bento-badge bg-red-100 text-red-800 border border-red-200 mb-2">Step 3 of 3</span>
               <h2 className="text-xl font-extrabold text-slate-900">Symptoms & Mandatory Safety Screening</h2>
               <p className="text-xs text-slate-500 mt-1">Select sensation profile and verify emergency red-flag safety questions.</p>
-            </div>
-
-            {/* Targetoid Bullseye Rash Toggle Card */}
-            <div className="bento-card bg-emerald-50 border-emerald-300 space-y-2">
-              <label className="flex items-start gap-3 cursor-pointer">
-                <input
-                  type="checkbox"
-                  checked={hasTargetoidBullseye}
-                  onChange={(e) => setHasTargetoidBullseye(e.target.checked)}
-                  className="mt-1 w-4 h-4 text-emerald-600 rounded border-slate-300 focus:ring-emerald-500"
-                />
-                <div>
-                  <p className="text-xs font-extrabold text-emerald-950 flex items-center gap-1.5">
-                    <Target className="w-4 h-4 text-emerald-600" />
-                    Expanding Targetoid / Bullseye Rash Present (Erythema Migrans)
-                  </p>
-                  <p className="text-[11px] text-emerald-800 mt-0.5 leading-relaxed">
-                    Check if rash displays an expanding circular ring with central clearing characteristic of Lyme disease tick bites.
-                  </p>
-                </div>
-              </label>
             </div>
 
             {/* Primary Sensation Bento Grid */}

@@ -36,6 +36,31 @@ export const PrimarySensationEnum = z.enum([
 ]);
 export type PrimarySensation = z.infer<typeof PrimarySensationEnum>;
 
+export const DermatologicalMorphologySchema = z.object({
+  pattern: z.enum([
+    "solitary_wheal",
+    "annular_target",
+    "linear_grouped",
+    "scattered_papules",
+    "indurated_plaque",
+  ]),
+  centralFeatures: z.enum([
+    "punctum_bite_mark",
+    "clear_halo",
+    "vesicle_blister",
+    "necrotic_ulcer",
+    "none",
+  ]),
+  primaryReaction: z.enum([
+    "urticarial_hive",
+    "expanding_erythema",
+    "excoriated_papule",
+    "ischemic_purpura",
+  ]),
+});
+
+export type DermatologicalMorphology = z.infer<typeof DermatologicalMorphologySchema>;
+
 export const TriageContextSchema = z.object({
   coordinates: z
     .object({
@@ -48,7 +73,6 @@ export const TriageContextSchema = z.object({
   incidentLocation: IncidentLocationEnum.default("yard_garden"),
   timeElapsed: TimeElapsedEnum.default("under_2h"),
   primarySensation: PrimarySensationEnum.default("intense_itch"),
-  hasTargetoidBullseye: z.boolean().default(false), // Visual hallmark flag for Erythema Migrans
   emergencyScreening: EmergencySymptomSchema,
 });
 
@@ -70,6 +94,7 @@ export const AnalysisResultSchema = z.object({
   isEmergencyRedirect: z.boolean(),
   emergencyMessage: z.string().optional(),
   culpritDetectedFromPhoto: z.boolean(),
+  morphology: DermatologicalMorphologySchema.optional(),
   rankedCandidates: z.array(CandidateResultSchema),
   summary: z.string(),
   disclaimer: z.string(),

@@ -1,4 +1,4 @@
-import { TriageContext } from "./schema";
+import { TriageContext, DermatologicalMorphology } from "./schema";
 
 export interface VectorInfo {
   id: string;
@@ -232,7 +232,10 @@ export const VECTOR_DATABASE: Record<string, VectorInfo> = {
   },
 };
 
-export function evaluateRegionalLikelihood(context: TriageContext): Record<string, number> {
+export function evaluateRegionalLikelihood(
+  context: TriageContext,
+  morphology?: DermatologicalMorphology
+): Record<string, number> {
   const rawScores: Record<string, number> = {};
 
   const state = context.usState || "US-VA";
@@ -265,17 +268,47 @@ export function evaluateRegionalLikelihood(context: TriageContext): Record<strin
     // Calculate composite base score
     let score = vector.baseWeight * geoFactor * seasonalFactor * habitatFactor * sensationFactor;
 
-    // 5. ERYTHEMA MIGRANS TARGETOID MORPHOLOGY RULE
-    // If expanding targetoid bullseye is detected, Deer Tick takes strict diagnostic precedence over generic nuisance pests.
-    if (context.hasTargetoidBullseye) {
-      if (key === "blacklegged_tick") {
-        score *= 5.0; // Heavy clinical precedence boost for Lyme disease vector
-      } else if (key === "mosquito" || key === "flea") {
-        score *= 0.1; // Penalize generic itch pests
+    // 5. Morphological Overrides & Multipliers
+    if (morphology) {
+      // Linear grouped pattern ('breakfast, lunch, dinner') -> Bed Bug / Flea
+      if (morphology.pattern === "linear_grouped") {
+        if (key === "bed_bug") score *= 5.0;
+        if (key === "flea") score *= 3.0;
+      }
+      // Solitary wheal + punctum bite mark -> Mosquito / Stings
+      if (morphology.pattern === "solitary_wheal" && morphology.centralFeatures === "punctum_bite_mark") {
+        if (key === "mosquito") score *= 3.0;
+      }
+      // Scattered papules or excoriated papule -> Flea / Bed Bug
+      if (morphology.pattern === "scattered_papules" || morphology.primaryReaction === "excoriated_papule") {
+        if (key === "flea") score *= 4.0;
+        if (key === "bed_bug") score *= 2.0;
+      }
+      // Necrotic ulcer or ischemic purpura -> Brown Recluse
+      if (
+        morphology.centralFeatures === "necrotic_ulcer" ||
+        morphology.primaryReaction === "ischemic_purpura" ||
+        morphology.pattern === "indurated_plaque"
+      ) {
+        if (key === "brown_recluse") score *= 8.0;
       }
     }
 
     rawScores[key] = score;
+  }
+
+  // Mandatory Precedence Override for Erythema Migrans (Lyme Disease / Blacklegged Tick)
+  if (
+    morphology &&
+    morphology.pattern === "annular_target" &&
+    morphology.primaryReaction === "expanding_erythema"
+  ) {
+    // Automatically set Deer Tick / Lyme Disease likelihood to >= 0.90 regardless of minor sensory inputs
+    const otherSum = Object.entries(rawScores)
+      .filter(([k]) => k !== "blacklegged_tick")
+      .reduce((sum, [, val]) => sum + val, 0);
+
+    rawScores["blacklegged_tick"] = Math.max(rawScores["blacklegged_tick"] || 1.0, otherSum * 10.0);
   }
 
   // Normalize scores to probabilities summing to 1.0

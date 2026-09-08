@@ -1,5 +1,5 @@
 import { GoogleGenAI } from "@google/genai";
-import { TriageContext, AnalysisResult } from "./schema";
+import { TriageContext, AnalysisResult, DermatologicalMorphology } from "./schema";
 import { VECTOR_DATABASE, evaluateRegionalLikelihood } from "./geoPestFilter";
 
 export async function analyzeBiteWithGemini(
@@ -19,7 +19,22 @@ export async function analyzeBiteWithGemini(
 
     const prompt = `
 You are BiteID, an expert medical triage system for insect and spider bites.
-Analyze the provided skin reaction photo and optional pest photo along with the patient context.
+Perform a TWO-STAGE clinical analysis:
+
+STAGE 1: DERMATOLOGICAL MORPHOLOGY EXTRACTION
+First, analyze the provided skin reaction photo for visual dermatological features:
+- pattern: one of ["solitary_wheal", "annular_target", "linear_grouped", "scattered_papules", "indurated_plaque"]
+- centralFeatures: one of ["punctum_bite_mark", "clear_halo", "vesicle_blister", "necrotic_ulcer", "none"]
+- primaryReaction: one of ["urticarial_hive", "expanding_erythema", "excoriated_papule", "ischemic_purpura"]
+
+CRITICAL VISUAL RULES:
+- Annular Target + Expanding Erythema: Expanding circular rash with central clearing (>5cm) is pathognomonic for Erythema Migrans (Lyme disease tick bite).
+- Linear Grouped: Sequential bite clusters ('breakfast, lunch, dinner') indicative of Bed Bugs or Fleas.
+- Solitary Wheal + Punctum Bite Mark: Single edematous hive with central dot indicative of Mosquito or biting flies.
+- Indurated Plaque + Necrotic Ulcer / Ischemic Purpura: Violaceous lesion with central eschar or necrosis indicative of Brown Recluse spider bite.
+
+STAGE 2: SPECIES PROBABILITY CALCULATION
+Combine extracted visual morphology with patient context and regional endemic probabilities to calculate species probabilities.
 
 Patient Context:
 - Geographic Region: ${context.usState}
@@ -27,23 +42,20 @@ Patient Context:
 - Location of Incident: ${context.incidentLocation}
 - Time Elapsed: ${context.timeElapsed}
 - Primary Sensation: ${context.primarySensation}
-- Targetoid Bullseye Rash Present: ${context.hasTargetoidBullseye ? "YES (Erythema Migrans)" : "NO"}
 
-Pre-Calculated Regional Vector Probabilities:
+Pre-Calculated Baseline Regional Vector Probabilities:
 ${JSON.stringify(regionalProbs, null, 2)}
-
-Clinical Differential Diagnosis Rules:
-1. CRITICAL DIFFERENTIAL: Distinguish expanding annular erythematous target lesions (Erythema Migrans / Lyme disease tick bite) from acute localized histamine wheals (Mosquito bites).
-   - Erythema Migrans (Tick): Expanding circular/annular rash (>5cm) with targetoid/bullseye pattern or central punctum. MUST prioritize Blacklegged (Deer) Tick (Ixodes scapularis) over generic mosquito or flea bites.
-   - Mosquito Wheal: Small localized edematous papule (<2cm) with immediate intense itching.
-2. If a pest/bug photo is provided, prioritize visual identification of pest morphology (wings, legs, body shape, markings).
-3. If red-flag systemic symptoms (breathing difficulty, facial swelling, severe dizziness, spreading hives) are suspected, set isEmergencyRedirect to true.
 
 Output MUST be valid JSON adhering strictly to this schema:
 {
   "isEmergencyRedirect": false,
   "emergencyMessage": undefined,
   "culpritDetectedFromPhoto": boolean,
+  "morphology": {
+    "pattern": "solitary_wheal" | "annular_target" | "linear_grouped" | "scattered_papules" | "indurated_plaque",
+    "centralFeatures": "punctum_bite_mark" | "clear_halo" | "vesicle_blister" | "necrotic_ulcer" | "none",
+    "primaryReaction": "urticarial_hive" | "expanding_erythema" | "excoriated_papule" | "ischemic_purpura"
+  },
   "rankedCandidates": [
     {
       "name": "Blacklegged (Deer) Tick | Mosquito | Bed Bug | Flea | Brown Recluse Spider | Black Widow Spider",
@@ -107,9 +119,16 @@ Output MUST be valid JSON adhering strictly to this schema:
  */
 export function generateMockTriageResult(
   context: TriageContext,
-  hasCulpritPhoto: boolean
+  hasCulpritPhoto: boolean,
+  overrideMorphology?: DermatologicalMorphology
 ): AnalysisResult {
-  const probs = evaluateRegionalLikelihood(context);
+  const morphology: DermatologicalMorphology = overrideMorphology || {
+    pattern: "solitary_wheal",
+    centralFeatures: "punctum_bite_mark",
+    primaryReaction: "urticarial_hive",
+  };
+
+  const probs = evaluateRegionalLikelihood(context, morphology);
   const sorted = Object.entries(probs).sort((a, b) => b[1] - a[1]);
 
   const rankedCandidates = sorted.slice(0, 3).map(([key, prob], index) => {
@@ -118,8 +137,12 @@ export function generateMockTriageResult(
 
     const matchedFactors: string[] = [];
 
-    if (context.hasTargetoidBullseye && key === "blacklegged_tick") {
-      matchedFactors.push("Classic Erythema Migrans (bullseye targetoid rash) indicative of Blacklegged Tick exposure");
+    if (
+      morphology.pattern === "annular_target" &&
+      morphology.primaryReaction === "expanding_erythema" &&
+      key === "blacklegged_tick"
+    ) {
+      matchedFactors.push("Classic Erythema Migrans (annular targetoid rash) indicative of Blacklegged Tick exposure");
     }
 
     if (context.incidentLocation && vector.habitatScores[context.incidentLocation] >= 0.7) {
@@ -156,12 +179,14 @@ export function generateMockTriageResult(
   return {
     isEmergencyRedirect: false,
     culpritDetectedFromPhoto: hasCulpritPhoto,
+    morphology,
     rankedCandidates,
-    summary: context.hasTargetoidBullseye
-      ? `Analysis indicates ${topMatch.name} (${topMatch.scientificName}) as the primary culprit due to targetoid Erythema Migrans morphology, combined with regional endemic data for ${context.usState}. Immediate medical evaluation for potential Lyme disease prophylaxis is recommended.`
-      : hasCulpritPhoto
-      ? `Analysis indicates ${topMatch.name} (${topMatch.scientificName}) as the primary culprit based on visual pest morphology combined with geo-seasonal data for ${context.usState}.`
-      : `Based on your geographic region (${context.usState}), incident location (${context.incidentLocation.replace(/_/g, " ")}), and sensation, ${topMatch.name} (${topMatch.scientificName}) is the most likely source of the skin lesion.`,
+    summary:
+      morphology.pattern === "annular_target" && morphology.primaryReaction === "expanding_erythema"
+        ? `Analysis indicates ${topMatch.name} (${topMatch.scientificName}) as the primary culprit due to targetoid Erythema Migrans morphology, combined with regional endemic data for ${context.usState}. Immediate medical evaluation for potential Lyme disease prophylaxis is recommended.`
+        : hasCulpritPhoto
+        ? `Analysis indicates ${topMatch.name} (${topMatch.scientificName}) as the primary culprit based on visual pest morphology combined with geo-seasonal data for ${context.usState}.`
+        : `Based on your geographic region (${context.usState}), incident location (${context.incidentLocation.replace(/_/g, " ")}), and sensation, ${topMatch.name} (${topMatch.scientificName}) is the most likely source of the skin lesion.`,
     disclaimer:
       "BiteID is an educational triage assistant and does not replace professional medical diagnosis. If you develop systemic symptoms or signs of infection, consult a healthcare provider immediately.",
   };

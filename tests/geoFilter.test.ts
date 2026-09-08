@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
 import { evaluateRegionalLikelihood } from "../src/lib/geoPestFilter";
-import { TriageContext } from "../src/lib/schema";
+import { TriageContext, DermatologicalMorphology } from "../src/lib/schema";
 
 describe("geoPestFilter Engine", () => {
   it("penalizes Brown Recluse probability to 0.0 in Washington State (US-WA)", () => {
@@ -10,7 +10,6 @@ describe("geoPestFilter Engine", () => {
       incidentLocation: "garage_shed",
       timeElapsed: "under_2h",
       primarySensation: "severe_pain",
-      hasTargetoidBullseye: false,
       emergencyScreening: {
         difficultyBreathing: false,
         facialSwelling: false,
@@ -31,7 +30,6 @@ describe("geoPestFilter Engine", () => {
       incidentLocation: "tall_grass_woods",
       timeElapsed: "1_to_2_days",
       primarySensation: "painless",
-      hasTargetoidBullseye: false,
       emergencyScreening: {
         difficultyBreathing: false,
         facialSwelling: false,
@@ -52,14 +50,13 @@ describe("geoPestFilter Engine", () => {
     expect(juneProbs.blacklegged_tick).toBeGreaterThan(janProbs.blacklegged_tick);
   });
 
-  it("ranks Blacklegged (Deer) Tick as candidate #1 when targetoid bullseye (Erythema Migrans) is present", () => {
+  it("ranks Blacklegged (Deer) Tick as candidate #1 when targetoid bullseye (Erythema Migrans) morphology is present", () => {
     const targetoidContext: TriageContext = {
       usState: "US-NY",
       monthIndex: 6, // July
       incidentLocation: "yard_garden",
       timeElapsed: "1_to_2_days",
-      primarySensation: "intense_itch", // Even if sensation is intense itch (often confused with mosquito)
-      hasTargetoidBullseye: true, // CRITICAL: Targetoid rash present!
+      primarySensation: "intense_itch",
       emergencyScreening: {
         difficultyBreathing: false,
         facialSwelling: false,
@@ -68,11 +65,17 @@ describe("geoPestFilter Engine", () => {
       },
     };
 
-    const probs = evaluateRegionalLikelihood(targetoidContext);
+    const targetoidMorphology: DermatologicalMorphology = {
+      pattern: "annular_target",
+      centralFeatures: "punctum_bite_mark",
+      primaryReaction: "expanding_erythema",
+    };
 
-    // Assert Deer Tick takes precedence over generic nuisance pests like Mosquito and Flea
+    const probs = evaluateRegionalLikelihood(targetoidContext, targetoidMorphology);
+
+    // Assert Deer Tick takes precedence (>= 0.90) over generic nuisance pests like Mosquito and Flea
+    expect(probs.blacklegged_tick).toBeGreaterThanOrEqual(0.9);
     expect(probs.blacklegged_tick).toBeGreaterThan(probs.mosquito * 3);
-    expect(probs.blacklegged_tick).toBeGreaterThan(0.7);
 
     // Sorted top candidate key
     const topCandidateKey = Object.entries(probs).sort((a, b) => b[1] - a[1])[0][0];
@@ -86,7 +89,6 @@ describe("geoPestFilter Engine", () => {
       incidentLocation: "bed",
       timeElapsed: "under_2h",
       primarySensation: "intense_itch",
-      hasTargetoidBullseye: false,
       emergencyScreening: {
         difficultyBreathing: false,
         facialSwelling: false,
