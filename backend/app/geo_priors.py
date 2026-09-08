@@ -262,12 +262,12 @@ def calculate_geographic_priors(
         scored_candidates.append((vector["id"], candidate))
 
     # --- DETERMINISTIC OVERRIDE RULES ---
-    # Rule 1: Mid-Atlantic + annular_target morphology -> Prioritize Deer Tick / Ixodes scapularis (>90%) and cap Mosquito (<=5%)
+    # Rule 1: Mid-Atlantic + annular_target morphology -> Prioritize Deer Tick / Ixodes scapularis (>90%) and cap generic nuisance vectors (Mosquito, Flea, Bed Bug) <=5%
     if state in MID_ATLANTIC_STATES and effective_morphology == "annular_target":
         for idx, (v_id, cand) in enumerate(scored_candidates):
             if v_id == "deer_tick":
-                cand.probabilityScore = 0.92
-                cand.probability = 0.92
+                cand.probabilityScore = 0.95
+                cand.probability = 0.95
                 cand.confidence = "high"
                 if "Mid-Atlantic Erythema Migrans prior override applied (>90%)" not in cand.matchedFactors:
                     cand.matchedFactors.append("Mid-Atlantic Erythema Migrans prior override applied (>90%)")
@@ -277,12 +277,12 @@ def calculate_geographic_priors(
                 cand.confidence = "high"
                 if "Regional tick vector prevalence in Mid-Atlantic" not in cand.matchedFactors:
                     cand.matchedFactors.append("Regional tick vector prevalence in Mid-Atlantic")
-            elif v_id == "mosquito":
+            elif v_id in ["mosquito", "flea", "bed_bug"]:
                 cand.probabilityScore = 0.04
                 cand.probability = 0.04
                 cand.confidence = "low"
-                if "Annular targetoid rash caps generic histamine wheals (Mosquito) to <=5%" not in cand.matchedFactors:
-                    cand.matchedFactors.append("Annular targetoid rash caps generic histamine wheals (Mosquito) to <=5%")
+                if "Annular targetoid rash caps non-targetoid nuisance pests to <=5%" not in cand.matchedFactors:
+                    cand.matchedFactors.append("Annular targetoid rash caps non-targetoid nuisance pests to <=5%")
 
     # Rule 2: Entomologist Identified Amblyomma americanum -> Boost Lone Star Tick and add Alpha-gal syndrome warnings
     if detected_taxonomy and "amblyomma americanum" in detected_taxonomy.lower():
