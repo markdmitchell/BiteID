@@ -14,7 +14,7 @@ test.describe('BiteID Multimodal Triage End-to-End Suite', () => {
     await page.click('button:has-text("Continue to Safety Screening")');
 
     // Step 3: Toggle Emergency Symptom "Difficulty breathing"
-    const redFlagCheckbox = page.locator('input[type="checkbox"]').first();
+    const redFlagCheckbox = page.locator('label:has-text("Difficulty breathing") input[type="checkbox"]');
     await redFlagCheckbox.check();
 
     // Verify Emergency Modal launches automatically

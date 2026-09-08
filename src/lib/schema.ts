@@ -48,6 +48,7 @@ export const TriageContextSchema = z.object({
   incidentLocation: IncidentLocationEnum.default("yard_garden"),
   timeElapsed: TimeElapsedEnum.default("under_2h"),
   primarySensation: PrimarySensationEnum.default("intense_itch"),
+  hasTargetoidBullseye: z.boolean().default(false), // Visual hallmark flag for Erythema Migrans
   emergencyScreening: EmergencySymptomSchema,
 });
 

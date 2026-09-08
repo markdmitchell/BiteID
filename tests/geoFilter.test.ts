@@ -10,6 +10,7 @@ describe("geoPestFilter Engine", () => {
       incidentLocation: "garage_shed",
       timeElapsed: "under_2h",
       primarySensation: "severe_pain",
+      hasTargetoidBullseye: false,
       emergencyScreening: {
         difficultyBreathing: false,
         facialSwelling: false,
@@ -30,6 +31,7 @@ describe("geoPestFilter Engine", () => {
       incidentLocation: "tall_grass_woods",
       timeElapsed: "1_to_2_days",
       primarySensation: "painless",
+      hasTargetoidBullseye: false,
       emergencyScreening: {
         difficultyBreathing: false,
         facialSwelling: false,
@@ -50,6 +52,33 @@ describe("geoPestFilter Engine", () => {
     expect(juneProbs.blacklegged_tick).toBeGreaterThan(janProbs.blacklegged_tick);
   });
 
+  it("ranks Blacklegged (Deer) Tick as candidate #1 when targetoid bullseye (Erythema Migrans) is present", () => {
+    const targetoidContext: TriageContext = {
+      usState: "US-NY",
+      monthIndex: 6, // July
+      incidentLocation: "yard_garden",
+      timeElapsed: "1_to_2_days",
+      primarySensation: "intense_itch", // Even if sensation is intense itch (often confused with mosquito)
+      hasTargetoidBullseye: true, // CRITICAL: Targetoid rash present!
+      emergencyScreening: {
+        difficultyBreathing: false,
+        facialSwelling: false,
+        dizzinessOrConfusion: false,
+        spreadingHives: false,
+      },
+    };
+
+    const probs = evaluateRegionalLikelihood(targetoidContext);
+
+    // Assert Deer Tick takes precedence over generic nuisance pests like Mosquito and Flea
+    expect(probs.blacklegged_tick).toBeGreaterThan(probs.mosquito * 3);
+    expect(probs.blacklegged_tick).toBeGreaterThan(0.7);
+
+    // Sorted top candidate key
+    const topCandidateKey = Object.entries(probs).sort((a, b) => b[1] - a[1])[0][0];
+    expect(topCandidateKey).toBe("blacklegged_tick");
+  });
+
   it("boosts Bed Bug probability significantly when incident location is bed", () => {
     const bedContext: TriageContext = {
       usState: "US-NY",
@@ -57,6 +86,7 @@ describe("geoPestFilter Engine", () => {
       incidentLocation: "bed",
       timeElapsed: "under_2h",
       primarySensation: "intense_itch",
+      hasTargetoidBullseye: false,
       emergencyScreening: {
         difficultyBreathing: false,
         facialSwelling: false,

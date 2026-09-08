@@ -14,7 +14,6 @@ export interface VectorInfo {
   warningSigns: string[];
 }
 
-// 6 Key Biting Vectors
 export const VECTOR_DATABASE: Record<string, VectorInfo> = {
   mosquito: {
     id: "mosquito",
@@ -22,7 +21,6 @@ export const VECTOR_DATABASE: Record<string, VectorInfo> = {
     scientificName: "Culicidae",
     endemicStates: "ALL",
     nonEndemicStates: [],
-    // Months 0-11: Jan, Feb, Mar, Apr, May, Jun, Jul, Aug, Sep, Oct, Nov, Dec
     seasonalMultiplier: [0.1, 0.1, 0.3, 0.6, 0.9, 1.0, 1.0, 1.0, 0.8, 0.5, 0.2, 0.1],
     habitatScores: {
       yard_garden: 1.0,
@@ -55,14 +53,12 @@ export const VECTOR_DATABASE: Record<string, VectorInfo> = {
     id: "blacklegged_tick",
     name: "Blacklegged (Deer) Tick",
     scientificName: "Ixodes scapularis",
-    // Endemic to Northeast, Mid-Atlantic, Upper Midwest
     endemicStates: [
       "US-VA", "US-MD", "US-PA", "US-NY", "US-NJ", "US-CT", "US-MA", "US-RI",
       "US-NH", "US-VT", "US-ME", "US-WI", "US-MN", "US-MI", "US-NC", "US-WV",
       "US-DE", "US-OH", "US-IN", "US-IL"
     ],
     nonEndemicStates: ["US-WA", "US-OR", "US-CA", "US-NV", "US-AZ", "US-NM", "US-AK", "US-HI"],
-    // Ticks are highly active May-July (months 4-6) & Sep-Nov. Activity drops sharply below 45°F / mid-winter (Jan/Feb/Dec: months 0, 1, 11).
     seasonalMultiplier: [0.05, 0.05, 0.3, 0.7, 1.0, 1.0, 0.9, 0.6, 0.8, 0.8, 0.4, 0.1],
     habitatScores: {
       tall_grass_woods: 1.0,
@@ -84,11 +80,12 @@ export const VECTOR_DATABASE: Record<string, VectorInfo> = {
       "If tick is attached, use fine-tipped tweezers to grasp as close to skin as possible and pull straight up.",
       "Clean bite area thoroughly with rubbing alcohol or soap and water.",
       "Save the tick in a sealed container or photo for potential identification.",
-      "Monitor the site for 30 days for expanding target/erythema migrans rash.",
+      "Monitor the site for 30 days for expanding targetoid Erythema Migrans rash.",
+      "Consult a healthcare provider immediately for prophylactic antibiotics (e.g. Doxycycline) if Erythema Migrans develops."
     ],
     warningSigns: [
-      "Expanding circular target/bullseye rash (Erythema Migrans).",
-      "Fever, chills, body aches, fatigue, or joint pain occurring within 3-30 days.",
+      "Expanding circular target/bullseye rash (Erythema Migrans hallmark of Lyme disease).",
+      "Fever, chills, body aches, fatigue, or joint pain occurring within 3-30 days post-exposure.",
     ],
   },
   bed_bug: {
@@ -97,7 +94,6 @@ export const VECTOR_DATABASE: Record<string, VectorInfo> = {
     scientificName: "Cimex lectularius",
     endemicStates: "ALL",
     nonEndemicStates: [],
-    // Year-round indoor pest
     seasonalMultiplier: [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0],
     habitatScores: {
       bed: 1.0,
@@ -163,12 +159,10 @@ export const VECTOR_DATABASE: Record<string, VectorInfo> = {
     id: "brown_recluse",
     name: "Brown Recluse Spider",
     scientificName: "Loxosceles reclusa",
-    // Endemic to Central & South United States
     endemicStates: [
       "US-TX", "US-OK", "US-KS", "US-MO", "US-AR", "US-LA", "US-MS", "US-AL",
       "US-TN", "US-KY", "US-IL", "US-IN", "US-GA", "US-NE", "US-IA"
     ],
-    // HARD BOUNDARY: Strictly non-endemic to Pacific Northwest, New England, Upper Midwest, etc.
     nonEndemicStates: [
       "US-WA", "US-OR", "US-CA", "US-ID", "US-NV", "US-AZ", "US-UT", "US-MT",
       "US-WY", "US-CO", "US-NM", "US-ND", "US-SD", "US-MN", "US-WI", "US-MI",
@@ -186,7 +180,7 @@ export const VECTOR_DATABASE: Record<string, VectorInfo> = {
     sensationScores: {
       severe_pain: 1.0,
       moderate_pain: 0.9,
-      painless: 0.5, // often delayed onset
+      painless: 0.5,
       mild_itch: 0.3,
       intense_itch: 0.2,
     },
@@ -206,7 +200,7 @@ export const VECTOR_DATABASE: Record<string, VectorInfo> = {
     id: "black_widow",
     name: "Black Widow Spider",
     scientificName: "Latrodectus",
-    endemicStates: "ALL", // Present across continental US, higher in South/West
+    endemicStates: "ALL",
     nonEndemicStates: ["US-AK", "US-HI"],
     seasonalMultiplier: [0.2, 0.2, 0.4, 0.7, 0.9, 1.0, 1.0, 1.0, 0.9, 0.8, 0.5, 0.2],
     habitatScores: {
@@ -238,10 +232,6 @@ export const VECTOR_DATABASE: Record<string, VectorInfo> = {
   },
 };
 
-/**
- * Evaluates the regional and contextual likelihood of biting vectors.
- * Returns a normalized object mapping vector ID to probability (0.0 to 1.0).
- */
 export function evaluateRegionalLikelihood(context: TriageContext): Record<string, number> {
   const rawScores: Record<string, number> = {};
 
@@ -257,9 +247,9 @@ export function evaluateRegionalLikelihood(context: TriageContext): Record<strin
       geoFactor = 0.0; // Hard geographic penalty!
     } else if (Array.isArray(vector.endemicStates)) {
       if (vector.endemicStates.includes(state)) {
-        geoFactor = 1.2; // Boost if explicitly endemic
+        geoFactor = 1.2;
       } else {
-        geoFactor = 0.3; // Low if outside core endemic region
+        geoFactor = 0.3;
       }
     }
 
@@ -272,8 +262,19 @@ export function evaluateRegionalLikelihood(context: TriageContext): Record<strin
     // 4. Sensation factor
     const sensationFactor = vector.sensationScores[sensation] ?? 0.5;
 
-    // Calculate composite raw score
-    const score = vector.baseWeight * geoFactor * seasonalFactor * habitatFactor * sensationFactor;
+    // Calculate composite base score
+    let score = vector.baseWeight * geoFactor * seasonalFactor * habitatFactor * sensationFactor;
+
+    // 5. ERYTHEMA MIGRANS TARGETOID MORPHOLOGY RULE
+    // If expanding targetoid bullseye is detected, Deer Tick takes strict diagnostic precedence over generic nuisance pests.
+    if (context.hasTargetoidBullseye) {
+      if (key === "blacklegged_tick") {
+        score *= 5.0; // Heavy clinical precedence boost for Lyme disease vector
+      } else if (key === "mosquito" || key === "flea") {
+        score *= 0.1; // Penalize generic itch pests
+      }
+    }
+
     rawScores[key] = score;
   }
 
@@ -282,7 +283,6 @@ export function evaluateRegionalLikelihood(context: TriageContext): Record<strin
 
   const probabilities: Record<string, number> = {};
   if (totalScore <= 0) {
-    // Fallback if all raw scores were 0 (e.g. extreme edge case)
     const count = Object.keys(VECTOR_DATABASE).length;
     for (const key of Object.keys(VECTOR_DATABASE)) {
       probabilities[key] = 1 / count;

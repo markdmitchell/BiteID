@@ -10,14 +10,11 @@ export async function analyzeBiteWithGemini(
   const apiKey = process.env.GEMINI_API_KEY;
 
   if (!apiKey) {
-    // Graceful offline / fallback mock generator
     return generateMockTriageResult(context, !!culpritImageBuffer);
   }
 
   try {
     const ai = new GoogleGenAI({ apiKey });
-    
-    // Evaluate regional probabilities as contextual guidance for Gemini
     const regionalProbs = evaluateRegionalLikelihood(context);
 
     const prompt = `
@@ -30,22 +27,26 @@ Patient Context:
 - Location of Incident: ${context.incidentLocation}
 - Time Elapsed: ${context.timeElapsed}
 - Primary Sensation: ${context.primarySensation}
+- Targetoid Bullseye Rash Present: ${context.hasTargetoidBullseye ? "YES (Erythema Migrans)" : "NO"}
 
-Pre-Calculated Regional Vector Probabilities (based on regional endemicity, season, and habitat):
+Pre-Calculated Regional Vector Probabilities:
 ${JSON.stringify(regionalProbs, null, 2)}
 
-Strict Guidance:
-1. If a pest/bug photo is provided, prioritize visual identification of the pest physical features (wings, legs, body shape, markings).
-2. If only a skin lesion photo is provided, state clearly that individual skin reactions (erythema, edema) vary widely and rely heavily on the regional, seasonal, and habitat context.
-3. Assess red-flag symptoms. If severe systemic toxicity is suspected, set isEmergencyRedirect to true.
-4. Output MUST be valid JSON adhering strictly to the following schema structure:
+Clinical Differential Diagnosis Rules:
+1. CRITICAL DIFFERENTIAL: Distinguish expanding annular erythematous target lesions (Erythema Migrans / Lyme disease tick bite) from acute localized histamine wheals (Mosquito bites).
+   - Erythema Migrans (Tick): Expanding circular/annular rash (>5cm) with targetoid/bullseye pattern or central punctum. MUST prioritize Blacklegged (Deer) Tick (Ixodes scapularis) over generic mosquito or flea bites.
+   - Mosquito Wheal: Small localized edematous papule (<2cm) with immediate intense itching.
+2. If a pest/bug photo is provided, prioritize visual identification of pest morphology (wings, legs, body shape, markings).
+3. If red-flag systemic symptoms (breathing difficulty, facial swelling, severe dizziness, spreading hives) are suspected, set isEmergencyRedirect to true.
+
+Output MUST be valid JSON adhering strictly to this schema:
 {
   "isEmergencyRedirect": false,
   "emergencyMessage": undefined,
   "culpritDetectedFromPhoto": boolean,
   "rankedCandidates": [
     {
-      "name": "Mosquito | Blacklegged (Deer) Tick | Bed Bug | Flea | Brown Recluse Spider | Black Widow Spider",
+      "name": "Blacklegged (Deer) Tick | Mosquito | Bed Bug | Flea | Brown Recluse Spider | Black Widow Spider",
       "scientificName": "Scientific name",
       "confidence": "high" | "medium" | "low",
       "probability": number (0.0 to 1.0),
@@ -80,6 +81,9 @@ Strict Guidance:
     const response = await ai.models.generateContent({
       model: "gemini-2.5-flash",
       contents: contents as any,
+      config: {
+        temperature: 0.2, // Low temperature for clinical diagnostic consistency
+      },
     });
 
     const responseText = response.text;
@@ -87,7 +91,6 @@ Strict Guidance:
       throw new Error("Empty response from Gemini API");
     }
 
-    // Extract JSON block if wrapped in markdown formatting
     const jsonMatch = responseText.match(/```json\s*([\s\S]*?)\s*```/) || responseText.match(/({[\s\S]*})/);
     const jsonString = jsonMatch ? jsonMatch[1] : responseText;
     const parsed = JSON.parse(jsonString);
@@ -107,8 +110,6 @@ export function generateMockTriageResult(
   hasCulpritPhoto: boolean
 ): AnalysisResult {
   const probs = evaluateRegionalLikelihood(context);
-
-  // Sort vectors by calculated probability
   const sorted = Object.entries(probs).sort((a, b) => b[1] - a[1]);
 
   const rankedCandidates = sorted.slice(0, 3).map(([key, prob], index) => {
@@ -117,24 +118,24 @@ export function generateMockTriageResult(
 
     const matchedFactors: string[] = [];
 
-    // Habitat match
+    if (context.hasTargetoidBullseye && key === "blacklegged_tick") {
+      matchedFactors.push("Classic Erythema Migrans (bullseye targetoid rash) indicative of Blacklegged Tick exposure");
+    }
+
     if (context.incidentLocation && vector.habitatScores[context.incidentLocation] >= 0.7) {
       matchedFactors.push(`High correlation with incident location (${context.incidentLocation.replace(/_/g, " ")})`);
     }
 
-    // Geo match
     if (vector.endemicStates === "ALL" || vector.endemicStates.includes(context.usState)) {
       matchedFactors.push(`Known endemic species in region (${context.usState})`);
     } else {
       matchedFactors.push(`Low endemic prevalence in ${context.usState}`);
     }
 
-    // Sensation match
     if (vector.sensationScores[context.primarySensation] >= 0.7) {
       matchedFactors.push(`Sensation profile (${context.primarySensation.replace(/_/g, " ")}) matches vector pattern`);
     }
 
-    // Culprit photo boost
     if (hasCulpritPhoto && index === 0) {
       matchedFactors.push("Pest morphological characteristics detected in provided culprit photo");
     }
@@ -156,7 +157,9 @@ export function generateMockTriageResult(
     isEmergencyRedirect: false,
     culpritDetectedFromPhoto: hasCulpritPhoto,
     rankedCandidates,
-    summary: hasCulpritPhoto
+    summary: context.hasTargetoidBullseye
+      ? `Analysis indicates ${topMatch.name} (${topMatch.scientificName}) as the primary culprit due to targetoid Erythema Migrans morphology, combined with regional endemic data for ${context.usState}. Immediate medical evaluation for potential Lyme disease prophylaxis is recommended.`
+      : hasCulpritPhoto
       ? `Analysis indicates ${topMatch.name} (${topMatch.scientificName}) as the primary culprit based on visual pest morphology combined with geo-seasonal data for ${context.usState}.`
       : `Based on your geographic region (${context.usState}), incident location (${context.incidentLocation.replace(/_/g, " ")}), and sensation, ${topMatch.name} (${topMatch.scientificName}) is the most likely source of the skin lesion.`,
     disclaimer:

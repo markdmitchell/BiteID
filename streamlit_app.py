@@ -46,9 +46,10 @@ VECTOR_DATABASE = {
             "Remove attached tick with fine-tipped tweezers by pulling straight up.",
             "Disinfect bite site with rubbing alcohol or soap and water.",
             "Save tick photo or seal in container for potential identification.",
-            "Monitor site for 30 days for expanding targetoid rash."
+            "Monitor site for 30 days for expanding targetoid Erythema Migrans rash.",
+            "Consult a healthcare provider immediately if Erythema Migrans rash is present."
         ],
-        "warning_signs": ["Expanding circular bullseye rash (Erythema Migrans).", "Fever, joint pain, or fatigue within 3-30 days."]
+        "warning_signs": ["Expanding circular target/bullseye rash (Erythema Migrans hallmark of Lyme disease).", "Fever, joint pain, or fatigue within 3-30 days."]
     },
     "bed_bug": {
         "name": "Bed Bug",
@@ -106,7 +107,7 @@ VECTOR_DATABASE = {
 }
 
 # Deterministic Geo-Seasonal Engine
-def evaluate_regional_likelihood(state, month_idx, habitat, sensation):
+def evaluate_regional_likelihood(state, month_idx, habitat, sensation, has_targetoid=False):
     raw_scores = {}
     for key, vector in VECTOR_DATABASE.items():
         geo_factor = 1.0
@@ -119,7 +120,16 @@ def evaluate_regional_likelihood(state, month_idx, habitat, sensation):
         habitat_factor = vector["habitat"].get(habitat, 0.5)
         sensation_factor = vector["sensation"].get(sensation, 0.5)
 
-        raw_scores[key] = vector["base_weight"] * geo_factor * seasonal_factor * habitat_factor * sensation_factor
+        score = vector["base_weight"] * geo_factor * seasonal_factor * habitat_factor * sensation_factor
+
+        # ERYTHEMA MIGRANS TARGETOID PRECEDENCE
+        if has_targetoid:
+            if key == "blacklegged_tick":
+                score *= 5.0
+            elif key in ["mosquito", "flea"]:
+                score *= 0.1
+
+        raw_scores[key] = score
 
     total = sum(raw_scores.values())
     if total <= 0:
@@ -159,6 +169,7 @@ col1, col2 = st.columns(2)
 with col1:
     lesion_file = st.file_uploader("📷 Photo of Skin Reaction (Required)", type=["jpg", "png", "jpeg"])
     culprit_file = st.file_uploader("🐛 Photo of Bug / Pest (Optional +80% Accuracy)", type=["jpg", "png", "jpeg"])
+    has_targetoid = st.checkbox("🎯 Expanding Bullseye / Targetoid Rash Present (Erythema Migrans)")
 
 with col2:
     state_options = ["US-VA", "US-WA", "US-NY", "US-TX", "US-CA", "US-FL", "US-MA", "US-IL", "US-NC", "US-GA", "US-PA", "US-OH"]
@@ -197,7 +208,7 @@ if st.button("🚀 Run BiteID Triage Assessment", type="primary", use_container_
         st.stop()
 
     # EVALUATE LIKELIHOOD
-    probs = evaluate_regional_likelihood(state, month_idx, habitat, sensation)
+    probs = evaluate_regional_likelihood(state, month_idx, habitat, sensation, has_targetoid)
     sorted_probs = sorted(probs.items(), key=lambda x: x[1], reverse=True)
     top_key, top_prob = sorted_probs[0]
     top_vector = VECTOR_DATABASE[top_key]
@@ -210,6 +221,8 @@ if st.button("🚀 Run BiteID Triage Assessment", type="primary", use_container_
     with res_col1:
         st.success(f"### Primary Suspected Cause: {top_vector['name']}")
         st.caption(f"*Scientific Name: {top_vector['scientific_name']}*")
+        if has_targetoid:
+            st.info("🎯 **Targetoid Morphology Detected:** Rash displays expanding Erythema Migrans pattern characteristic of Blacklegged (Deer) Tick bites and early Lyme disease.")
         st.write(f"Based on your region (**{state}**), environment (**{habitat.replace('_', ' ')}**), and sensation profile, **{top_vector['name']}** is the primary vector match.")
     with res_col2:
         st.metric("Probability Match", f"{int(top_prob * 100)}%")
