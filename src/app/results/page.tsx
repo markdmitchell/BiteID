@@ -52,7 +52,7 @@ export default function ResultsPage() {
   if (!result) {
     return (
       <div className="max-w-xl mx-auto py-16 text-center space-y-4">
-        <div className="w-16 h-16 bg-slate-200/60 text-slate-400 rounded-full flex items-center justify-center mx-auto">
+        <div className="w-16 h-16 bg-slate-200 text-slate-400 rounded-full flex items-center justify-center mx-auto">
           <Info className="w-8 h-8" />
         </div>
         <h2 className="text-xl font-extrabold text-slate-800">No Active Triage Result Found</h2>
@@ -73,13 +73,13 @@ export default function ResultsPage() {
   if (result.isEmergencyRedirect) {
     return (
       <div className="max-w-2xl mx-auto space-y-6 py-4">
-        <div className="bg-red-600 text-white rounded-3xl p-8 shadow-2xl border-4 border-red-700 text-center space-y-6 glow-red">
+        <div className="bento-card-dark bg-red-600 text-white border-4 border-red-700 text-center space-y-6 shadow-2xl">
           <div className="w-20 h-20 bg-white/20 rounded-full flex items-center justify-center mx-auto animate-pulse">
             <AlertOctagon className="w-12 h-12 text-white" />
           </div>
 
           <div className="space-y-2">
-            <span className="bg-white/20 text-white text-xs font-extrabold uppercase tracking-widest px-3.5 py-1 rounded-full backdrop-blur-md">
+            <span className="bento-badge bg-white/20 text-white border border-white/30">
               Emergency Safety Interception
             </span>
             <h1 className="text-2xl sm:text-3xl font-extrabold">Seek Emergency Care Immediately</h1>
@@ -93,23 +93,23 @@ export default function ResultsPage() {
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
             <a
               href="tel:911"
-              className="flex items-center justify-center gap-2 bg-white text-red-700 hover:bg-red-50 font-extrabold text-base py-4 px-6 rounded-2xl shadow-lg transition-transform transform active:scale-95"
+              className="flex items-center justify-center gap-2 bg-white text-red-700 hover:bg-red-50 font-extrabold text-sm py-3.5 px-6 rounded-2xl shadow-lg transition-transform transform active:scale-95"
             >
-              <PhoneCall className="w-5 h-5" />
+              <PhoneCall className="w-4 h-4" />
               <span>Call 911</span>
             </a>
 
             <a
               href="tel:18002221222"
-              className="flex items-center justify-center gap-2 bg-amber-500 hover:bg-amber-600 text-white font-extrabold text-base py-4 px-6 rounded-2xl shadow-lg transition-transform transform active:scale-95"
+              className="flex items-center justify-center gap-2 bg-amber-500 hover:bg-amber-600 text-white font-extrabold text-sm py-3.5 px-6 rounded-2xl shadow-lg transition-transform transform active:scale-95"
             >
-              <PhoneCall className="w-5 h-5" />
+              <PhoneCall className="w-4 h-4" />
               <span>Poison Control</span>
             </a>
           </div>
         </div>
 
-        <div className="glass-card rounded-3xl p-6 space-y-3 text-slate-700">
+        <div className="bento-card space-y-3 text-slate-700">
           <h3 className="text-sm font-extrabold text-slate-900 flex items-center gap-2">
             <ShieldCheck className="w-4 h-4 text-red-600" /> Safe Transportation Instructions
           </h3>
@@ -148,44 +148,44 @@ export default function ResultsPage() {
         />
       )}
 
-      {/* Top Banner */}
-      <div className="glass-card-dark rounded-3xl p-6 sm:p-8 text-white shadow-xl relative overflow-hidden glow-emerald">
+      {/* Top Main Bento Hero Banner */}
+      <div className="bento-card-dark relative overflow-hidden space-y-5">
         <div className="absolute top-0 right-0 transform translate-x-8 -translate-y-8 opacity-10 pointer-events-none">
           <Bug className="w-64 h-64 text-white" />
         </div>
 
         <div className="relative z-10 space-y-4">
           <div className="flex flex-wrap items-center justify-between gap-2">
-            <span className="bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 text-xs font-semibold px-3 py-1 rounded-full flex items-center gap-1.5 backdrop-blur-md">
-              <Sparkles className="w-3.5 h-3.5" /> BiteID Multimodal Assessment
+            <span className="bento-badge bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
+              <Sparkles className="w-3.5 h-3.5" /> BiteID Triage Assessment
             </span>
             {result.culpritDetectedFromPhoto && (
-              <span className="bg-amber-500/20 text-amber-300 border border-amber-500/30 text-xs font-semibold px-3 py-1 rounded-full backdrop-blur-md">
+              <span className="bento-badge bg-amber-500/20 text-amber-300 border border-amber-500/30">
                 Pest Visual Confirmation Included
               </span>
             )}
           </div>
 
           <div>
-            <p className="text-xs uppercase tracking-wider text-emerald-400 font-extrabold">Primary Suspected Cause</p>
+            <p className="text-xs uppercase tracking-wider text-emerald-400 font-extrabold">Primary Suspected Vector</p>
             <h1 className="text-2xl sm:text-4xl font-extrabold text-white mt-1">
               {topMatch?.name}
             </h1>
-            <p className="text-sm italic text-slate-300 font-serif">{topMatch?.scientificName}</p>
+            <p className="text-xs italic text-slate-300 font-serif">{topMatch?.scientificName}</p>
           </div>
 
           <div className="flex flex-wrap items-center justify-between gap-4 pt-2">
-            <div className="flex flex-wrap items-center gap-4">
-              <div className="flex items-center gap-2 bg-white/10 backdrop-blur-md px-4 py-2 rounded-2xl border border-white/10">
-                <span className="text-xs text-slate-300">Probability Match:</span>
-                <span className="text-lg font-extrabold text-emerald-400">
+            <div className="flex flex-wrap items-center gap-3">
+              <div className="bg-white/10 px-4 py-2 rounded-2xl border border-white/10 text-xs">
+                <span className="text-slate-300 font-medium">Probability Match: </span>
+                <span className="font-extrabold text-emerald-400 text-base">
                   {Math.round((topMatch?.probability || 0) * 100)}%
                 </span>
               </div>
 
-              <div className="flex items-center gap-2 bg-white/10 backdrop-blur-md px-4 py-2 rounded-2xl border border-white/10">
-                <span className="text-xs text-slate-300">Confidence:</span>
-                <span className={`text-xs font-extrabold uppercase px-2.5 py-0.5 rounded-md ${
+              <div className="bg-white/10 px-4 py-2 rounded-2xl border border-white/10 text-xs">
+                <span className="text-slate-300 font-medium">Confidence: </span>
+                <span className={`font-extrabold uppercase text-[11px] px-2 py-0.5 rounded ${
                   topMatch?.confidence === "high"
                     ? "bg-emerald-500 text-slate-950"
                     : topMatch?.confidence === "medium"
@@ -205,7 +205,7 @@ export default function ResultsPage() {
                   name: topMatch.name,
                 })
               }
-              className="inline-flex items-center gap-2 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-extrabold text-xs px-4 py-2.5 rounded-2xl shadow-md transition-all transform hover:scale-105"
+              className="inline-flex items-center gap-2 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-extrabold text-xs px-4 py-2.5 rounded-2xl shadow-md transition-all"
             >
               <Eye className="w-4 h-4" />
               <span>Compare Visual References</span>
@@ -214,26 +214,26 @@ export default function ResultsPage() {
         </div>
       </div>
 
-      {/* Top 3 Suspected Causes Ranking */}
-      <div className="glass-card rounded-3xl p-6 space-y-4">
-        <h2 className="text-lg font-extrabold text-slate-900">Top Suspected Biting Vectors</h2>
+      {/* Top 3 Suspected Vectors Bento Tile */}
+      <div className="bento-card space-y-4">
+        <h2 className="text-base font-extrabold text-slate-900">Vector Suspect Leaderboard</h2>
 
-        <div className="space-y-4">
+        <div className="grid grid-cols-1 gap-3">
           {result.rankedCandidates.map((candidate, idx) => (
-            <div key={idx} className="p-4 rounded-2xl border border-slate-200/80 bg-white/60 space-y-3 shadow-xs">
+            <div key={idx} className="p-4 rounded-2xl border border-slate-200/80 bg-slate-50/70 space-y-2">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2.5">
-                  <span className="w-7 h-7 rounded-xl bg-slate-900 text-white text-xs font-extrabold flex items-center justify-center shadow-sm">
+                  <span className="w-7 h-7 rounded-xl bg-slate-900 text-white text-xs font-extrabold flex items-center justify-center">
                     #{idx + 1}
                   </span>
                   <div>
-                    <p className="text-sm font-extrabold text-slate-800">{candidate.name}</p>
-                    <p className="text-[11px] italic text-slate-500">{candidate.scientificName}</p>
+                    <p className="text-xs font-extrabold text-slate-800">{candidate.name}</p>
+                    <p className="text-[10px] italic text-slate-500">{candidate.scientificName}</p>
                   </div>
                 </div>
 
                 <div className="flex items-center gap-3">
-                  <span className="text-sm font-extrabold text-slate-900">
+                  <span className="text-xs font-extrabold text-slate-900">
                     {Math.round(candidate.probability * 100)}%
                   </span>
                   <button
@@ -253,7 +253,7 @@ export default function ResultsPage() {
               </div>
 
               {/* Progress Bar */}
-              <div className="w-full h-2.5 bg-slate-200/80 rounded-full overflow-hidden">
+              <div className="w-full h-2 bg-slate-200 rounded-full overflow-hidden">
                 <div
                   className={`h-full transition-all duration-500 ${
                     idx === 0 ? "bg-emerald-600" : idx === 1 ? "bg-amber-500" : "bg-slate-400"
@@ -266,30 +266,30 @@ export default function ResultsPage() {
         </div>
       </div>
 
-      {/* "Why this match?" Accordion */}
-      <div className="glass-card rounded-3xl p-6 space-y-4">
-        <h2 className="text-lg font-extrabold text-slate-900">Why This Match? Contextual Correlation</h2>
+      {/* "Why this match?" Bento Accordion Tile */}
+      <div className="bento-card space-y-4">
+        <h2 className="text-base font-extrabold text-slate-900">Contextual Match Factor Grid</h2>
 
         <div className="space-y-3">
           {result.rankedCandidates.map((candidate, idx) => {
             const isOpen = activeAccordion === idx;
             return (
-              <div key={idx} className="border border-slate-200/80 rounded-2xl overflow-hidden bg-white/40">
+              <div key={idx} className="border border-slate-200 rounded-2xl overflow-hidden bg-white">
                 <button
                   type="button"
                   onClick={() => setActiveAccordion(isOpen ? null : idx)}
-                  className="w-full p-4 text-left font-bold text-sm bg-white/60 hover:bg-white/90 flex items-center justify-between transition-colors"
+                  className="w-full p-4 text-left font-bold text-xs bg-slate-50 hover:bg-slate-100 flex items-center justify-between transition-colors"
                 >
                   <span className="flex items-center gap-2 text-slate-800">
                     <Bug className="w-4 h-4 text-emerald-600" />
-                    <span>Matched Factors for {candidate.name}</span>
+                    <span>Diagnostic Factors for {candidate.name}</span>
                   </span>
                   <ChevronDown className={`w-4 h-4 text-slate-500 transition-transform ${isOpen ? "rotate-180" : ""}`} />
                 </button>
 
                 {isOpen && (
-                  <div className="p-4 bg-white/80 border-t border-slate-200/80 space-y-2 text-xs text-slate-600">
-                    <p className="font-extrabold text-slate-800 mb-2">Key Diagnostic Correlations:</p>
+                  <div className="p-4 bg-white border-t border-slate-200 space-y-2 text-xs text-slate-600">
+                    <p className="font-extrabold text-slate-800 mb-2">Diagnostic Correlations:</p>
                     <ul className="space-y-1.5 list-disc list-inside text-slate-700 font-medium">
                       {candidate.matchedFactors.map((factor, fIdx) => (
                         <li key={fIdx}>{factor}</li>
@@ -303,10 +303,10 @@ export default function ResultsPage() {
         </div>
       </div>
 
-      {/* First Aid Advice Checklist */}
+      {/* First Aid Checklist Bento Tile */}
       {topMatch && topMatch.firstAidAdvice.length > 0 && (
-        <div className="glass-card rounded-3xl p-6 space-y-4">
-          <h2 className="text-lg font-extrabold text-slate-900 flex items-center gap-2">
+        <div className="bento-card space-y-4">
+          <h2 className="text-base font-extrabold text-slate-900 flex items-center gap-2">
             <CheckSquare className="w-5 h-5 text-emerald-600" /> Recommended First Aid Checklist
           </h2>
 
@@ -320,8 +320,8 @@ export default function ResultsPage() {
                   onClick={() => setCompletedAdvice((prev) => ({ ...prev, [aIdx]: !prev[aIdx] }))}
                   className={`w-full text-left p-3.5 rounded-2xl border flex items-start gap-3 transition-all ${
                     isDone
-                      ? "bg-emerald-500/10 border-emerald-500/30 text-slate-500 line-through"
-                      : "bg-white/60 border-slate-200/80 hover:bg-white text-slate-800"
+                      ? "bg-emerald-50 border-emerald-300 text-slate-500 line-through"
+                      : "bg-slate-50 border-slate-200 hover:bg-slate-100 text-slate-800"
                   }`}
                 >
                   <div className={`w-5 h-5 rounded-lg flex items-center justify-center border mt-0.5 ${
@@ -337,13 +337,13 @@ export default function ResultsPage() {
         </div>
       )}
 
-      {/* "When to see a doctor" Safety Checklist */}
-      <div className="bg-amber-500/10 border border-amber-500/30 rounded-3xl p-6 space-y-4 backdrop-blur-md">
-        <h2 className="text-base font-extrabold text-amber-950 flex items-center gap-2">
-          <AlertTriangle className="w-5 h-5 text-amber-600" /> When to See a Healthcare Provider
+      {/* Physician Warning Bento Tile */}
+      <div className="bento-card bg-amber-50/70 border-amber-200 space-y-3">
+        <h2 className="text-xs font-extrabold text-amber-900 flex items-center gap-2 uppercase tracking-wider">
+          <AlertTriangle className="w-4 h-4 text-amber-600" /> When to See a Healthcare Provider
         </h2>
 
-        <ul className="space-y-2 text-xs text-amber-950 font-semibold list-disc list-inside">
+        <ul className="space-y-1.5 text-xs text-amber-900 font-medium list-disc list-inside">
           {topMatch?.warningSigns.map((sign, sIdx) => (
             <li key={sIdx}>{sign}</li>
           )) || <li>If redness expands beyond 2 inches or warm, pus-filled blisters develop.</li>}
@@ -351,12 +351,12 @@ export default function ResultsPage() {
         </ul>
       </div>
 
-      {/* CLINICAL SUMMARY CARD (Exportable View) */}
-      <div className="glass-card rounded-3xl p-6 border-2 border-slate-300/80 shadow-md space-y-4 print:border-none">
+      {/* Clinical Summary Bento Card (Exportable View) */}
+      <div className="bento-card border-2 border-slate-300 space-y-4 print:border-none">
         <div className="flex items-center justify-between border-b border-slate-200 pb-3">
           <div className="flex items-center gap-2">
             <FileText className="w-5 h-5 text-emerald-600" />
-            <h2 className="text-base font-extrabold text-slate-900">Clinical Summary Card</h2>
+            <h2 className="text-sm font-extrabold text-slate-900">Clinical Summary Card</h2>
           </div>
           <span className="text-[11px] font-mono text-slate-400">ID: {Date.now().toString().slice(-8)}</span>
         </div>
@@ -380,7 +380,7 @@ export default function ResultsPage() {
           </div>
         </div>
 
-        <div className="bg-white/80 rounded-2xl p-4 text-xs text-slate-700 space-y-1 border border-slate-200/60">
+        <div className="bg-slate-50 rounded-2xl p-4 text-xs text-slate-700 space-y-1 border border-slate-200">
           <p className="font-extrabold text-slate-900">Triage Summary:</p>
           <p className="leading-relaxed">{result.summary}</p>
         </div>
@@ -391,7 +391,7 @@ export default function ResultsPage() {
       </div>
 
       {/* Action Controls */}
-      <div className="flex flex-wrap items-center justify-between gap-4 pt-4 pb-8">
+      <div className="flex flex-wrap items-center justify-between gap-4 pt-2 pb-8">
         <button
           type="button"
           onClick={() => window.print()}

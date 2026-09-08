@@ -52,8 +52,8 @@ test.describe('BiteID Multimodal Triage End-to-End Suite', () => {
 
     // Verify Top Candidate Card and Matched Factors
     await expect(page.locator('h1')).toContainText('Tick');
-    await expect(page.locator('text=Top Suspected Biting Vectors')).toBeVisible();
-    await expect(page.locator('text=Why This Match? Contextual Correlation')).toBeVisible();
+    await expect(page.locator('text=Vector Suspect Leaderboard')).toBeVisible();
+    await expect(page.locator('text=Contextual Match Factor Grid')).toBeVisible();
     await expect(page.locator('text=Clinical Summary Card')).toBeVisible();
   });
 

@@ -170,68 +170,69 @@ export default function IntakePage() {
   };
 
   return (
-    <div className="max-w-3xl mx-auto space-y-6">
+    <div className="max-w-4xl mx-auto space-y-6">
       <EmergencyModal
         isOpen={showEmergencyModal}
         onClose={() => setShowEmergencyModal(false)}
         symptoms={emergencySymptoms}
       />
 
-      {/* Progress Steps Header */}
-      <div className="glass-card rounded-3xl p-4 sm:p-6 shadow-sm">
+      {/* Bento Progress Steps Header */}
+      <div className="bento-card p-4 sm:p-5">
         <div className="flex items-center justify-between max-w-xl mx-auto">
-          <div className={`flex items-center gap-2 ${currentStep >= 1 ? "text-emerald-600 font-bold" : "text-slate-400"}`}>
-            <div className={`w-8 h-8 rounded-xl flex items-center justify-center text-sm font-extrabold shadow-sm ${
-              currentStep >= 1 ? "bg-emerald-600 text-white" : "bg-slate-200/60"
+          <div className={`flex items-center gap-2 ${currentStep >= 1 ? "text-emerald-600 font-extrabold" : "text-slate-400"}`}>
+            <div className={`w-8 h-8 rounded-xl flex items-center justify-center text-xs font-extrabold ${
+              currentStep >= 1 ? "bg-emerald-600 text-white shadow-sm" : "bg-slate-100"
             }`}>
               1
             </div>
-            <span className="hidden sm:inline">Photos</span>
+            <span className="hidden sm:inline text-xs">Photos</span>
           </div>
 
-          <div className={`h-1 flex-1 mx-3 rounded-full ${currentStep >= 2 ? "bg-emerald-600" : "bg-slate-200/60"}`} />
+          <div className={`h-1 flex-1 mx-3 rounded-full ${currentStep >= 2 ? "bg-emerald-600" : "bg-slate-200"}`} />
 
-          <div className={`flex items-center gap-2 ${currentStep >= 2 ? "text-emerald-600 font-bold" : "text-slate-400"}`}>
-            <div className={`w-8 h-8 rounded-xl flex items-center justify-center text-sm font-extrabold shadow-sm ${
-              currentStep >= 2 ? "bg-emerald-600 text-white" : "bg-slate-200/60"
+          <div className={`flex items-center gap-2 ${currentStep >= 2 ? "text-emerald-600 font-extrabold" : "text-slate-400"}`}>
+            <div className={`w-8 h-8 rounded-xl flex items-center justify-center text-xs font-extrabold ${
+              currentStep >= 2 ? "bg-emerald-600 text-white shadow-sm" : "bg-slate-100"
             }`}>
               2
             </div>
-            <span className="hidden sm:inline">Context</span>
+            <span className="hidden sm:inline text-xs">Context</span>
           </div>
 
-          <div className={`h-1 flex-1 mx-3 rounded-full ${currentStep >= 3 ? "bg-emerald-600" : "bg-slate-200/60"}`} />
+          <div className={`h-1 flex-1 mx-3 rounded-full ${currentStep >= 3 ? "bg-emerald-600" : "bg-slate-200"}`} />
 
-          <div className={`flex items-center gap-2 ${currentStep === 3 ? "text-emerald-600 font-bold" : "text-slate-400"}`}>
-            <div className={`w-8 h-8 rounded-xl flex items-center justify-center text-sm font-extrabold shadow-sm ${
-              currentStep === 3 ? "bg-emerald-600 text-white" : "bg-slate-200/60"
+          <div className={`flex items-center gap-2 ${currentStep === 3 ? "text-emerald-600 font-extrabold" : "text-slate-400"}`}>
+            <div className={`w-8 h-8 rounded-xl flex items-center justify-center text-xs font-extrabold ${
+              currentStep === 3 ? "bg-emerald-600 text-white shadow-sm" : "bg-slate-100"
             }`}>
               3
             </div>
-            <span className="hidden sm:inline">Symptoms & Safety</span>
+            <span className="hidden sm:inline text-xs">Safety & Symptoms</span>
           </div>
         </div>
       </div>
 
-      {/* STEP 1: PHOTO CAPTURE */}
+      {/* STEP 1: PHOTO CAPTURE (Bento Tiles) */}
       {currentStep === 1 && (
         <div className="space-y-6 animate-in fade-in duration-200">
-          <div className="glass-card rounded-3xl p-6 sm:p-8 space-y-6">
+          <div className="bento-card space-y-6">
             <div>
-              <h2 className="text-xl font-extrabold text-slate-900">Step 1: Upload Bite Photos</h2>
-              <p className="text-sm text-slate-500">Provide a clear photo of the skin bite lesion and an optional photo of the insect/spider.</p>
+              <span className="bento-badge bg-emerald-100 text-emerald-800 border border-emerald-200 mb-2">Step 1 of 3</span>
+              <h2 className="text-xl font-extrabold text-slate-900">Bite Photo Attachments</h2>
+              <p className="text-xs text-slate-500 mt-1">Provide skin lesion photos and optional pest images into modular upload cards.</p>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {/* CARD A: Lesion Image (Required) */}
-              <div className="border-2 border-dashed border-slate-300/80 rounded-3xl p-5 hover:border-emerald-500 transition-all bg-white/40 flex flex-col items-center justify-center text-center relative">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+              {/* CARD A: Lesion Image Bento Tile */}
+              <div className="bento-card bg-slate-50/70 border-dashed border-2 border-slate-300 hover:border-emerald-500 transition-all flex flex-col items-center justify-center text-center relative">
                 <span className="absolute top-3 left-3 bg-slate-900 text-white text-[10px] font-extrabold px-2.5 py-0.5 rounded-full shadow-sm">
                   Required
                 </span>
 
                 {lesionPreview ? (
                   <div className="w-full space-y-3">
-                    <div className="relative w-full h-48 rounded-2xl overflow-hidden bg-slate-200 shadow-inner">
+                    <div className="relative w-full h-48 rounded-xl overflow-hidden bg-slate-200 shadow-inner">
                       {/* eslint-disable-next-line @next/next/no-img-element */}
                       <img src={lesionPreview} alt="Skin lesion preview" className="w-full h-full object-cover" />
                       <button
@@ -241,18 +242,18 @@ export default function IntakePage() {
                         <X className="w-4 h-4" />
                       </button>
                     </div>
-                    <p className="text-xs text-emerald-700 font-bold flex items-center justify-center gap-1">
+                    <p className="text-xs text-emerald-700 font-extrabold flex items-center justify-center gap-1">
                       <CheckCircle2 className="w-4 h-4" /> Lesion photo attached
                     </p>
                   </div>
                 ) : (
                   <div className="py-6 space-y-3">
-                    <div className="w-12 h-12 rounded-2xl bg-emerald-500/10 text-emerald-600 flex items-center justify-center mx-auto shadow-sm">
+                    <div className="w-12 h-12 rounded-2xl bg-emerald-100 text-emerald-600 flex items-center justify-center mx-auto shadow-sm">
                       <Camera className="w-6 h-6" />
                     </div>
                     <div>
                       <p className="text-sm font-extrabold text-slate-800">Photo of Skin Reaction</p>
-                      <p className="text-xs text-slate-500 mt-1">Upload bite lesion photo</p>
+                      <p className="text-xs text-slate-500 mt-1">Upload lesion reaction photo</p>
                     </div>
                     <label className="inline-flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-extrabold px-4 py-2.5 rounded-xl cursor-pointer shadow-md transition-all">
                       <Upload className="w-3.5 h-3.5" />
@@ -274,15 +275,15 @@ export default function IntakePage() {
                 )}
               </div>
 
-              {/* CARD B: Culprit Image (Optional) */}
-              <div className="border-2 border-dashed border-slate-300/80 rounded-3xl p-5 hover:border-emerald-500 transition-all bg-white/40 flex flex-col items-center justify-center text-center relative">
+              {/* CARD B: Culprit Image Bento Tile */}
+              <div className="bento-card bg-slate-50/70 border-dashed border-2 border-slate-300 hover:border-emerald-500 transition-all flex flex-col items-center justify-center text-center relative">
                 <span className="absolute top-3 left-3 bg-amber-500 text-white text-[10px] font-extrabold px-2.5 py-0.5 rounded-full flex items-center gap-1 shadow-sm">
                   <Sparkles className="w-3 h-3" /> +80% Accuracy Boost
                 </span>
 
                 {culpritPreview ? (
                   <div className="w-full space-y-3">
-                    <div className="relative w-full h-48 rounded-2xl overflow-hidden bg-slate-200 shadow-inner">
+                    <div className="relative w-full h-48 rounded-xl overflow-hidden bg-slate-200 shadow-inner">
                       {/* eslint-disable-next-line @next/next/no-img-element */}
                       <img src={culpritPreview} alt="Culprit bug preview" className="w-full h-full object-cover" />
                       <button
@@ -292,13 +293,13 @@ export default function IntakePage() {
                         <X className="w-4 h-4" />
                       </button>
                     </div>
-                    <p className="text-xs text-emerald-700 font-bold flex items-center justify-center gap-1">
+                    <p className="text-xs text-emerald-700 font-extrabold flex items-center justify-center gap-1">
                       <CheckCircle2 className="w-4 h-4" /> Culprit photo attached
                     </p>
                   </div>
                 ) : (
                   <div className="py-6 space-y-3">
-                    <div className="w-12 h-12 rounded-2xl bg-amber-500/10 text-amber-600 flex items-center justify-center mx-auto shadow-sm">
+                    <div className="w-12 h-12 rounded-2xl bg-amber-100 text-amber-600 flex items-center justify-center mx-auto shadow-sm">
                       <Bug className="w-6 h-6" />
                     </div>
                     <div>
@@ -333,7 +334,7 @@ export default function IntakePage() {
                   if (!lesionPreview) handleUseSampleLesion();
                   setCurrentStep(2);
                 }}
-                className="flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold px-6 py-3 rounded-2xl transition-all shadow-md text-sm"
+                className="flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold px-6 py-3 rounded-2xl transition-all shadow-md text-xs"
               >
                 <span>Continue to Context</span>
                 <ChevronRight className="w-4 h-4" />
@@ -343,18 +344,19 @@ export default function IntakePage() {
         </div>
       )}
 
-      {/* STEP 2: CONTEXT */}
+      {/* STEP 2: CONTEXT (Bento Grid Tiles) */}
       {currentStep === 2 && (
         <div className="space-y-6 animate-in fade-in duration-200">
-          <div className="glass-card rounded-3xl p-6 sm:p-8 space-y-6">
+          <div className="bento-card space-y-6">
             <div>
-              <h2 className="text-xl font-extrabold text-slate-900">Step 2: Geographic & Temporal Context</h2>
-              <p className="text-sm text-slate-500">Bite risks vary dramatically by region, active seasonal windows, and exact location.</p>
+              <span className="bento-badge bg-blue-100 text-blue-800 border border-blue-200 mb-2">Step 2 of 3</span>
+              <h2 className="text-xl font-extrabold text-slate-900">Geographic & Habitat Context</h2>
+              <p className="text-xs text-slate-500 mt-1">Configure endemic regional state boundaries, active seasonal months, and habitat environments.</p>
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              {/* State Dropdown */}
-              <div className="space-y-2">
+              {/* State Dropdown Bento Tile */}
+              <div className="bento-card bg-slate-50/70 p-4 space-y-2">
                 <label className="text-xs font-bold text-slate-700 uppercase tracking-wider flex items-center gap-1.5">
                   <MapPin className="w-4 h-4 text-emerald-600" /> State / Region
                 </label>
@@ -362,7 +364,7 @@ export default function IntakePage() {
                   <select
                     value={usState}
                     onChange={(e) => setUsState(e.target.value)}
-                    className="flex-1 rounded-xl border border-slate-300/80 px-3.5 py-2.5 text-sm bg-white/80 backdrop-blur-md focus:ring-2 focus:ring-emerald-500 focus:outline-none shadow-sm"
+                    className="flex-1 rounded-xl border border-slate-300 px-3.5 py-2.5 text-xs bg-white focus:ring-2 focus:ring-emerald-500 focus:outline-none shadow-xs font-semibold"
                   >
                     {US_STATES.map((st) => (
                       <option key={st.code} value={st.code}>
@@ -374,22 +376,22 @@ export default function IntakePage() {
                     type="button"
                     onClick={handleGeoLocate}
                     title="Auto-detect current location"
-                    className="bg-white/80 hover:bg-white text-slate-700 p-2.5 rounded-xl border border-slate-300/80 shadow-sm transition-all"
+                    className="bg-white hover:bg-slate-100 text-slate-700 p-2.5 rounded-xl border border-slate-300 shadow-xs transition-all"
                   >
                     <MapPin className="w-4 h-4 text-emerald-600" />
                   </button>
                 </div>
               </div>
 
-              {/* Month Selector */}
-              <div className="space-y-2">
+              {/* Month Selector Bento Tile */}
+              <div className="bento-card bg-slate-50/70 p-4 space-y-2">
                 <label className="text-xs font-bold text-slate-700 uppercase tracking-wider flex items-center gap-1.5">
                   <Calendar className="w-4 h-4 text-emerald-600" /> Incident Month
                 </label>
                 <select
                   value={monthIndex}
                   onChange={(e) => setMonthIndex(parseInt(e.target.value))}
-                  className="w-full rounded-xl border border-slate-300/80 px-3.5 py-2.5 text-sm bg-white/80 backdrop-blur-md focus:ring-2 focus:ring-emerald-500 focus:outline-none shadow-sm"
+                  className="w-full rounded-xl border border-slate-300 px-3.5 py-2.5 text-xs bg-white focus:ring-2 focus:ring-emerald-500 focus:outline-none shadow-xs font-semibold"
                 >
                   {MONTHS.map((m, idx) => (
                     <option key={idx} value={idx}>
@@ -400,7 +402,7 @@ export default function IntakePage() {
               </div>
             </div>
 
-            {/* Location Cards */}
+            {/* Location Bento Tiles */}
             <div className="space-y-2">
               <label className="text-xs font-bold text-slate-700 uppercase tracking-wider">
                 Incident Environment / Habitat
@@ -420,8 +422,8 @@ export default function IntakePage() {
                     onClick={() => setIncidentLocation(loc.id as IncidentLocation)}
                     className={`p-3.5 rounded-2xl border text-left flex items-start gap-2.5 transition-all ${
                       incidentLocation === loc.id
-                        ? "border-emerald-500 bg-emerald-500/10 text-emerald-950 font-bold ring-2 ring-emerald-500/30 shadow-md"
-                        : "border-slate-200/80 hover:border-slate-300 text-slate-700 bg-white/60"
+                        ? "border-emerald-600 bg-emerald-50 text-emerald-950 font-extrabold ring-2 ring-emerald-500/20 shadow-sm"
+                        : "border-slate-200 hover:border-slate-300 text-slate-700 bg-white"
                     }`}
                   >
                     <span className="text-xl">{loc.icon}</span>
@@ -431,7 +433,7 @@ export default function IntakePage() {
               </div>
             </div>
 
-            {/* Timing Cards */}
+            {/* Timing Bento Tiles */}
             <div className="space-y-2">
               <label className="text-xs font-bold text-slate-700 uppercase tracking-wider flex items-center gap-1.5">
                 <Clock className="w-4 h-4 text-emerald-600" /> Time Elapsed Since Bite
@@ -447,10 +449,10 @@ export default function IntakePage() {
                     key={t.id}
                     type="button"
                     onClick={() => setTimeElapsed(t.id as TimeElapsed)}
-                    className={`p-3 rounded-2xl border text-center text-xs transition-all ${
+                    className={`p-3 rounded-2xl border text-center text-xs font-semibold transition-all ${
                       timeElapsed === t.id
-                        ? "border-emerald-500 bg-emerald-500/10 text-emerald-950 font-bold ring-2 ring-emerald-500/30 shadow-sm"
-                        : "border-slate-200/80 hover:border-slate-300 text-slate-700 bg-white/60"
+                        ? "border-emerald-600 bg-emerald-50 text-emerald-950 font-extrabold ring-2 ring-emerald-500/20 shadow-sm"
+                        : "border-slate-200 hover:border-slate-300 text-slate-700 bg-white"
                     }`}
                   >
                     {t.label}
@@ -463,7 +465,7 @@ export default function IntakePage() {
               <button
                 type="button"
                 onClick={() => setCurrentStep(1)}
-                className="flex items-center gap-1.5 text-slate-600 hover:text-slate-900 font-semibold text-sm px-4 py-2.5 rounded-xl transition-colors"
+                className="flex items-center gap-1.5 text-slate-600 hover:text-slate-900 font-semibold text-xs px-4 py-2.5 rounded-xl transition-colors"
               >
                 <ChevronLeft className="w-4 h-4" />
                 <span>Back</span>
@@ -472,7 +474,7 @@ export default function IntakePage() {
               <button
                 type="button"
                 onClick={() => setCurrentStep(3)}
-                className="flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold px-6 py-3 rounded-2xl transition-all shadow-md text-sm"
+                className="flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold px-6 py-3 rounded-2xl transition-all shadow-md text-xs"
               >
                 <span>Continue to Safety Screening</span>
                 <ChevronRight className="w-4 h-4" />
@@ -482,19 +484,20 @@ export default function IntakePage() {
         </div>
       )}
 
-      {/* STEP 3: SYMPTOMS & SAFETY */}
+      {/* STEP 3: SYMPTOMS & SAFETY (Bento Layout) */}
       {currentStep === 3 && (
         <div className="space-y-6 animate-in fade-in duration-200">
-          <div className="glass-card rounded-3xl p-6 sm:p-8 space-y-6">
+          <div className="bento-card space-y-6">
             <div>
-              <h2 className="text-xl font-extrabold text-slate-900">Step 3: Symptoms & Safety Interception</h2>
-              <p className="text-sm text-slate-500">Provide sensation profile and complete the mandatory emergency red-flag screening.</p>
+              <span className="bento-badge bg-red-100 text-red-800 border border-red-200 mb-2">Step 3 of 3</span>
+              <h2 className="text-xl font-extrabold text-slate-900">Symptoms & Mandatory Safety Screening</h2>
+              <p className="text-xs text-slate-500 mt-1">Select sensation profile and verify emergency red-flag safety questions.</p>
             </div>
 
-            {/* Primary Sensation */}
+            {/* Primary Sensation Bento Grid */}
             <div className="space-y-2">
               <label className="text-xs font-bold text-slate-700 uppercase tracking-wider flex items-center gap-1.5">
-                <Activity className="w-4 h-4 text-emerald-600" /> Primary Sensation
+                <Activity className="w-4 h-4 text-emerald-600" /> Primary Sensation Profile
               </label>
               <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
                 {[
@@ -510,8 +513,8 @@ export default function IntakePage() {
                     onClick={() => setPrimarySensation(sens.id as PrimarySensation)}
                     className={`p-3.5 rounded-2xl border text-left transition-all ${
                       primarySensation === sens.id
-                        ? "border-emerald-500 bg-emerald-500/10 text-emerald-950 font-bold ring-2 ring-emerald-500/30 shadow-sm"
-                        : "border-slate-200/80 hover:border-slate-300 text-slate-700 bg-white/60"
+                        ? "border-emerald-600 bg-emerald-50 text-emerald-950 font-extrabold ring-2 ring-emerald-500/20 shadow-sm"
+                        : "border-slate-200 hover:border-slate-300 text-slate-700 bg-white"
                     }`}
                   >
                     <p className="text-xs font-extrabold">{sens.label}</p>
@@ -521,8 +524,8 @@ export default function IntakePage() {
               </div>
             </div>
 
-            {/* MANDATORY RED-FLAG SAFETY SCREENING */}
-            <div className="bg-red-500/10 border border-red-500/30 rounded-3xl p-5 space-y-4 backdrop-blur-md">
+            {/* MANDATORY RED-FLAG SAFETY BENTO TILE */}
+            <div className="bento-card bg-red-50/70 border-red-200 space-y-4">
               <div className="flex items-center gap-2 text-red-800 font-extrabold text-sm">
                 <AlertTriangle className="w-5 h-5 text-red-600 flex-shrink-0" />
                 <span>Emergency Red-Flag Screening (Check any that apply):</span>
@@ -541,8 +544,8 @@ export default function IntakePage() {
                       key={item.key}
                       className={`flex items-start gap-3 p-3.5 rounded-2xl border cursor-pointer transition-all ${
                         isChecked
-                          ? "bg-red-500/20 border-red-500/50 text-red-950 font-extrabold shadow-sm"
-                          : "bg-white/80 border-red-200 hover:bg-red-50/50 text-slate-800"
+                          ? "bg-red-100 border-red-400 text-red-950 font-extrabold shadow-xs"
+                          : "bg-white border-red-200 hover:bg-red-50/50 text-slate-800"
                       }`}
                     >
                       <input
@@ -575,7 +578,7 @@ export default function IntakePage() {
               <button
                 type="button"
                 onClick={() => setCurrentStep(2)}
-                className="flex items-center gap-1.5 text-slate-600 hover:text-slate-900 font-semibold text-sm px-4 py-2.5 rounded-xl transition-colors"
+                className="flex items-center gap-1.5 text-slate-600 hover:text-slate-900 font-semibold text-xs px-4 py-2.5 rounded-xl transition-colors"
               >
                 <ChevronLeft className="w-4 h-4" />
                 <span>Back</span>
@@ -585,7 +588,7 @@ export default function IntakePage() {
                 type="button"
                 disabled={isSubmitting}
                 onClick={handleSubmit}
-                className={`flex items-center gap-2 font-extrabold px-8 py-3.5 rounded-2xl transition-all shadow-lg text-sm ${
+                className={`flex items-center gap-2 font-extrabold px-8 py-3.5 rounded-2xl transition-all shadow-lg text-xs ${
                   hasRedFlags
                     ? "bg-red-600 hover:bg-red-700 text-white shadow-red-500/20"
                     : "bg-emerald-600 hover:bg-emerald-700 text-white shadow-emerald-500/20"
