@@ -9,10 +9,8 @@ type EmergencyModalProps = {
 export function EmergencyModal({ open, onDismiss }: EmergencyModalProps) {
   return (
     <Dialog open={open} onOpenChange={(next) => !next && onDismiss()}>
-      <DialogContent
-        showCloseButton={false}
-        className="overflow-hidden border-0 bg-destructive p-0 text-destructive-foreground sm:max-w-lg"
-      >
+      <DialogContent className="overflow-hidden border-0 bg-destructive p-0 text-destructive-foreground sm:max-w-lg">
+        <div className="sr-only">Emergency warning</div>
         <div className="p-6 sm:p-8">
           <div className="flex size-12 items-center justify-center rounded-full bg-destructive-foreground/15">
             <AlertTriangle className="size-6" />
