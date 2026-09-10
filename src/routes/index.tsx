@@ -38,13 +38,13 @@ import {
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "SkinCheck Triage — Bite & Rash Intake" },
+      { title: "BiteID — Bite & Rash Intake (Alpha)" },
       {
         name: "description",
         content:
           "Upload a photo of a bite or rash, answer a few questions, and get a ranked assessment with a skin-tone reference guide.",
       },
-      { property: "og:title", content: "SkinCheck Triage — Bite & Rash Intake" },
+      { property: "og:title", content: "BiteID — Bite & Rash Intake (Alpha)" },
       {
         property: "og:description",
         content:
@@ -105,10 +105,13 @@ function TriagePage() {
           <span className="flex size-9 items-center justify-center rounded-xl bg-primary text-primary-foreground">
             <Stethoscope className="size-5" />
           </span>
-          <div>
-            <p className="font-display text-base font-semibold text-foreground">SkinCheck Triage</p>
-            <p className="text-xs text-muted-foreground">Bites, stings and skin reactions</p>
+          <div className="flex flex-wrap items-baseline gap-2">
+            <p className="font-display text-base font-semibold text-foreground">BiteID</p>
+            <span className="rounded-full bg-caution/20 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-caution-foreground">
+              Alpha — testing only
+            </span>
           </div>
+          <p className="text-xs text-muted-foreground">Bites, stings and skin reactions</p>
         </div>
       </header>
 
