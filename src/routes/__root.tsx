@@ -77,15 +77,17 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "SkinCheck Triage" },
+      { title: "BiteID" },
       {
         name: "description",
-        content: "Guided intake for bites, stings and skin reactions with ranked assessments.",
+        content:
+          "BiteID is an alpha prototype for testing only: guided intake for bites, stings and skin reactions with ranked assessments.",
       },
-      { property: "og:title", content: "SkinCheck Triage" },
+      { property: "og:title", content: "BiteID" },
       {
         property: "og:description",
-        content: "Guided intake for bites, stings and skin reactions with ranked assessments.",
+        content:
+          "BiteID is an alpha prototype for testing only: guided intake for bites, stings and skin reactions with ranked assessments.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
