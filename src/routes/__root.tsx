@@ -80,12 +80,14 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { title: "BiteID" },
       {
         name: "description",
-        content: "Guided intake for bites, stings and skin reactions with ranked assessments.",
+        content:
+          "BiteID is an alpha prototype for testing only: guided intake for bites, stings and skin reactions with ranked assessments.",
       },
       { property: "og:title", content: "BiteID" },
       {
         property: "og:description",
-        content: "Guided intake for bites, stings and skin reactions with ranked assessments.",
+        content:
+          "BiteID is an alpha prototype for testing only: guided intake for bites, stings and skin reactions with ranked assessments.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },

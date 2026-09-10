@@ -42,13 +42,13 @@ export const Route = createFileRoute("/")({
       {
         name: "description",
         content:
-          "Upload a photo of a bite or rash, answer a few questions, and get a ranked assessment with a skin-tone reference guide.",
+          "Alpha testing only: upload a photo of a bite or rash, answer a few questions, and see a ranked assessment with a skin-tone reference guide.",
       },
       { property: "og:title", content: "BiteID — Bite & Rash Intake (Alpha)" },
       {
         property: "og:description",
         content:
-          "Upload a photo of a bite or rash, answer a few questions, and get a ranked assessment with a skin-tone reference guide.",
+          "Alpha testing only: upload a photo of a bite or rash, answer a few questions, and see a ranked assessment with a skin-tone reference guide.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
