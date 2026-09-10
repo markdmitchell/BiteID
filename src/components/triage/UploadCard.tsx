@@ -105,7 +105,6 @@ export function UploadCard({ title, hint, required, file, onChange }: UploadCard
         ref={inputRef}
         type="file"
         accept="image/*"
-        capture="environment"
         className="hidden"
         onChange={(e) => onChange(e.target.files?.[0] ?? null)}
       />
