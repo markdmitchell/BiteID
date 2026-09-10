@@ -313,8 +313,10 @@ function TriagePage() {
         )}
 
         <p className="mt-10 text-xs leading-relaxed text-muted-foreground">
-          This tool provides general information only and is not a diagnosis. Always consult a
-          qualified clinician about a bite, sting or changing skin lesion.
+          <span className="font-semibold text-foreground">Alpha version — for testing only.</span>{" "}
+          BiteID is an unfinished prototype and is not a medical service. This tool provides general
+          information only and is not a diagnosis. Always consult a qualified clinician about a
+          bite, sting or changing skin lesion.
         </p>
       </div>
 
