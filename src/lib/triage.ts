@@ -105,7 +105,19 @@ export type TriageResponse = {
   [key: string]: unknown;
 };
 
-export const API_URL = import.meta.env["VITE_API_URL"] as string | undefined;
+const API_URL = import.meta.env["VITE_API_URL"] as string | undefined;
+
+/**
+ * Neutral placeholder shown when the service cannot be reached. Contains no
+ * findings, scoring or interpretation — only generic safety guidance.
+ */
+export const FALLBACK_RESPONSE: TriageResponse = {
+  results: [],
+  guidance:
+    "We could not reach the assessment service, so there is nothing ranked to show for this intake yet.\n\nKeep the area clean, watch for spreading redness, swelling or fever, and speak with a clinician if anything worsens.",
+  disclaimer:
+    "Alpha version — for testing only. BiteID is not a medical service and does not provide a diagnosis.",
+};
 
 export function buildTriageFormData(state: TriageFormState): FormData {
   const fd = new FormData();
