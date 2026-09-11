@@ -328,6 +328,45 @@ export const REFERENCE_ASSET_REGISTRY: VisualReferenceAsset[] = [
     ],
     sourceAttribution: "CDC PHIL #9921",
   },
+  {
+    id: "ref_midge_2",
+    pestId: "no_see_um",
+    imageUrl: SVG_REF_DARK_MOSQUITO,
+    isAIGenerated: true,
+    skinTypeCategory: "V-VI",
+    clinicalDescription: "Clusters of hyperpigmented pinpoint papules with subtle induration on rich melanin skin.",
+    hallmarkFeatures: [
+      "Dark hyperpigmented pinpoint dots",
+      "Pronounced delayed pruritus and post-inflammatory hyperpigmentation",
+    ],
+    sourceAttribution: "AI Clinical Model Reference",
+  },
+  {
+    id: "ref_black_fly_2",
+    pestId: "black_fly",
+    imageUrl: SVG_REF_RECLUSE_DARK,
+    isAIGenerated: true,
+    skinTypeCategory: "V-VI",
+    clinicalDescription: "Violaceous indurated plaque with central dark hemorrhagic punctum on dark skin tone.",
+    hallmarkFeatures: [
+      "Dark central blood spot with purplish induration",
+      "Severe localized warmth and tenderness",
+    ],
+    sourceAttribution: "AI Clinical Model Reference",
+  },
+  {
+    id: "ref_blister_beetle_2",
+    pestId: "blister_beetle",
+    imageUrl: SVG_REF_RECLUSE_DARK,
+    isAIGenerated: true,
+    skinTypeCategory: "V-VI",
+    clinicalDescription: "Tense hyperpigmented bullae with fluid accumulation on dark melanin-rich skin tone.",
+    hallmarkFeatures: [
+      "Tense dark bullae without central punctum mark",
+      "Linear chemical contact mark with post-inflammatory hyperpigmentation risk",
+    ],
+    sourceAttribution: "AI Clinical Model Reference",
+  },
 ];
 
 export function getReferenceAssetsForPest(
