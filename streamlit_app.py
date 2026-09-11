@@ -361,45 +361,39 @@ if st.button("🚀 Run BiteID Triage Assessment", type="primary", use_container_
         st.error("Immediate emergency medical evaluation is recommended. Red-flag systemic symptoms (such as breathing difficulty, facial swelling, severe dizziness, or spreading hives) may indicate anaphylaxis. Please call 911 or visit the nearest emergency department immediately.")
         st.stop()
 
-    # 2. CHECK GEMINI API KEY AT TOP OF ROUTE / ACTION
+    # 2. CHECK GEMINI API KEY & FALL BACK TO DETERMINISTIC BAYESIAN PRIOR ENGINE
     api_key = os.environ.get("GEMINI_API_KEY")
-    if not api_key:
-        st.error("🚨 Missing GEMINI_API_KEY environment variable. Please configure GEMINI_API_KEY in environment variables to run BiteID triage analysis.")
-        st.stop()
+    bug_taxonomy = None
+    lesion_morphology = "other"
 
-    # 3. REQUIRE LESION IMAGE FILE
-    if not lesion_file:
-        st.error("📷 Lesion reaction photo is required to run BiteID triage analysis.")
-        st.stop()
+    if api_key and lesion_file:
+        # EXECUTE MULTI-NODE VISION INFERENCE
+        with st.spinner("🤖 Running Multi-Node AI Triage Engine (Node A Entomologist & Node B Dermatologist)..."):
+            try:
+                # Node A: Entomologist
+                if culprit_file:
+                    culprit_bytes = culprit_file.read()
+                    node_a_res = call_gemini_vision(
+                        image_bytes=culprit_bytes,
+                        mime_type=culprit_file.type or "image/jpeg",
+                        prompt_text=PROMPT_NODE_A,
+                        api_key=api_key
+                    )
+                    bug_taxonomy = node_a_res.get("identifiedBugTaxonomy")
 
-    # 4. EXECUTE MULTI-NODE VISION INFERENCE
-    with st.spinner("🤖 Running Multi-Node AI Triage Engine (Node A Entomologist & Node B Dermatologist)..."):
-        try:
-            # Node A: Entomologist
-            bug_taxonomy = None
-            if culprit_file:
-                culprit_bytes = culprit_file.read()
-                node_a_res = call_gemini_vision(
-                    image_bytes=culprit_bytes,
-                    mime_type=culprit_file.type or "image/jpeg",
-                    prompt_text=PROMPT_NODE_A,
+                # Node B: Dermatologist
+                lesion_bytes = lesion_file.read()
+                node_b_res = call_gemini_vision(
+                    image_bytes=lesion_bytes,
+                    mime_type=lesion_file.type or "image/jpeg",
+                    prompt_text=PROMPT_NODE_B,
                     api_key=api_key
                 )
-                bug_taxonomy = node_a_res.get("identifiedBugTaxonomy")
-
-            # Node B: Dermatologist
-            lesion_bytes = lesion_file.read()
-            node_b_res = call_gemini_vision(
-                image_bytes=lesion_bytes,
-                mime_type=lesion_file.type or "image/jpeg",
-                prompt_text=PROMPT_NODE_B,
-                api_key=api_key
-            )
-            lesion_morphology = node_b_res.get("lesionMorphology", "other")
-
-        except Exception as e:
-            st.error(f"🚨 Multi-Node Vision Pipeline Error: {str(e)}")
-            st.stop()
+                lesion_morphology = node_b_res.get("lesionMorphology", "other")
+            except Exception as e:
+                st.warning(f"⚠️ External Vision API unavailable ({str(e)}). Operating in deterministic Bayesian prior synthesis mode.")
+    elif not api_key:
+        st.info("ℹ️ GEMINI_API_KEY is not configured in environment. Operating in deterministic Bayesian prior synthesis mode.")
 
     # 5. Node C: Synthesizer & Mid-Atlantic Prior Rule
     probs = evaluate_regional_likelihood(
