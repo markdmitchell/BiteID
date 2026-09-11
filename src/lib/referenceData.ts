@@ -203,6 +203,82 @@ export const REFERENCE_ASSET_REGISTRY: VisualReferenceAsset[] = [
     ],
     sourceAttribution: "CDC PHIL #6801",
   },
+
+  // Honey Bee References
+  {
+    id: "ref_bee_1",
+    pestId: "honey_bee",
+    imageUrl: SVG_REF_LIGHT_MOSQUITO,
+    isAIGenerated: false,
+    skinTypeCategory: "I-II",
+    clinicalDescription: "Edematous wheal with central barbed stinger and surrounding erythema.",
+    hallmarkFeatures: [
+      "Barbed stinger left behind in central punctum",
+      "White central blanched eschar/blister",
+      "Immediate intense localized pain and swelling",
+    ],
+    sourceAttribution: "CDC PHIL #1192",
+  },
+
+  // Wasp / Yellow Jacket References
+  {
+    id: "ref_wasp_1",
+    pestId: "wasp",
+    imageUrl: SVG_REF_LIGHT_MOSQUITO,
+    isAIGenerated: false,
+    skinTypeCategory: "III-IV",
+    clinicalDescription: "Rapidly expanding erythematous welt without retained stinger.",
+    hallmarkFeatures: [
+      "Central punctum mark without retained stinger",
+      "Rapidly spreading local edema and warmth",
+    ],
+    sourceAttribution: "iNaturalist #44120",
+  },
+
+  // Bark Scorpion References
+  {
+    id: "ref_scorpion_1",
+    pestId: "scorpion",
+    imageUrl: SVG_REF_RECLUSE_LIGHT,
+    isAIGenerated: false,
+    skinTypeCategory: "I-II",
+    clinicalDescription: "Pinpoint stinger entry site with minimal local swelling but severe localized hyperesthesia.",
+    hallmarkFeatures: [
+      "Pinpoint central stinger mark",
+      "Minimal swelling despite severe burning pain and numbness",
+    ],
+    sourceAttribution: "CDC PHIL #3321",
+  },
+
+  // Horse Fly References
+  {
+    id: "ref_fly_1",
+    pestId: "horse_fly",
+    imageUrl: SVG_REF_RECLUSE_LIGHT,
+    isAIGenerated: false,
+    skinTypeCategory: "I-II",
+    clinicalDescription: "Lacerated skin wound with central hemorrhagic bleeding point and erythematous wheal.",
+    hallmarkFeatures: [
+      "Central bleeding punctum caused by scissor-like mouthparts",
+      "Immediate sharp pain and firm surrounding welt",
+    ],
+    sourceAttribution: "CDC PHIL #8820",
+  },
+
+  // Lice References
+  {
+    id: "ref_lice_1",
+    pestId: "lice",
+    imageUrl: SVG_REF_LIGHT_MOSQUITO,
+    isAIGenerated: false,
+    skinTypeCategory: "I-II",
+    clinicalDescription: "Linear excoriated papules on nape of neck and scalp hairline.",
+    hallmarkFeatures: [
+      "Small intensely itchy erythematous papules",
+      "Excoriation marks from repeated scratching",
+    ],
+    sourceAttribution: "CDC PHIL #2041",
+  },
 ];
 
 export function getReferenceAssetsForPest(

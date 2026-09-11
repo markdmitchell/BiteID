@@ -462,5 +462,85 @@
     "expectedSpecies": "lone_star_tick",
     "expectedMorphology": { "pattern": "annular_target", "centralFeatures": "punctum_bite_mark", "primaryReaction": "expanding_erythema" },
     "context": { "usState": "US-MO", "monthIndex": 6, "incidentLocation": "yard_garden", "timeElapsed": "over_2_days", "primarySensation": "mild_itch", "emergencyScreening": { "difficultyBreathing": false, "facialSwelling": false, "dizzinessOrConfusion": false, "spreadingHives": false } }
+  },
+  {
+    "id": "bee_01",
+    "name": "Honey Bee - Barbed Stinger & Acute Local Edema (Fair Skin)",
+    "skinTone": "Type I (Fair)",
+    "expectedSpecies": "honey_bee",
+    "expectedMorphology": { "pattern": "solitary_wheal", "centralFeatures": "punctum_bite_mark", "primaryReaction": "urticarial_hive" },
+    "context": { "usState": "US-VA", "monthIndex": 5, "incidentLocation": "yard_garden", "timeElapsed": "under_2h", "primarySensation": "severe_pain", "emergencyScreening": { "difficultyBreathing": false, "facialSwelling": false, "dizzinessOrConfusion": false, "spreadingHives": false } }
+  },
+  {
+    "id": "bee_02",
+    "name": "Honey Bee - Central Blanched Eschar (Dark Skin)",
+    "skinTone": "Type V (Dark)",
+    "expectedSpecies": "honey_bee",
+    "expectedMorphology": { "pattern": "solitary_wheal", "centralFeatures": "punctum_bite_mark", "primaryReaction": "urticarial_hive" },
+    "context": { "usState": "US-NC", "monthIndex": 6, "incidentLocation": "yard_garden", "timeElapsed": "under_2h", "primarySensation": "moderate_pain", "emergencyScreening": { "difficultyBreathing": false, "facialSwelling": false, "dizzinessOrConfusion": false, "spreadingHives": false } }
+  },
+  {
+    "id": "wasp_01",
+    "name": "Yellow Jacket - Rapidly Expanding Erythematous Welt (Light Skin)",
+    "skinTone": "Type II (Light)",
+    "expectedSpecies": "wasp",
+    "expectedMorphology": { "pattern": "solitary_wheal", "centralFeatures": "punctum_bite_mark", "primaryReaction": "urticarial_hive" },
+    "context": { "usState": "US-GA", "monthIndex": 7, "incidentLocation": "outdoor_other", "timeElapsed": "under_2h", "primarySensation": "severe_pain", "emergencyScreening": { "difficultyBreathing": false, "facialSwelling": false, "dizzinessOrConfusion": false, "spreadingHives": false } }
+  },
+  {
+    "id": "wasp_02",
+    "name": "Wasp Sting - Intense Local Edema (Deep Dark Skin)",
+    "skinTone": "Type VI (Deep Dark)",
+    "expectedSpecies": "wasp",
+    "expectedMorphology": { "pattern": "solitary_wheal", "centralFeatures": "none", "primaryReaction": "urticarial_hive" },
+    "context": { "usState": "US-FL", "monthIndex": 8, "incidentLocation": "garage_shed", "timeElapsed": "under_2h", "primarySensation": "severe_pain", "emergencyScreening": { "difficultyBreathing": false, "facialSwelling": false, "dizzinessOrConfusion": false, "spreadingHives": false } }
+  },
+  {
+    "id": "scorpion_01",
+    "name": "Bark Scorpion - Acute Hyperesthesia (Fair Skin)",
+    "skinTone": "Type I (Fair)",
+    "expectedSpecies": "scorpion",
+    "expectedMorphology": { "pattern": "solitary_wheal", "centralFeatures": "punctum_bite_mark", "primaryReaction": "urticarial_hive" },
+    "context": { "usState": "US-AZ", "monthIndex": 6, "incidentLocation": "garage_shed", "timeElapsed": "under_2h", "primarySensation": "severe_pain", "emergencyScreening": { "difficultyBreathing": false, "facialSwelling": false, "dizzinessOrConfusion": false, "spreadingHives": false } }
+  },
+  {
+    "id": "scorpion_02",
+    "name": "Bark Scorpion - Minimal Swelling with Severe Burning Pain (Olive Skin)",
+    "skinTone": "Type IV (Olive)",
+    "expectedSpecies": "scorpion",
+    "expectedMorphology": { "pattern": "solitary_wheal", "centralFeatures": "punctum_bite_mark", "primaryReaction": "urticarial_hive" },
+    "context": { "usState": "US-NM", "monthIndex": 7, "incidentLocation": "indoor_other", "timeElapsed": "under_2h", "primarySensation": "severe_pain", "emergencyScreening": { "difficultyBreathing": false, "facialSwelling": false, "dizzinessOrConfusion": false, "spreadingHives": false } }
+  },
+  {
+    "id": "fly_01",
+    "name": "Horse Fly - Lacerated Bleeding Bite (Medium Skin)",
+    "skinTone": "Type III (Medium)",
+    "expectedSpecies": "horse_fly",
+    "expectedMorphology": { "pattern": "solitary_wheal", "centralFeatures": "punctum_bite_mark", "primaryReaction": "urticarial_hive" },
+    "context": { "usState": "US-MI", "monthIndex": 6, "incidentLocation": "tall_grass_woods", "timeElapsed": "under_2h", "primarySensation": "severe_pain", "emergencyScreening": { "difficultyBreathing": false, "facialSwelling": false, "dizzinessOrConfusion": false, "spreadingHives": false } }
+  },
+  {
+    "id": "fly_02",
+    "name": "Deer Fly - Painful Hemorrhagic Punctum (Deep Dark Skin)",
+    "skinTone": "Type VI (Deep Dark)",
+    "expectedSpecies": "horse_fly",
+    "expectedMorphology": { "pattern": "solitary_wheal", "centralFeatures": "punctum_bite_mark", "primaryReaction": "urticarial_hive" },
+    "context": { "usState": "US-MN", "monthIndex": 7, "incidentLocation": "outdoor_other", "timeElapsed": "2_to_12h", "primarySensation": "moderate_pain", "emergencyScreening": { "difficultyBreathing": false, "facialSwelling": false, "dizzinessOrConfusion": false, "spreadingHives": false } }
+  },
+  {
+    "id": "lice_01",
+    "name": "Head Lice - Pruritic Scalp Hairline Papules (Light Skin)",
+    "skinTone": "Type II (Light)",
+    "expectedSpecies": "lice",
+    "expectedMorphology": { "pattern": "linear_grouped", "centralFeatures": "none", "primaryReaction": "excoriated_papule" },
+    "context": { "usState": "US-OH", "monthIndex": 9, "incidentLocation": "bed", "timeElapsed": "1_to_2_days", "primarySensation": "intense_itch", "emergencyScreening": { "difficultyBreathing": false, "facialSwelling": false, "dizzinessOrConfusion": false, "spreadingHives": false } }
+  },
+  {
+    "id": "lice_02",
+    "name": "Body Lice - Clothing Line Excoriated Papules (Dark Skin)",
+    "skinTone": "Type V (Dark)",
+    "expectedSpecies": "lice",
+    "expectedMorphology": { "pattern": "linear_grouped", "centralFeatures": "none", "primaryReaction": "excoriated_papule" },
+    "context": { "usState": "US-IL", "monthIndex": 10, "incidentLocation": "indoor_other", "timeElapsed": "over_2_days", "primarySensation": "intense_itch", "emergencyScreening": { "difficultyBreathing": false, "facialSwelling": false, "dizzinessOrConfusion": false, "spreadingHives": false } }
   }
 ]

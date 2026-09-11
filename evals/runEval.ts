@@ -13,7 +13,7 @@ interface GoldenProfile {
   context: TriageContext;
 }
 
-// Vector ID to canonical name map for 11 species
+// Vector ID to canonical name map for 16 species
 const SPECIES_NAMES: Record<string, string> = {
   blacklegged_tick: "Blacklegged (Deer) Tick",
   lone_star_tick: "Lone Star Tick",
@@ -26,6 +26,11 @@ const SPECIES_NAMES: Record<string, string> = {
   fire_ant: "Fire Ant",
   chigger: "Chigger (Harvest Mite)",
   kissing_bug: "Kissing Bug (Triatomine)",
+  honey_bee: "Honey Bee",
+  wasp: "Wasp / Yellow Jacket",
+  scorpion: "Bark Scorpion",
+  horse_fly: "Horse Fly / Deer Fly",
+  lice: "Head / Body Lice",
 };
 
 const SPECIES_KEYS = Object.keys(SPECIES_NAMES);
@@ -36,7 +41,7 @@ async function runEvaluation() {
   const profiles: GoldenProfile[] = JSON.parse(datasetRaw);
 
   console.log(`\n======================================================`);
-  console.log(`🧪 BiteID Deep Evaluation Harness - 60 Profile Clinical Benchmark`);
+  console.log(`🧪 BiteID Deep Evaluation Harness - 16-Species Clinical Benchmark`);
   console.log(`======================================================\n`);
   console.log(`Loaded ${profiles.length} clinical benchmark profiles from goldenDataset.json\n`);
 
@@ -173,15 +178,15 @@ async function runEvaluation() {
     console.log(`| **${group}** | ${stat.total} | **${acc}%** | ${status} |`);
   }
 
-  // Display 11-Species Confusion Matrix
-  console.log(`\n### 🔲 11-Species Diagnostic Confusion Matrix\n`);
-  console.log(`| Expected Species \\ Predicted | Deer Tick | Lone Star | Dog Tick | Mosquito | Bed Bug | Flea | Recluse | Widow | Fire Ant | Chigger | Kissing Bug |`);
-  console.log(`| :--- | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: |`);
+  // Display 16-Species Confusion Matrix
+  console.log(`\n### 🔲 16-Species Diagnostic Confusion Matrix\n`);
+  console.log(`| Expected Species \\ Predicted | Deer Tick | Lone Star | Dog Tick | Mosquito | Bed Bug | Flea | Recluse | Widow | Fire Ant | Chigger | Kissing Bug | Bee | Wasp | Scorpion | Horse Fly | Lice |`);
+  console.log(`| :--- | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: |`);
   for (const expectedKey of SPECIES_KEYS) {
     const row = confusionMatrix[expectedKey];
     if (!row) continue;
     console.log(
-      `| **${SPECIES_NAMES[expectedKey]}** | ${row.blacklegged_tick || 0} | ${row.lone_star_tick || 0} | ${row.dog_tick || 0} | ${row.mosquito || 0} | ${row.bed_bug || 0} | ${row.flea || 0} | ${row.brown_recluse || 0} | ${row.black_widow || 0} | ${row.fire_ant || 0} | ${row.chigger || 0} | ${row.kissing_bug || 0} |`
+      `| **${SPECIES_NAMES[expectedKey]}** | ${row.blacklegged_tick || 0} | ${row.lone_star_tick || 0} | ${row.dog_tick || 0} | ${row.mosquito || 0} | ${row.bed_bug || 0} | ${row.flea || 0} | ${row.brown_recluse || 0} | ${row.black_widow || 0} | ${row.fire_ant || 0} | ${row.chigger || 0} | ${row.kissing_bug || 0} | ${row.honey_bee || 0} | ${row.wasp || 0} | ${row.scorpion || 0} | ${row.horse_fly || 0} | ${row.lice || 0} |`
     );
   }
 

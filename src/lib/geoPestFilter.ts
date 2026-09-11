@@ -164,7 +164,7 @@ export const VECTOR_DATABASE: Record<string, VectorInfo> = {
       moderate_pain: 0.2,
       severe_pain: 0.05,
     },
-    baseWeight: 0.25,
+    baseWeight: 0.45,
     associatedPathogens: [],
     delayedRisks: ["Secondary excoriation infection"],
     firstAidAdvice: ["Wash bites with soap and water.", "Inspect mattress seams."],
@@ -281,9 +281,9 @@ export const VECTOR_DATABASE: Record<string, VectorInfo> = {
     },
     sensationScores: {
       severe_pain: 1.0,
-      intense_itch: 0.9,
-      moderate_pain: 0.7,
-      mild_itch: 0.3,
+      moderate_pain: 0.8,
+      intense_itch: 0.3,
+      mild_itch: 0.1,
       painless: 0.05,
     },
     baseWeight: 0.25,
@@ -348,7 +348,147 @@ export const VECTOR_DATABASE: Record<string, VectorInfo> = {
     associatedPathogens: ["Chagas Disease"],
     delayedRisks: ["Chronic Chagas Cardiomyopathy"],
     firstAidAdvice: ["Wash bite site thoroughly with soap and water."],
-    warningSigns: ["Painless eyelid swelling (Romaña sign) or firm nodule."],
+    warningSigns: ["Painless facial/eyelid edema (Romaña sign)."],
+  },
+  honey_bee: {
+    id: "honey_bee",
+    name: "Honey Bee",
+    scientificName: "Apis mellifera",
+    endemicStates: "ALL",
+    nonEndemicStates: [],
+    seasonalMultiplier: [0.1, 0.2, 0.5, 0.8, 1.0, 1.0, 1.0, 0.9, 0.7, 0.4, 0.2, 0.1],
+    habitatScores: {
+      yard_garden: 1.0,
+      outdoor_other: 0.9,
+      tall_grass_woods: 0.6,
+      garage_shed: 0.3,
+      indoor_other: 0.2,
+      bed: 0.05,
+    },
+    sensationScores: {
+      severe_pain: 1.0,
+      moderate_pain: 0.9,
+      intense_itch: 0.2,
+      mild_itch: 0.1,
+      painless: 0.05,
+    },
+    baseWeight: 0.35,
+    associatedPathogens: [],
+    delayedRisks: ["Anaphylaxis (IgE allergy)", "Secondary infection"],
+    firstAidAdvice: ["Scrape stinger off immediately with fingernail or card. Wash with soap and water."],
+    warningSigns: ["Barbed stinger in skin, difficulty breathing, or facial swelling."],
+  },
+  wasp: {
+    id: "wasp",
+    name: "Wasp / Yellow Jacket",
+    scientificName: "Vespula / Polistes spp.",
+    endemicStates: "ALL",
+    nonEndemicStates: [],
+    seasonalMultiplier: [0.1, 0.2, 0.5, 0.8, 1.0, 1.0, 1.0, 1.0, 0.8, 0.5, 0.2, 0.1],
+    habitatScores: {
+      yard_garden: 1.0,
+      outdoor_other: 0.9,
+      garage_shed: 0.8,
+      tall_grass_woods: 0.5,
+      indoor_other: 0.3,
+      bed: 0.05,
+    },
+    sensationScores: {
+      severe_pain: 1.0,
+      moderate_pain: 0.9,
+      intense_itch: 0.2,
+      mild_itch: 0.1,
+      painless: 0.05,
+    },
+    baseWeight: 0.35,
+    associatedPathogens: [],
+    delayedRisks: ["Anaphylactic Shock", "Toxic reaction"],
+    firstAidAdvice: ["Wash with soap and cold water. Apply ice pack."],
+    warningSigns: ["Rapidly expanding red welt, dizziness, or breathing difficulty."],
+  },
+  scorpion: {
+    id: "scorpion",
+    name: "Bark Scorpion",
+    scientificName: "Centruroides sculpturatus",
+    endemicStates: ["US-AZ", "US-NM", "US-NV", "US-CA", "US-TX", "US-UT"],
+    nonEndemicStates: ["US-NY", "US-MA", "US-ME", "US-WI", "US-MN", "US-AK", "US-HI"],
+    seasonalMultiplier: [0.2, 0.3, 0.6, 0.8, 1.0, 1.0, 1.0, 1.0, 0.8, 0.6, 0.3, 0.2],
+    habitatScores: {
+      garage_shed: 1.0,
+      indoor_other: 0.9,
+      outdoor_other: 0.8,
+      yard_garden: 0.6,
+      bed: 0.4,
+      tall_grass_woods: 0.3,
+    },
+    sensationScores: {
+      severe_pain: 1.0,
+      moderate_pain: 0.7,
+      painless: 0.1,
+      intense_itch: 0.1,
+      mild_itch: 0.1,
+    },
+    baseWeight: 0.4,
+    associatedPathogens: ["Neurotoxic venom"],
+    delayedRisks: ["Autonomic hyperactivation", "Neurotoxicity"],
+    firstAidAdvice: ["Wash sting site with soap and water. Apply cool compress."],
+    warningSigns: ["Severe burning pain, localized numbness/tingling, or muscle twitching."],
+  },
+  horse_fly: {
+    id: "horse_fly",
+    name: "Horse Fly / Deer Fly",
+    scientificName: "Tabanidae",
+    endemicStates: "ALL",
+    nonEndemicStates: [],
+    seasonalMultiplier: [0.05, 0.1, 0.3, 0.6, 0.9, 1.0, 1.0, 1.0, 0.7, 0.4, 0.1, 0.05],
+    habitatScores: {
+      tall_grass_woods: 1.0,
+      outdoor_other: 0.9,
+      yard_garden: 0.7,
+      garage_shed: 0.3,
+      indoor_other: 0.2,
+      bed: 0.05,
+    },
+    sensationScores: {
+      severe_pain: 1.0,
+      moderate_pain: 0.9,
+      intense_itch: 0.3,
+      mild_itch: 0.1,
+      painless: 0.05,
+    },
+    baseWeight: 0.35,
+    associatedPathogens: ["Tularemia"],
+    delayedRisks: ["Secondary infection of laceration"],
+    firstAidAdvice: ["Clean bite wound with soap and water. Apply hydrocortisone cream."],
+    warningSigns: ["Painful lacerated bite mark with central bleeding punctum."],
+  },
+  lice: {
+    id: "lice",
+    name: "Head / Body Lice",
+    scientificName: "Pediculus humanus",
+    endemicStates: "ALL",
+    nonEndemicStates: [],
+    seasonalMultiplier: [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0],
+    habitatScores: {
+      bed: 1.0,
+      indoor_other: 0.9,
+      garage_shed: 0.2,
+      yard_garden: 0.1,
+      tall_grass_woods: 0.05,
+      outdoor_other: 0.05,
+    },
+    sensationScores: {
+      intense_itch: 1.0,
+      mild_itch: 0.8,
+      painless: 0.3,
+      moderate_pain: 0.1,
+      severe_pain: 0.05,
+    },
+    baseWeight: 0.35,
+    associatedPathogens: ["Louse-borne Typhus", "Trench Fever"],
+    delayedRisks: ["Secondary excoriation infection"],
+    firstAidAdvice: ["Use pediculicide treatment or shampoo. Wash bedding in hot water."],
+    warningSigns: ["Itchy papules around nape of neck or along clothing seams."],
   },
 };
 
@@ -463,24 +603,44 @@ export function evaluateRegionalLikelihood(
       if ((lower.includes("solenopsis") || lower.includes("fire ant")) && key === "fire_ant") {
         score *= 10.0;
       }
+      if ((lower.includes("apis") || lower.includes("honey bee") || lower.includes("bee")) && key === "honey_bee") {
+        score *= 10.0;
+      }
+      if ((lower.includes("vespula") || lower.includes("wasp") || lower.includes("yellow jacket")) && key === "wasp") {
+        score *= 10.0;
+      }
+      if ((lower.includes("centruroides") || lower.includes("scorpion")) && key === "scorpion") {
+        score *= 10.0;
+      }
+      if ((lower.includes("tabanidae") || lower.includes("horse fly") || lower.includes("deer fly")) && key === "horse_fly") {
+        score *= 10.0;
+      }
+      if ((lower.includes("pediculus") || lower.includes("lice")) && key === "lice") {
+        score *= 10.0;
+      }
     }
 
     // 5. Morphological Overrides & Multipliers
     if (morphObj) {
       if (morphObj.pattern === "linear_grouped") {
-        if (key === "bed_bug") score *= 5.0;
-        if (key === "flea") score *= 3.0;
+        if (key === "bed_bug") score *= 10.0;
+        if (key === "flea") score *= 4.0;
         if (key === "chigger") score *= 4.0;
+        if (key === "lice") score *= 5.0;
       }
       if (morphObj.pattern === "solitary_wheal" && morphObj.centralFeatures === "punctum_bite_mark") {
-        if (key === "mosquito") score *= 3.0;
-        if (key === "fire_ant" && sensation === "severe_pain") score *= 4.0;
-        if (key === "black_widow" && sensation === "severe_pain") score *= 5.0;
+        if (key === "mosquito") score *= 4.0;
+        if (key === "fire_ant" && (sensation === "severe_pain" || sensation === "intense_itch")) score *= 9.0;
+        if (key === "honey_bee" && (sensation === "severe_pain" || sensation === "moderate_pain")) score *= 9.0;
+        if (key === "wasp" && (sensation === "severe_pain" || sensation === "moderate_pain")) score *= 9.0;
+        if (key === "scorpion" && sensation === "severe_pain") score *= 9.0;
+        if (key === "horse_fly" && (sensation === "severe_pain" || sensation === "moderate_pain")) score *= 9.0;
       }
       if (morphObj.pattern === "scattered_papules" || morphObj.primaryReaction === "excoriated_papule") {
-        if (key === "flea") score *= 4.0;
-        if (key === "bed_bug") score *= 2.0;
-        if (key === "chigger") score *= 4.0;
+        if (key === "lice") score *= 8.0;
+        if (key === "flea") score *= 5.0;
+        if (key === "chigger") score *= 5.0;
+        if (key === "bed_bug") score *= 0.3;
       }
       if (
         morphObj.centralFeatures === "necrotic_ulcer" ||

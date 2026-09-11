@@ -295,6 +295,116 @@ VECTOR_DATABASE: List[Dict[str, Any]] = [
         "warningSignsToWatch": [
             "Painless facial/eyelid edema (Romaña sign) or firm painless nodule at bite site."
         ]
+    },
+    {
+        "id": "honey_bee",
+        "pestName": "Honey Bee",
+        "name": "Honey Bee",
+        "scientificName": "Apis mellifera",
+        "endemicStates": ["ALL"],
+        "peakMonths": [3, 4, 5, 6, 7, 8, 9],
+        "habitats": ["yard_garden", "outdoor_other"],
+        "sensations": ["severe_pain", "moderate_pain"],
+        "morphologies": ["edematous_wheal"],
+        "associatedPathogens": [],
+        "delayedRisks": ["Anaphylaxis (IgE-mediated Systemic Allergy)", "Secondary Bacterial Infection"],
+        "firstAidAdvice": [
+            "Remove stinger immediately by scraping horizontally with a fingernail or credit card (do NOT squeeze with tweezers).",
+            "Wash sting site thoroughly with soap and water.",
+            "Apply ice pack or cold compress for 10-15 minutes to control edema."
+        ],
+        "warningSignsToWatch": [
+            "Barbed stinger retained in central white punctum.",
+            "Rapidly spreading hives, lip/tongue swelling, or difficulty breathing (Emergency Anaphylaxis)."
+        ]
+    },
+    {
+        "id": "wasp",
+        "pestName": "Wasp / Yellow Jacket",
+        "name": "Wasp / Yellow Jacket",
+        "scientificName": "Vespula / Polistes spp.",
+        "endemicStates": ["ALL"],
+        "peakMonths": [3, 4, 5, 6, 7, 8, 9, 10],
+        "habitats": ["yard_garden", "outdoor_other", "garage_shed"],
+        "sensations": ["severe_pain", "moderate_pain"],
+        "morphologies": ["edematous_wheal"],
+        "associatedPathogens": [],
+        "delayedRisks": ["Anaphylactic Shock", "Multi-sting Systemic Toxic Reaction"],
+        "firstAidAdvice": [
+            "Wash sting area immediately with soap and cold water.",
+            "Apply ice pack wrapped in a cloth to dull acute burning pain.",
+            "Elevate affected limb if sting occurred on arm or leg."
+        ],
+        "warningSignsToWatch": [
+            "Rapidly expanding warm erythematous welt without retained stinger.",
+            "Systemic symptoms such as dizziness, throat tightness, or generalized hives."
+        ]
+    },
+    {
+        "id": "scorpion",
+        "pestName": "Bark Scorpion",
+        "name": "Bark Scorpion",
+        "scientificName": "Centruroides sculpturatus",
+        "endemicStates": [
+            "US-AZ", "US-NM", "US-NV", "US-CA", "US-TX", "US-UT"
+        ],
+        "peakMonths": [3, 4, 5, 6, 7, 8, 9, 10],
+        "habitats": ["garage_shed", "indoor_other", "outdoor_other"],
+        "sensations": ["severe_pain"],
+        "morphologies": ["edematous_wheal", "other"],
+        "associatedPathogens": ["Neurotoxic peptides"],
+        "delayedRisks": ["Autonomic Hyperactivation", "Cranial Nerve Dysfunction"],
+        "firstAidAdvice": [
+            "Wash sting site with mild soap and water.",
+            "Apply cool compress (10 min on, 10 min off). Do NOT apply ice directly.",
+            "Keep affected area still and lower than heart level."
+        ],
+        "warningSignsToWatch": [
+            "Severe burning pain with minimal local swelling but intense localized numbness/tingling.",
+            "Involuntary eye movements, muscle twitching, or difficulty swallowing."
+        ]
+    },
+    {
+        "id": "horse_fly",
+        "pestName": "Horse Fly / Deer Fly",
+        "name": "Horse Fly / Deer Fly",
+        "scientificName": "Tabanidae",
+        "endemicStates": ["ALL"],
+        "peakMonths": [4, 5, 6, 7, 8, 9],
+        "habitats": ["tall_grass_woods", "outdoor_other", "yard_garden"],
+        "sensations": ["severe_pain", "moderate_pain"],
+        "morphologies": ["edematous_wheal", "other"],
+        "associatedPathogens": ["Tularemia (Francisella tularensis)"],
+        "delayedRisks": ["Secondary Bacterial Infection from lacerated wound"],
+        "firstAidAdvice": [
+            "Clean lacerating bite wound thoroughly with soap and warm water.",
+            "Apply antiseptic lotion or OTC hydrocortisone.",
+            "Avoid scratching open bite wound."
+        ],
+        "warningSignsToWatch": [
+            "Painful lacerated bite mark with central bleeding punctum and surrounding warm welt."
+        ]
+    },
+    {
+        "id": "lice",
+        "pestName": "Head / Body Lice",
+        "name": "Head / Body Lice",
+        "scientificName": "Pediculus humanus",
+        "endemicStates": ["ALL"],
+        "peakMonths": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11],
+        "habitats": ["bed", "indoor_other"],
+        "sensations": ["intense_itch"],
+        "morphologies": ["linear_cluster", "other"],
+        "associatedPathogens": ["Louse-borne Typhus (Rickettsia prowazekii)", "Trench Fever"],
+        "delayedRisks": ["Excoriation Infection & Pyoderma"],
+        "firstAidAdvice": [
+            "Wash hair and body thoroughly; use pediculicide shampoo or OTC treatment as directed.",
+            "Machine wash bedding and clothing in hot water (>130°F) and dry on high heat.",
+            "Inspect family members and close contacts."
+        ],
+        "warningSignsToWatch": [
+            "Intensely itchy red papules concentrated around nape of neck, behind ears, or along clothing friction lines."
+        ]
     }
 ]
 
@@ -449,6 +559,36 @@ def calculate_geographic_priors(
         elif "solenopsis" in lower_tax or "fire ant" in lower_tax:
             for v_id, cand in scored_candidates:
                 if v_id == "fire_ant":
+                    cand.probabilityScore = 0.98
+                    cand.probability = 0.98
+                    cand.confidence = "high"
+        elif "apis" in lower_tax or "honey bee" in lower_tax or "bee" in lower_tax:
+            for v_id, cand in scored_candidates:
+                if v_id == "honey_bee":
+                    cand.probabilityScore = 0.98
+                    cand.probability = 0.98
+                    cand.confidence = "high"
+        elif "vespula" in lower_tax or "wasp" in lower_tax or "yellow jacket" in lower_tax:
+            for v_id, cand in scored_candidates:
+                if v_id == "wasp":
+                    cand.probabilityScore = 0.98
+                    cand.probability = 0.98
+                    cand.confidence = "high"
+        elif "centruroides" in lower_tax or "scorpion" in lower_tax:
+            for v_id, cand in scored_candidates:
+                if v_id == "scorpion":
+                    cand.probabilityScore = 0.98
+                    cand.probability = 0.98
+                    cand.confidence = "high"
+        elif "tabanidae" in lower_tax or "horse fly" in lower_tax or "deer fly" in lower_tax:
+            for v_id, cand in scored_candidates:
+                if v_id == "horse_fly":
+                    cand.probabilityScore = 0.98
+                    cand.probability = 0.98
+                    cand.confidence = "high"
+        elif "pediculus" in lower_tax or "lice" in lower_tax:
+            for v_id, cand in scored_candidates:
+                if v_id == "lice":
                     cand.probabilityScore = 0.98
                     cand.probability = 0.98
                     cand.confidence = "high"
