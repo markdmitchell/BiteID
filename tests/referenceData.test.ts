@@ -24,6 +24,13 @@ describe("Reference Data Registry & Fitzpatrick Filter Engine", () => {
     const tickDark = getReferenceAssetsForPest("blacklegged_tick", "V-VI");
     expect(tickDark.length).toBeGreaterThan(0);
     expect(tickDark[0].skinTypeCategory).toBe("V-VI");
+
+    // Test discrete Fitzpatrick type filtering and fallback mapping
+    const mosquitoType1 = getReferenceAssetsForPest("mosquito", "Type I");
+    expect(mosquitoType1.length).toBeGreaterThan(0);
+
+    const tickType6 = getReferenceAssetsForPest("blacklegged_tick", "Type VI");
+    expect(tickType6.length).toBeGreaterThan(0);
   });
 
   it("includes mandatory clinical source attributions (CDC PHIL or AI Clinical Model)", () => {

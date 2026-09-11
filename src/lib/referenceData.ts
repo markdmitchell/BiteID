@@ -1,4 +1,5 @@
-export type FitzpatrickScale = 'I-II' | 'III-IV' | 'V-VI';
+export type DiscreteFitzpatrickType = 'Type I' | 'Type II' | 'Type III' | 'Type IV' | 'Type V' | 'Type VI';
+export type FitzpatrickScale = DiscreteFitzpatrickType | 'I-II' | 'III-IV' | 'V-VI';
 
 export interface VisualReferenceAsset {
   id: string;
@@ -286,15 +287,29 @@ export function getReferenceAssetsForPest(
   skinType?: FitzpatrickScale
 ): VisualReferenceAsset[] {
   const pestAssets = REFERENCE_ASSET_REGISTRY.filter((asset) => asset.pestId === pestId);
-  if (pestAssets.length === 0) {
-    // Fallback to mosquito assets if pestId not explicitly matched
-    return REFERENCE_ASSET_REGISTRY.filter((asset) => asset.pestId === "mosquito");
-  }
+  const pool = pestAssets.length > 0 ? pestAssets : REFERENCE_ASSET_REGISTRY.filter((asset) => asset.pestId === "mosquito");
 
   if (skinType) {
-    const filtered = pestAssets.filter((asset) => asset.skinTypeCategory === skinType);
-    if (filtered.length > 0) return filtered;
+    // Try exact match first
+    const exactMatches = pool.filter((asset) => asset.skinTypeCategory === skinType);
+    if (exactMatches.length > 0) return exactMatches;
+
+    // Map discrete types to legacy categories as fallback
+    const categoryMap: Record<string, FitzpatrickScale> = {
+      "Type I": "I-II",
+      "Type II": "I-II",
+      "Type III": "III-IV",
+      "Type IV": "III-IV",
+      "Type V": "V-VI",
+      "Type VI": "V-VI",
+    };
+
+    const fallbackCategory = categoryMap[skinType];
+    if (fallbackCategory) {
+      const fallbackMatches = pool.filter((asset) => asset.skinTypeCategory === fallbackCategory);
+      if (fallbackMatches.length > 0) return fallbackMatches;
+    }
   }
 
-  return pestAssets;
+  return pool;
 }

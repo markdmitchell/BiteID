@@ -19,7 +19,7 @@ export function ReferenceComparisonModal({
   pestName,
   userImageUrl,
 }: ReferenceComparisonModalProps) {
-  const [selectedSkinType, setSelectedSkinType] = useState<FitzpatrickScale>("I-II");
+  const [selectedSkinType, setSelectedSkinType] = useState<FitzpatrickScale>("Type I");
 
   if (!isOpen) return null;
 
@@ -52,33 +52,36 @@ export function ReferenceComparisonModal({
               Visual Reference Comparison: {pestName}
             </h2>
             <p className="text-xs sm:text-sm text-slate-500 mt-1">
-              Compare your reaction against verified CDC public health assets and AI clinical presentations across Fitzpatrick skin types.
+              Compare your reaction against verified CDC public health assets and AI clinical presentations across discrete Fitzpatrick skin phototypes.
             </p>
           </div>
 
           {/* Skin Type Filter Controls */}
           <div className="bg-slate-100/60 p-4 rounded-2xl border border-slate-200/80 space-y-2 backdrop-blur-md">
             <label className="text-xs font-bold text-slate-700 uppercase tracking-wider flex items-center gap-1.5">
-              <Filter className="w-3.5 h-3.5 text-emerald-600" /> Select Fitzpatrick Skin Tone Category:
+              <Filter className="w-3.5 h-3.5 text-emerald-600" /> Select Discrete Fitzpatrick Phototype:
             </label>
-            <div className="grid grid-cols-3 gap-2">
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-2">
               {[
-                { scale: "I-II" as FitzpatrickScale, label: "Types I - II", sub: "Fair / Light" },
-                { scale: "III-IV" as FitzpatrickScale, label: "Types III - IV", sub: "Medium / Olive" },
-                { scale: "V-VI" as FitzpatrickScale, label: "Types V - VI", sub: "Deep / Dark" },
+                { scale: "Type I" as FitzpatrickScale, label: "Type I", sub: "Pale White" },
+                { scale: "Type II" as FitzpatrickScale, label: "Type II", sub: "Fair / Beige" },
+                { scale: "Type III" as FitzpatrickScale, label: "Type III", sub: "Medium / Olive" },
+                { scale: "Type IV" as FitzpatrickScale, label: "Type IV", sub: "Light Brown" },
+                { scale: "Type V" as FitzpatrickScale, label: "Type V", sub: "Dark Brown" },
+                { scale: "Type VI" as FitzpatrickScale, label: "Type VI", sub: "Deeply Pigmented" },
               ].map((item) => (
                 <button
                   key={item.scale}
                   type="button"
                   onClick={() => setSelectedSkinType(item.scale)}
-                  className={`p-2.5 rounded-2xl border text-center transition-all ${
+                  className={`p-2 rounded-xl border text-center transition-all ${
                     selectedSkinType === item.scale
                       ? "border-emerald-500 bg-emerald-600 text-white font-extrabold shadow-md"
                       : "border-slate-200/80 bg-white/80 text-slate-700 hover:border-slate-300"
                   }`}
                 >
                   <p className="text-xs leading-none">{item.label}</p>
-                  <p className={`text-[10px] mt-1 ${selectedSkinType === item.scale ? "text-emerald-100" : "text-slate-400"}`}>
+                  <p className={`text-[9px] mt-1 truncate ${selectedSkinType === item.scale ? "text-emerald-100" : "text-slate-400"}`}>
                     {item.sub}
                   </p>
                 </button>
