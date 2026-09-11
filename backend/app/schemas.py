@@ -1,4 +1,4 @@
-from typing import List, Optional, Literal
+from typing import List, Optional, Literal, Any
 from pydantic import BaseModel, Field
 
 
@@ -121,6 +121,18 @@ class CandidateCulprit(BaseModel):
     warningSigns: List[str] = Field(default_factory=list)
 
 
+class TriageResultItem(BaseModel):
+    name: str
+    scientificName: Optional[str] = None
+    description: Optional[str] = None
+    confidence: float = 0.0
+    matchedFactors: List[str] = Field(default_factory=list)
+    associatedPathogens: List[str] = Field(default_factory=list)
+    delayedRisks: List[str] = Field(default_factory=list)
+    firstAidAdvice: List[str] = Field(default_factory=list)
+    warningSignsToWatch: List[str] = Field(default_factory=list)
+
+
 class AnalysisResult(BaseModel):
     isEmergencyRedirect: bool
     emergencyMessage: Optional[str] = None
@@ -128,5 +140,34 @@ class AnalysisResult(BaseModel):
     morphology: Optional[DermatologicalMorphology] = None
     visionAnalysis: Optional[VisionAnalysisOutput] = None
     rankedCandidates: List[CandidateCulprit]
+    results: List[TriageResultItem] = Field(default_factory=list)
     summary: str
     disclaimer: str
+
+
+def map_environment_string(env: Optional[str]) -> str:
+    if not env:
+        return "yard_garden"
+    env_lower = env.lower().strip()
+    if env_lower in ["woods", "tall_grass_woods", "forest", "trail"]:
+        return "tall_grass_woods"
+    if env_lower in ["yard", "yard_garden", "garden", "lawn"]:
+        return "yard_garden"
+    if env_lower in ["bed", "bedroom", "mattress"]:
+        return "bed"
+    if env_lower in ["garage", "garage_shed", "shed", "attic", "woodpile"]:
+        return "garage_shed"
+    if env_lower in ["indoor", "indoor_other", "office", "travel"]:
+        return "indoor_other"
+    return "outdoor_other"
+
+
+def map_duration_string(dur: Optional[str]) -> str:
+    if not dur:
+        return "under_2h"
+    dur_lower = dur.lower().strip()
+    if dur_lower in ["under-24h", "under_24h", "under_2h", "<2h", "hours"]:
+        return "under_2h"
+    if dur_lower in ["1-3d", "2_to_12h", "1_to_2_days", "1-2d", "days"]:
+        return "1_to_2_days"
+    return "over_2_days"

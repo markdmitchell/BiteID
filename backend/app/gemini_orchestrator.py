@@ -183,6 +183,21 @@ async def orchestrate_triage_pipeline(
 
     summary_text = f"Primary suspected vector: {primary_cause} ({top_candidate.probabilityScore * 100:.0f}% confidence score)." if top_candidate else "Analysis complete."
 
+    results_list = [
+        {
+            "name": c.name,
+            "scientificName": c.scientificName,
+            "description": f"Match probability {c.probabilityScore * 100:.0f}%. Matched: {', '.join(c.matchedFactors[:2]) if c.matchedFactors else 'Endemic geographic prior'}",
+            "confidence": c.probabilityScore,
+            "matchedFactors": c.matchedFactors,
+            "associatedPathogens": c.associatedPathogens,
+            "delayedRisks": c.delayedRisks,
+            "firstAidAdvice": c.firstAidAdvice,
+            "warningSignsToWatch": c.warningSignsToWatch,
+        }
+        for c in ranked_candidates
+    ]
+
     return AnalysisResult(
         isEmergencyRedirect=False,
         emergencyMessage=None,
@@ -190,6 +205,7 @@ async def orchestrate_triage_pipeline(
         morphology=morph_obj,
         visionAnalysis=vision_analysis,
         rankedCandidates=ranked_candidates,
+        results=results_list, # type: ignore
         summary=summary_text,
         disclaimer="DISCLAIMER: BiteID is an AI educational decision-support tool. It does not provide definitive medical diagnosis or treatment advice. Consult a healthcare provider for diagnosis."
     )

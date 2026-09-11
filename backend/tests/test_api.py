@@ -36,6 +36,23 @@ def test_emergency_redirect_short_circuit():
     assert len(data["rankedCandidates"]) == 0
 
 
+def test_lovable_payload_format():
+    # Tests direct Lovable FormData fields (environment, duration, emergency_flags)
+    response = client.post(
+        "/triage",
+        data={
+            "environment": "woods",
+            "duration": "under-24h",
+            "emergency_flags": json.dumps(["breathing"])
+        }
+    )
+
+    assert response.status_code == 200
+    data = response.json()
+    assert data["isEmergencyRedirect"] is True
+    assert "CRITICAL" in data["emergencyMessage"]
+
+
 def test_malformed_context_payload():
     response = client.post(
         "/api/analyze",
@@ -71,7 +88,7 @@ def test_payload_too_large():
     response = client.post(
         "/api/analyze",
         data={"context": context.model_dump_json()},
-        files={"lesion_image": ("large.jpg", large_buffer, "image/jpeg")}
+        files={"skin_lesion_image": ("large.jpg", large_buffer, "image/jpeg")}
     )
     assert response.status_code == 400
     assert "exceeds the 10MB limit" in response.json()["detail"]
