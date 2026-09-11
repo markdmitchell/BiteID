@@ -13,14 +13,19 @@ interface GoldenProfile {
   context: TriageContext;
 }
 
-// Vector ID to canonical name map
+// Vector ID to canonical name map for 11 species
 const SPECIES_NAMES: Record<string, string> = {
   blacklegged_tick: "Blacklegged (Deer) Tick",
+  lone_star_tick: "Lone Star Tick",
+  dog_tick: "American Dog Tick",
   mosquito: "Mosquito",
   bed_bug: "Bed Bug",
   flea: "Flea",
   brown_recluse: "Brown Recluse Spider",
   black_widow: "Black Widow Spider",
+  fire_ant: "Fire Ant",
+  chigger: "Chigger (Harvest Mite)",
+  kissing_bug: "Kissing Bug (Triatomine)",
 };
 
 const SPECIES_KEYS = Object.keys(SPECIES_NAMES);
@@ -31,13 +36,14 @@ async function runEvaluation() {
   const profiles: GoldenProfile[] = JSON.parse(datasetRaw);
 
   console.log(`\n======================================================`);
-  console.log(`🧪 BiteID Evaluation Harness - Clinical Benchmark`);
+  console.log(`🧪 BiteID Deep Evaluation Harness - 60 Profile Clinical Benchmark`);
   console.log(`======================================================\n`);
-  console.log(`Loaded ${profiles.length} clinical profiles from goldenDataset.json\n`);
+  console.log(`Loaded ${profiles.length} clinical benchmark profiles from goldenDataset.json\n`);
 
   let totalMorphologyMatches = 0;
   let totalMorphologyChecks = 0;
   let totalSpeciesCorrect = 0;
+  let totalTop3Hits = 0;
   let lymeCasesTotal = 0;
   let lymeCasesCorrect = 0;
 
@@ -95,6 +101,20 @@ async function runEvaluation() {
     const speciesMatch = topPredictedKey === profile.expectedSpecies;
     if (speciesMatch) totalSpeciesCorrect++;
 
+    // Evaluate Top-3 Recall Rate
+    const top3Keys: string[] = [];
+    for (const cand of result.rankedCandidates.slice(0, 3)) {
+      for (const [key, vector] of Object.entries(VECTOR_DATABASE)) {
+        if (vector.name === cand.name || vector.scientificName === cand.scientificName) {
+          top3Keys.push(key);
+          break;
+        }
+      }
+    }
+    if (top3Keys.includes(profile.expectedSpecies)) {
+      totalTop3Hits++;
+    }
+
     // Skin Tone Equity grouping
     let groupKey = "Types III-IV (Medium/Olive)";
     const tone = profile.skinTone;
@@ -127,22 +147,24 @@ async function runEvaluation() {
 
   const morphologyAccuracy = ((totalMorphologyMatches / totalMorphologyChecks) * 100).toFixed(1);
   const overallDiagnosticAccuracy = ((totalSpeciesCorrect / profiles.length) * 100).toFixed(1);
+  const top3RecallRate = ((totalTop3Hits / profiles.length) * 100).toFixed(1);
   const lymeAccuracy = lymeCasesTotal > 0 ? ((lymeCasesCorrect / lymeCasesTotal) * 100).toFixed(1) : "0.0";
 
-  // Display Evaluation Results Table
-  console.log(`### 📊 Benchmark Execution Summary\n`);
-  console.table(resultsTable);
+  // Display Evaluation Results Summary Table
+  console.log(`### 📊 60-Profile Benchmark Execution Summary (Sample View)\n`);
+  console.table(resultsTable.slice(0, 15));
 
-  // Display Markdown Summary Table
-  console.log(`\n### 📈 Accuracy Percentages & Metrics\n`);
+  // Display Markdown Metrics Summary Table
+  console.log(`\n### 📈 Comprehensive Diagnostic Accuracy Metrics\n`);
   console.log(`| Metric Category | Target Threshold | Achieved Accuracy | Result Status |`);
   console.log(`| :--- | :---: | :---: | :---: |`);
   console.log(`| **Morphology Extraction Accuracy** | >= 90.0% | **${morphologyAccuracy}%** | ${Number(morphologyAccuracy) >= 90 ? "✅ PASS" : "❌ FAIL"} |`);
   console.log(`| **Overall Top-1 Species Accuracy** | >= 80.0% | **${overallDiagnosticAccuracy}%** | ${Number(overallDiagnosticAccuracy) >= 80 ? "✅ PASS" : "❌ FAIL"} |`);
+  console.log(`| **Top-3 Differential Recall Rate** | >= 95.0% | **${top3RecallRate}%** | ${Number(top3RecallRate) >= 95 ? "✅ PASS" : "❌ FAIL"} |`);
   console.log(`| **Lyme Disease (EM) Top-1 Rank Accuracy** | **100.0%** | **${lymeAccuracy}%** | ${Number(lymeAccuracy) === 100 ? "✅ PASS" : "❌ FAIL"} |`);
 
   // Display Skin Tone Equity Table
-  console.log(`\n### 🎨 Fitzpatrick Skin Tone Equity Breakdown\n`);
+  console.log(`\n### 🎨 Fitzpatrick Skin Tone Equity Breakdown (Types I-VI)\n`);
   console.log(`| Skin Tone Category | Profile Count | Achieved Accuracy | Equity Status |`);
   console.log(`| :--- | :---: | :---: | :---: |`);
   for (const [group, stat] of Object.entries(skinToneStats)) {
@@ -151,15 +173,15 @@ async function runEvaluation() {
     console.log(`| **${group}** | ${stat.total} | **${acc}%** | ${status} |`);
   }
 
-  // Display Confusion Matrix
-  console.log(`\n### 🔲 Diagnostic Confusion Matrix\n`);
-  console.log(`| Expected Species \\ Predicted | Tick | Mosquito | Bed Bug | Flea | Brown Recluse | Widow |`);
-  console.log(`| :--- | :---: | :---: | :---: | :---: | :---: | :---: |`);
-  for (const expectedKey of ["blacklegged_tick", "mosquito", "bed_bug", "flea", "brown_recluse", "black_widow"]) {
+  // Display 11-Species Confusion Matrix
+  console.log(`\n### 🔲 11-Species Diagnostic Confusion Matrix\n`);
+  console.log(`| Expected Species \\ Predicted | Deer Tick | Lone Star | Dog Tick | Mosquito | Bed Bug | Flea | Recluse | Widow | Fire Ant | Chigger | Kissing Bug |`);
+  console.log(`| :--- | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: |`);
+  for (const expectedKey of SPECIES_KEYS) {
     const row = confusionMatrix[expectedKey];
     if (!row) continue;
     console.log(
-      `| **${SPECIES_NAMES[expectedKey]}** | ${row.blacklegged_tick} | ${row.mosquito} | ${row.bed_bug} | ${row.flea} | ${row.brown_recluse} | ${row.black_widow} |`
+      `| **${SPECIES_NAMES[expectedKey]}** | ${row.blacklegged_tick || 0} | ${row.lone_star_tick || 0} | ${row.dog_tick || 0} | ${row.mosquito || 0} | ${row.bed_bug || 0} | ${row.flea || 0} | ${row.brown_recluse || 0} | ${row.black_widow || 0} | ${row.fire_ant || 0} | ${row.chigger || 0} | ${row.kissing_bug || 0} |`
     );
   }
 
@@ -170,7 +192,7 @@ async function runEvaluation() {
     console.error(`\n❌ VERIFICATION GATE FAILED: Lyme Disease / Erythema Migrans top-1 accuracy was ${lymeAccuracy}%, expected 100.0%\n`);
     process.exit(1);
   } else {
-    console.log(`\n✅ VERIFICATION GATE PASSED: 100% Lyme Disease / Erythema Migrans top-1 rank achieved across all 30 profiles!\n`);
+    console.log(`\n✅ VERIFICATION GATE PASSED: 100% Lyme Disease / Erythema Migrans top-1 rank achieved across all 60 benchmark profiles!\n`);
     process.exit(0);
   }
 }

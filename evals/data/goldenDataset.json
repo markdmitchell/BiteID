@@ -4,719 +4,463 @@
     "name": "Lyme Disease - Classic Bullseye (Fair Skin)",
     "skinTone": "Type I (Fair)",
     "expectedSpecies": "blacklegged_tick",
-    "expectedMorphology": {
-      "pattern": "annular_target",
-      "centralFeatures": "punctum_bite_mark",
-      "primaryReaction": "expanding_erythema"
-    },
-    "context": {
-      "usState": "US-VA",
-      "monthIndex": 5,
-      "incidentLocation": "tall_grass_woods",
-      "timeElapsed": "over_2_days",
-      "primarySensation": "painless",
-      "emergencyScreening": {
-        "difficultyBreathing": false,
-        "facialSwelling": false,
-        "dizzinessOrConfusion": false,
-        "spreadingHives": false
-      }
-    }
+    "expectedMorphology": { "pattern": "annular_target", "centralFeatures": "punctum_bite_mark", "primaryReaction": "expanding_erythema" },
+    "context": { "usState": "US-VA", "monthIndex": 5, "incidentLocation": "tall_grass_woods", "timeElapsed": "over_2_days", "primarySensation": "painless", "emergencyScreening": { "difficultyBreathing": false, "facialSwelling": false, "dizzinessOrConfusion": false, "spreadingHives": false } }
   },
   {
     "id": "lyme_02",
     "name": "Lyme Disease - Expanding Annular Lesion (Medium Skin)",
     "skinTone": "Type III (Medium)",
     "expectedSpecies": "blacklegged_tick",
-    "expectedMorphology": {
-      "pattern": "annular_target",
-      "centralFeatures": "none",
-      "primaryReaction": "expanding_erythema"
-    },
-    "context": {
-      "usState": "US-NY",
-      "monthIndex": 6,
-      "incidentLocation": "yard_garden",
-      "timeElapsed": "over_2_days",
-      "primarySensation": "mild_itch",
-      "emergencyScreening": {
-        "difficultyBreathing": false,
-        "facialSwelling": false,
-        "dizzinessOrConfusion": false,
-        "spreadingHives": false
-      }
-    }
+    "expectedMorphology": { "pattern": "annular_target", "centralFeatures": "none", "primaryReaction": "expanding_erythema" },
+    "context": { "usState": "US-NY", "monthIndex": 6, "incidentLocation": "yard_garden", "timeElapsed": "over_2_days", "primarySensation": "mild_itch", "emergencyScreening": { "difficultyBreathing": false, "facialSwelling": false, "dizzinessOrConfusion": false, "spreadingHives": false } }
   },
   {
     "id": "lyme_03",
     "name": "Lyme Disease - Disseminated Erythema Migrans (Dark Skin)",
     "skinTone": "Type V (Dark)",
     "expectedSpecies": "blacklegged_tick",
-    "expectedMorphology": {
-      "pattern": "annular_target",
-      "centralFeatures": "clear_halo",
-      "primaryReaction": "expanding_erythema"
-    },
-    "context": {
-      "usState": "US-PA",
-      "monthIndex": 4,
-      "incidentLocation": "tall_grass_woods",
-      "timeElapsed": "1_to_2_days",
-      "primarySensation": "painless",
-      "emergencyScreening": {
-        "difficultyBreathing": false,
-        "facialSwelling": false,
-        "dizzinessOrConfusion": false,
-        "spreadingHives": false
-      }
-    }
+    "expectedMorphology": { "pattern": "annular_target", "centralFeatures": "clear_halo", "primaryReaction": "expanding_erythema" },
+    "context": { "usState": "US-PA", "monthIndex": 4, "incidentLocation": "tall_grass_woods", "timeElapsed": "1_to_2_days", "primarySensation": "painless", "emergencyScreening": { "difficultyBreathing": false, "facialSwelling": false, "dizzinessOrConfusion": false, "spreadingHives": false } }
   },
   {
     "id": "lyme_04",
     "name": "Lyme Disease - Hyperpigmented Targetoid Ring (Deep Dark Skin)",
     "skinTone": "Type VI (Deep Dark)",
     "expectedSpecies": "blacklegged_tick",
-    "expectedMorphology": {
-      "pattern": "annular_target",
-      "centralFeatures": "clear_halo",
-      "primaryReaction": "expanding_erythema"
-    },
-    "context": {
-      "usState": "US-CT",
-      "monthIndex": 6,
-      "incidentLocation": "tall_grass_woods",
-      "timeElapsed": "over_2_days",
-      "primarySensation": "painless",
-      "emergencyScreening": {
-        "difficultyBreathing": false,
-        "facialSwelling": false,
-        "dizzinessOrConfusion": false,
-        "spreadingHives": false
-      }
-    }
+    "expectedMorphology": { "pattern": "annular_target", "centralFeatures": "clear_halo", "primaryReaction": "expanding_erythema" },
+    "context": { "usState": "US-CT", "monthIndex": 6, "incidentLocation": "tall_grass_woods", "timeElapsed": "over_2_days", "primarySensation": "painless", "emergencyScreening": { "difficultyBreathing": false, "facialSwelling": false, "dizzinessOrConfusion": false, "spreadingHives": false } }
   },
   {
     "id": "lyme_05",
     "name": "Lyme Disease - Nymphal Tick Bite (Light Skin)",
     "skinTone": "Type II (Light)",
     "expectedSpecies": "blacklegged_tick",
-    "expectedMorphology": {
-      "pattern": "annular_target",
-      "centralFeatures": "punctum_bite_mark",
-      "primaryReaction": "expanding_erythema"
-    },
-    "context": {
-      "usState": "US-MA",
-      "monthIndex": 5,
-      "incidentLocation": "tall_grass_woods",
-      "timeElapsed": "1_to_2_days",
-      "primarySensation": "painless",
-      "emergencyScreening": {
-        "difficultyBreathing": false,
-        "facialSwelling": false,
-        "dizzinessOrConfusion": false,
-        "spreadingHives": false
-      }
-    }
+    "expectedMorphology": { "pattern": "annular_target", "centralFeatures": "punctum_bite_mark", "primaryReaction": "expanding_erythema" },
+    "context": { "usState": "US-MA", "monthIndex": 5, "incidentLocation": "tall_grass_woods", "timeElapsed": "1_to_2_days", "primarySensation": "painless", "emergencyScreening": { "difficultyBreathing": false, "facialSwelling": false, "dizzinessOrConfusion": false, "spreadingHives": false } }
   },
   {
     "id": "lyme_06",
-    "name": "Lyme Disease - Atypical Uniform Erythematous Plaque (Olive Skin)",
+    "name": "Lyme Disease - Atypical Uniform Plaque (Olive Skin)",
     "skinTone": "Type IV (Olive)",
     "expectedSpecies": "blacklegged_tick",
-    "expectedMorphology": {
-      "pattern": "annular_target",
-      "centralFeatures": "punctum_bite_mark",
-      "primaryReaction": "expanding_erythema"
-    },
-    "context": {
-      "usState": "US-NJ",
-      "monthIndex": 7,
-      "incidentLocation": "yard_garden",
-      "timeElapsed": "over_2_days",
-      "primarySensation": "mild_itch",
-      "emergencyScreening": {
-        "difficultyBreathing": false,
-        "facialSwelling": false,
-        "dizzinessOrConfusion": false,
-        "spreadingHives": false
-      }
-    }
+    "expectedMorphology": { "pattern": "annular_target", "centralFeatures": "punctum_bite_mark", "primaryReaction": "expanding_erythema" },
+    "context": { "usState": "US-NJ", "monthIndex": 7, "incidentLocation": "yard_garden", "timeElapsed": "over_2_days", "primarySensation": "mild_itch", "emergencyScreening": { "difficultyBreathing": false, "facialSwelling": false, "dizzinessOrConfusion": false, "spreadingHives": false } }
+  },
+  {
+    "id": "stari_01",
+    "name": "STARI - Lone Star Tick Targetoid Rash (Fair Skin)",
+    "skinTone": "Type I (Fair)",
+    "expectedSpecies": "lone_star_tick",
+    "expectedMorphology": { "pattern": "annular_target", "centralFeatures": "punctum_bite_mark", "primaryReaction": "expanding_erythema" },
+    "context": { "usState": "US-NC", "monthIndex": 5, "incidentLocation": "tall_grass_woods", "timeElapsed": "1_to_2_days", "primarySensation": "mild_itch", "emergencyScreening": { "difficultyBreathing": false, "facialSwelling": false, "dizzinessOrConfusion": false, "spreadingHives": false } }
+  },
+  {
+    "id": "stari_02",
+    "name": "STARI - Central Punctum Ring (Medium Skin)",
+    "skinTone": "Type III (Medium)",
+    "expectedSpecies": "lone_star_tick",
+    "expectedMorphology": { "pattern": "annular_target", "centralFeatures": "punctum_bite_mark", "primaryReaction": "expanding_erythema" },
+    "context": { "usState": "US-VA", "monthIndex": 6, "incidentLocation": "yard_garden", "timeElapsed": "over_2_days", "primarySensation": "intense_itch", "emergencyScreening": { "difficultyBreathing": false, "facialSwelling": false, "dizzinessOrConfusion": false, "spreadingHives": false } }
+  },
+  {
+    "id": "stari_03",
+    "name": "STARI - Hyperpigmented Targetoid Halo (Dark Skin)",
+    "skinTone": "Type V (Dark)",
+    "expectedSpecies": "lone_star_tick",
+    "expectedMorphology": { "pattern": "annular_target", "centralFeatures": "clear_halo", "primaryReaction": "expanding_erythema" },
+    "context": { "usState": "US-GA", "monthIndex": 7, "incidentLocation": "tall_grass_woods", "timeElapsed": "over_2_days", "primarySensation": "mild_itch", "emergencyScreening": { "difficultyBreathing": false, "facialSwelling": false, "dizzinessOrConfusion": false, "spreadingHives": false } }
+  },
+  {
+    "id": "rmsf_01",
+    "name": "RMSF - Spotted Maculopapular Wrist Reaction (Light Skin)",
+    "skinTone": "Type II (Light)",
+    "expectedSpecies": "dog_tick",
+    "expectedMorphology": { "pattern": "annular_target", "centralFeatures": "punctum_bite_mark", "primaryReaction": "expanding_erythema" },
+    "context": { "usState": "US-NC", "monthIndex": 5, "incidentLocation": "tall_grass_woods", "timeElapsed": "over_2_days", "primarySensation": "painless", "emergencyScreening": { "difficultyBreathing": false, "facialSwelling": false, "dizzinessOrConfusion": false, "spreadingHives": false } }
+  },
+  {
+    "id": "rmsf_02",
+    "name": "RMSF - Ankle Macular Eruption (Olive Skin)",
+    "skinTone": "Type IV (Olive)",
+    "expectedSpecies": "dog_tick",
+    "expectedMorphology": { "pattern": "annular_target", "centralFeatures": "punctum_bite_mark", "primaryReaction": "expanding_erythema" },
+    "context": { "usState": "US-TN", "monthIndex": 6, "incidentLocation": "yard_garden", "timeElapsed": "1_to_2_days", "primarySensation": "mild_itch", "emergencyScreening": { "difficultyBreathing": false, "facialSwelling": false, "dizzinessOrConfusion": false, "spreadingHives": false } }
+  },
+  {
+    "id": "rmsf_03",
+    "name": "RMSF - Hyperpigmented Petechial Rash (Deep Dark Skin)",
+    "skinTone": "Type VI (Deep Dark)",
+    "expectedSpecies": "dog_tick",
+    "expectedMorphology": { "pattern": "annular_target", "centralFeatures": "punctum_bite_mark", "primaryReaction": "expanding_erythema" },
+    "context": { "usState": "US-OK", "monthIndex": 7, "incidentLocation": "tall_grass_woods", "timeElapsed": "over_2_days", "primarySensation": "painless", "emergencyScreening": { "difficultyBreathing": false, "facialSwelling": false, "dizzinessOrConfusion": false, "spreadingHives": false } }
   },
   {
     "id": "mosquito_01",
     "name": "Mosquito - Acute Urticarial Wheal",
     "skinTone": "Type II (Light)",
     "expectedSpecies": "mosquito",
-    "expectedMorphology": {
-      "pattern": "solitary_wheal",
-      "centralFeatures": "punctum_bite_mark",
-      "primaryReaction": "urticarial_hive"
-    },
-    "context": {
-      "usState": "US-VA",
-      "monthIndex": 6,
-      "incidentLocation": "yard_garden",
-      "timeElapsed": "under_2h",
-      "primarySensation": "intense_itch",
-      "emergencyScreening": {
-        "difficultyBreathing": false,
-        "facialSwelling": false,
-        "dizzinessOrConfusion": false,
-        "spreadingHives": false
-      }
-    }
+    "expectedMorphology": { "pattern": "solitary_wheal", "centralFeatures": "punctum_bite_mark", "primaryReaction": "urticarial_hive" },
+    "context": { "usState": "US-VA", "monthIndex": 6, "incidentLocation": "yard_garden", "timeElapsed": "under_2h", "primarySensation": "intense_itch", "emergencyScreening": { "difficultyBreathing": false, "facialSwelling": false, "dizzinessOrConfusion": false, "spreadingHives": false } }
   },
   {
     "id": "mosquito_02",
     "name": "Mosquito - Solitary Forearm Reaction",
     "skinTone": "Type IV (Olive)",
     "expectedSpecies": "mosquito",
-    "expectedMorphology": {
-      "pattern": "solitary_wheal",
-      "centralFeatures": "punctum_bite_mark",
-      "primaryReaction": "urticarial_hive"
-    },
-    "context": {
-      "usState": "US-FL",
-      "monthIndex": 7,
-      "incidentLocation": "outdoor_other",
-      "timeElapsed": "2_to_12h",
-      "primarySensation": "intense_itch",
-      "emergencyScreening": {
-        "difficultyBreathing": false,
-        "facialSwelling": false,
-        "dizzinessOrConfusion": false,
-        "spreadingHives": false
-      }
-    }
+    "expectedMorphology": { "pattern": "solitary_wheal", "centralFeatures": "punctum_bite_mark", "primaryReaction": "urticarial_hive" },
+    "context": { "usState": "US-FL", "monthIndex": 7, "incidentLocation": "outdoor_other", "timeElapsed": "2_to_12h", "primarySensation": "intense_itch", "emergencyScreening": { "difficultyBreathing": false, "facialSwelling": false, "dizzinessOrConfusion": false, "spreadingHives": false } }
   },
   {
     "id": "mosquito_03",
     "name": "Mosquito - Immediate Histamine Flare",
     "skinTone": "Type III (Medium)",
     "expectedSpecies": "mosquito",
-    "expectedMorphology": {
-      "pattern": "solitary_wheal",
-      "centralFeatures": "punctum_bite_mark",
-      "primaryReaction": "urticarial_hive"
-    },
-    "context": {
-      "usState": "US-NC",
-      "monthIndex": 5,
-      "incidentLocation": "yard_garden",
-      "timeElapsed": "under_2h",
-      "primarySensation": "intense_itch",
-      "emergencyScreening": {
-        "difficultyBreathing": false,
-        "facialSwelling": false,
-        "dizzinessOrConfusion": false,
-        "spreadingHives": false
-      }
-    }
+    "expectedMorphology": { "pattern": "solitary_wheal", "centralFeatures": "punctum_bite_mark", "primaryReaction": "urticarial_hive" },
+    "context": { "usState": "US-NC", "monthIndex": 5, "incidentLocation": "yard_garden", "timeElapsed": "under_2h", "primarySensation": "intense_itch", "emergencyScreening": { "difficultyBreathing": false, "facialSwelling": false, "dizzinessOrConfusion": false, "spreadingHives": false } }
   },
   {
     "id": "mosquito_04",
     "name": "Mosquito - Elevated Papular Hive (Deep Dark Skin)",
     "skinTone": "Type VI (Deep Dark)",
     "expectedSpecies": "mosquito",
-    "expectedMorphology": {
-      "pattern": "solitary_wheal",
-      "centralFeatures": "punctum_bite_mark",
-      "primaryReaction": "urticarial_hive"
-    },
-    "context": {
-      "usState": "US-GA",
-      "monthIndex": 8,
-      "incidentLocation": "outdoor_other",
-      "timeElapsed": "2_to_12h",
-      "primarySensation": "intense_itch",
-      "emergencyScreening": {
-        "difficultyBreathing": false,
-        "facialSwelling": false,
-        "dizzinessOrConfusion": false,
-        "spreadingHives": false
-      }
-    }
+    "expectedMorphology": { "pattern": "solitary_wheal", "centralFeatures": "punctum_bite_mark", "primaryReaction": "urticarial_hive" },
+    "context": { "usState": "US-GA", "monthIndex": 8, "incidentLocation": "outdoor_other", "timeElapsed": "2_to_12h", "primarySensation": "intense_itch", "emergencyScreening": { "difficultyBreathing": false, "facialSwelling": false, "dizzinessOrConfusion": false, "spreadingHives": false } }
   },
   {
     "id": "mosquito_05",
     "name": "Mosquito - Large Local Reaction (Fair Skin)",
     "skinTone": "Type I (Fair)",
     "expectedSpecies": "mosquito",
-    "expectedMorphology": {
-      "pattern": "solitary_wheal",
-      "centralFeatures": "punctum_bite_mark",
-      "primaryReaction": "urticarial_hive"
-    },
-    "context": {
-      "usState": "US-MN",
-      "monthIndex": 6,
-      "incidentLocation": "yard_garden",
-      "timeElapsed": "2_to_12h",
-      "primarySensation": "intense_itch",
-      "emergencyScreening": {
-        "difficultyBreathing": false,
-        "facialSwelling": false,
-        "dizzinessOrConfusion": false,
-        "spreadingHives": false
-      }
-    }
+    "expectedMorphology": { "pattern": "solitary_wheal", "centralFeatures": "punctum_bite_mark", "primaryReaction": "urticarial_hive" },
+    "context": { "usState": "US-MN", "monthIndex": 6, "incidentLocation": "yard_garden", "timeElapsed": "2_to_12h", "primarySensation": "intense_itch", "emergencyScreening": { "difficultyBreathing": false, "facialSwelling": false, "dizzinessOrConfusion": false, "spreadingHives": false } }
   },
   {
     "id": "mosquito_06",
     "name": "Mosquito - Multiple Pruritic Papules (Dark Skin)",
     "skinTone": "Type V (Dark)",
     "expectedSpecies": "mosquito",
-    "expectedMorphology": {
-      "pattern": "solitary_wheal",
-      "centralFeatures": "punctum_bite_mark",
-      "primaryReaction": "urticarial_hive"
-    },
-    "context": {
-      "usState": "US-LA",
-      "monthIndex": 7,
-      "incidentLocation": "yard_garden",
-      "timeElapsed": "under_2h",
-      "primarySensation": "intense_itch",
-      "emergencyScreening": {
-        "difficultyBreathing": false,
-        "facialSwelling": false,
-        "dizzinessOrConfusion": false,
-        "spreadingHives": false
-      }
-    }
+    "expectedMorphology": { "pattern": "solitary_wheal", "centralFeatures": "punctum_bite_mark", "primaryReaction": "urticarial_hive" },
+    "context": { "usState": "US-LA", "monthIndex": 7, "incidentLocation": "yard_garden", "timeElapsed": "under_2h", "primarySensation": "intense_itch", "emergencyScreening": { "difficultyBreathing": false, "facialSwelling": false, "dizzinessOrConfusion": false, "spreadingHives": false } }
   },
   {
     "id": "bedbug_01",
     "name": "Bed Bug - Linear Cluster (Breakfast, Lunch, Dinner)",
     "skinTone": "Type II (Fair)",
     "expectedSpecies": "bed_bug",
-    "expectedMorphology": {
-      "pattern": "linear_grouped",
-      "centralFeatures": "clear_halo",
-      "primaryReaction": "urticarial_hive"
-    },
-    "context": {
-      "usState": "US-NY",
-      "monthIndex": 1,
-      "incidentLocation": "bed",
-      "timeElapsed": "1_to_2_days",
-      "primarySensation": "intense_itch",
-      "emergencyScreening": {
-        "difficultyBreathing": false,
-        "facialSwelling": false,
-        "dizzinessOrConfusion": false,
-        "spreadingHives": false
-      }
-    }
+    "expectedMorphology": { "pattern": "linear_grouped", "centralFeatures": "clear_halo", "primaryReaction": "urticarial_hive" },
+    "context": { "usState": "US-NY", "monthIndex": 1, "incidentLocation": "bed", "timeElapsed": "1_to_2_days", "primarySensation": "intense_itch", "emergencyScreening": { "difficultyBreathing": false, "facialSwelling": false, "dizzinessOrConfusion": false, "spreadingHives": false } }
   },
   {
     "id": "bedbug_02",
     "name": "Bed Bug - Sequential Shoulder Bites",
     "skinTone": "Type IV (Olive)",
     "expectedSpecies": "bed_bug",
-    "expectedMorphology": {
-      "pattern": "linear_grouped",
-      "centralFeatures": "punctum_bite_mark",
-      "primaryReaction": "urticarial_hive"
-    },
-    "context": {
-      "usState": "US-IL",
-      "monthIndex": 10,
-      "incidentLocation": "bed",
-      "timeElapsed": "2_to_12h",
-      "primarySensation": "intense_itch",
-      "emergencyScreening": {
-        "difficultyBreathing": false,
-        "facialSwelling": false,
-        "dizzinessOrConfusion": false,
-        "spreadingHives": false
-      }
-    }
+    "expectedMorphology": { "pattern": "linear_grouped", "centralFeatures": "punctum_bite_mark", "primaryReaction": "urticarial_hive" },
+    "context": { "usState": "US-IL", "monthIndex": 10, "incidentLocation": "bed", "timeElapsed": "2_to_12h", "primarySensation": "intense_itch", "emergencyScreening": { "difficultyBreathing": false, "facialSwelling": false, "dizzinessOrConfusion": false, "spreadingHives": false } }
   },
   {
     "id": "bedbug_03",
     "name": "Bed Bug - Nocturnal Linear papules",
     "skinTone": "Type I (Fair)",
     "expectedSpecies": "bed_bug",
-    "expectedMorphology": {
-      "pattern": "linear_grouped",
-      "centralFeatures": "none",
-      "primaryReaction": "urticarial_hive"
-    },
-    "context": {
-      "usState": "US-CA",
-      "monthIndex": 3,
-      "incidentLocation": "indoor_other",
-      "timeElapsed": "over_2_days",
-      "primarySensation": "intense_itch",
-      "emergencyScreening": {
-        "difficultyBreathing": false,
-        "facialSwelling": false,
-        "dizzinessOrConfusion": false,
-        "spreadingHives": false
-      }
-    }
+    "expectedMorphology": { "pattern": "linear_grouped", "centralFeatures": "none", "primaryReaction": "urticarial_hive" },
+    "context": { "usState": "US-CA", "monthIndex": 3, "incidentLocation": "indoor_other", "timeElapsed": "over_2_days", "primarySensation": "intense_itch", "emergencyScreening": { "difficultyBreathing": false, "facialSwelling": false, "dizzinessOrConfusion": false, "spreadingHives": false } }
   },
   {
     "id": "bedbug_04",
     "name": "Bed Bug - Flank Linear 3-Bite Track (Medium Skin)",
     "skinTone": "Type III (Medium)",
     "expectedSpecies": "bed_bug",
-    "expectedMorphology": {
-      "pattern": "linear_grouped",
-      "centralFeatures": "punctum_bite_mark",
-      "primaryReaction": "urticarial_hive"
-    },
-    "context": {
-      "usState": "US-TX",
-      "monthIndex": 2,
-      "incidentLocation": "bed",
-      "timeElapsed": "1_to_2_days",
-      "primarySensation": "intense_itch",
-      "emergencyScreening": {
-        "difficultyBreathing": false,
-        "facialSwelling": false,
-        "dizzinessOrConfusion": false,
-        "spreadingHives": false
-      }
-    }
+    "expectedMorphology": { "pattern": "linear_grouped", "centralFeatures": "punctum_bite_mark", "primaryReaction": "urticarial_hive" },
+    "context": { "usState": "US-TX", "monthIndex": 2, "incidentLocation": "bed", "timeElapsed": "1_to_2_days", "primarySensation": "intense_itch", "emergencyScreening": { "difficultyBreathing": false, "facialSwelling": false, "dizzinessOrConfusion": false, "spreadingHives": false } }
   },
   {
     "id": "bedbug_05",
     "name": "Bed Bug - Hyperpigmented Linear Track (Deep Dark Skin)",
     "skinTone": "Type VI (Deep Dark)",
     "expectedSpecies": "bed_bug",
-    "expectedMorphology": {
-      "pattern": "linear_grouped",
-      "centralFeatures": "none",
-      "primaryReaction": "urticarial_hive"
-    },
-    "context": {
-      "usState": "US-MI",
-      "monthIndex": 11,
-      "incidentLocation": "bed",
-      "timeElapsed": "over_2_days",
-      "primarySensation": "intense_itch",
-      "emergencyScreening": {
-        "difficultyBreathing": false,
-        "facialSwelling": false,
-        "dizzinessOrConfusion": false,
-        "spreadingHives": false
-      }
-    }
+    "expectedMorphology": { "pattern": "linear_grouped", "centralFeatures": "none", "primaryReaction": "urticarial_hive" },
+    "context": { "usState": "US-MI", "monthIndex": 11, "incidentLocation": "bed", "timeElapsed": "over_2_days", "primarySensation": "intense_itch", "emergencyScreening": { "difficultyBreathing": false, "facialSwelling": false, "dizzinessOrConfusion": false, "spreadingHives": false } }
   },
   {
     "id": "bedbug_06",
     "name": "Bed Bug - Bullous Inflammatory Bites (Dark Skin)",
     "skinTone": "Type V (Dark)",
     "expectedSpecies": "bed_bug",
-    "expectedMorphology": {
-      "pattern": "linear_grouped",
-      "centralFeatures": "clear_halo",
-      "primaryReaction": "urticarial_hive"
-    },
-    "context": {
-      "usState": "US-PA",
-      "monthIndex": 9,
-      "incidentLocation": "bed",
-      "timeElapsed": "1_to_2_days",
-      "primarySensation": "intense_itch",
-      "emergencyScreening": {
-        "difficultyBreathing": false,
-        "facialSwelling": false,
-        "dizzinessOrConfusion": false,
-        "spreadingHives": false
-      }
-    }
+    "expectedMorphology": { "pattern": "linear_grouped", "centralFeatures": "clear_halo", "primaryReaction": "urticarial_hive" },
+    "context": { "usState": "US-PA", "monthIndex": 9, "incidentLocation": "bed", "timeElapsed": "1_to_2_days", "primarySensation": "intense_itch", "emergencyScreening": { "difficultyBreathing": false, "facialSwelling": false, "dizzinessOrConfusion": false, "spreadingHives": false } }
   },
   {
     "id": "flea_01",
     "name": "Flea - Ankle & Lower Extremity Papules",
     "skinTone": "Type III (Medium)",
     "expectedSpecies": "flea",
-    "expectedMorphology": {
-      "pattern": "scattered_papules",
-      "centralFeatures": "punctum_bite_mark",
-      "primaryReaction": "excoriated_papule"
-    },
-    "context": {
-      "usState": "US-VA",
-      "monthIndex": 7,
-      "incidentLocation": "yard_garden",
-      "timeElapsed": "1_to_2_days",
-      "primarySensation": "intense_itch",
-      "emergencyScreening": {
-        "difficultyBreathing": false,
-        "facialSwelling": false,
-        "dizzinessOrConfusion": false,
-        "spreadingHives": false
-      }
-    }
+    "expectedMorphology": { "pattern": "scattered_papules", "centralFeatures": "punctum_bite_mark", "primaryReaction": "excoriated_papule" },
+    "context": { "usState": "US-VA", "monthIndex": 7, "incidentLocation": "yard_garden", "timeElapsed": "1_to_2_days", "primarySensation": "intense_itch", "emergencyScreening": { "difficultyBreathing": false, "facialSwelling": false, "dizzinessOrConfusion": false, "spreadingHives": false } }
   },
   {
     "id": "flea_02",
     "name": "Flea - Pet Contact Scattered Lesions",
     "skinTone": "Type II (Fair)",
     "expectedSpecies": "flea",
-    "expectedMorphology": {
-      "pattern": "scattered_papules",
-      "centralFeatures": "punctum_bite_mark",
-      "primaryReaction": "excoriated_papule"
-    },
-    "context": {
-      "usState": "US-OH",
-      "monthIndex": 6,
-      "incidentLocation": "indoor_other",
-      "timeElapsed": "2_to_12h",
-      "primarySensation": "intense_itch",
-      "emergencyScreening": {
-        "difficultyBreathing": false,
-        "facialSwelling": false,
-        "dizzinessOrConfusion": false,
-        "spreadingHives": false
-      }
-    }
+    "expectedMorphology": { "pattern": "scattered_papules", "centralFeatures": "punctum_bite_mark", "primaryReaction": "excoriated_papule" },
+    "context": { "usState": "US-OH", "monthIndex": 6, "incidentLocation": "indoor_other", "timeElapsed": "2_to_12h", "primarySensation": "intense_itch", "emergencyScreening": { "difficultyBreathing": false, "facialSwelling": false, "dizzinessOrConfusion": false, "spreadingHives": false } }
   },
   {
     "id": "flea_03",
     "name": "Flea - Cluster of Pruritic Papules",
     "skinTone": "Type V (Dark)",
     "expectedSpecies": "flea",
-    "expectedMorphology": {
-      "pattern": "scattered_papules",
-      "centralFeatures": "none",
-      "primaryReaction": "excoriated_papule"
-    },
-    "context": {
-      "usState": "US-GA",
-      "monthIndex": 8,
-      "incidentLocation": "yard_garden",
-      "timeElapsed": "1_to_2_days",
-      "primarySensation": "intense_itch",
-      "emergencyScreening": {
-        "difficultyBreathing": false,
-        "facialSwelling": false,
-        "dizzinessOrConfusion": false,
-        "spreadingHives": false
-      }
-    }
+    "expectedMorphology": { "pattern": "scattered_papules", "centralFeatures": "none", "primaryReaction": "excoriated_papule" },
+    "context": { "usState": "US-GA", "monthIndex": 8, "incidentLocation": "yard_garden", "timeElapsed": "1_to_2_days", "primarySensation": "intense_itch", "emergencyScreening": { "difficultyBreathing": false, "facialSwelling": false, "dizzinessOrConfusion": false, "spreadingHives": false } }
   },
   {
     "id": "flea_04",
     "name": "Flea - Pinpoint Ankle Clusters (Fair Skin)",
     "skinTone": "Type I (Fair)",
     "expectedSpecies": "flea",
-    "expectedMorphology": {
-      "pattern": "scattered_papules",
-      "centralFeatures": "punctum_bite_mark",
-      "primaryReaction": "excoriated_papule"
-    },
-    "context": {
-      "usState": "US-NC",
-      "monthIndex": 5,
-      "incidentLocation": "yard_garden",
-      "timeElapsed": "2_to_12h",
-      "primarySensation": "intense_itch",
-      "emergencyScreening": {
-        "difficultyBreathing": false,
-        "facialSwelling": false,
-        "dizzinessOrConfusion": false,
-        "spreadingHives": false
-      }
-    }
+    "expectedMorphology": { "pattern": "scattered_papules", "centralFeatures": "punctum_bite_mark", "primaryReaction": "excoriated_papule" },
+    "context": { "usState": "US-NC", "monthIndex": 5, "incidentLocation": "yard_garden", "timeElapsed": "2_to_12h", "primarySensation": "intense_itch", "emergencyScreening": { "difficultyBreathing": false, "facialSwelling": false, "dizzinessOrConfusion": false, "spreadingHives": false } }
   },
   {
     "id": "flea_05",
     "name": "Flea - Excoriated Lower Leg Lesions (Deep Dark Skin)",
     "skinTone": "Type VI (Deep Dark)",
     "expectedSpecies": "flea",
-    "expectedMorphology": {
-      "pattern": "scattered_papules",
-      "centralFeatures": "none",
-      "primaryReaction": "excoriated_papule"
-    },
-    "context": {
-      "usState": "US-SC",
-      "monthIndex": 7,
-      "incidentLocation": "yard_garden",
-      "timeElapsed": "1_to_2_days",
-      "primarySensation": "intense_itch",
-      "emergencyScreening": {
-        "difficultyBreathing": false,
-        "facialSwelling": false,
-        "dizzinessOrConfusion": false,
-        "spreadingHives": false
-      }
-    }
+    "expectedMorphology": { "pattern": "scattered_papules", "centralFeatures": "none", "primaryReaction": "excoriated_papule" },
+    "context": { "usState": "US-SC", "monthIndex": 7, "incidentLocation": "yard_garden", "timeElapsed": "1_to_2_days", "primarySensation": "intense_itch", "emergencyScreening": { "difficultyBreathing": false, "facialSwelling": false, "dizzinessOrConfusion": false, "spreadingHives": false } }
   },
   {
     "id": "flea_06",
     "name": "Flea - Multiple Pruritic Papules (Olive Skin)",
     "skinTone": "Type IV (Olive)",
     "expectedSpecies": "flea",
-    "expectedMorphology": {
-      "pattern": "scattered_papules",
-      "centralFeatures": "punctum_bite_mark",
-      "primaryReaction": "excoriated_papule"
-    },
-    "context": {
-      "usState": "US-TX",
-      "monthIndex": 6,
-      "incidentLocation": "indoor_other",
-      "timeElapsed": "2_to_12h",
-      "primarySensation": "intense_itch",
-      "emergencyScreening": {
-        "difficultyBreathing": false,
-        "facialSwelling": false,
-        "dizzinessOrConfusion": false,
-        "spreadingHives": false
-      }
-    }
+    "expectedMorphology": { "pattern": "scattered_papules", "centralFeatures": "punctum_bite_mark", "primaryReaction": "excoriated_papule" },
+    "context": { "usState": "US-TX", "monthIndex": 6, "incidentLocation": "indoor_other", "timeElapsed": "2_to_12h", "primarySensation": "intense_itch", "emergencyScreening": { "difficultyBreathing": false, "facialSwelling": false, "dizzinessOrConfusion": false, "spreadingHives": false } }
   },
   {
     "id": "recluse_01",
     "name": "Brown Recluse - Early Necrotic Macule",
     "skinTone": "Type II (Fair)",
     "expectedSpecies": "brown_recluse",
-    "expectedMorphology": {
-      "pattern": "indurated_plaque",
-      "centralFeatures": "necrotic_ulcer",
-      "primaryReaction": "ischemic_purpura"
-    },
-    "context": {
-      "usState": "US-TX",
-      "monthIndex": 5,
-      "incidentLocation": "garage_shed",
-      "timeElapsed": "over_2_days",
-      "primarySensation": "severe_pain",
-      "emergencyScreening": {
-        "difficultyBreathing": false,
-        "facialSwelling": false,
-        "dizzinessOrConfusion": false,
-        "spreadingHives": false
-      }
-    }
+    "expectedMorphology": { "pattern": "indurated_plaque", "centralFeatures": "necrotic_ulcer", "primaryReaction": "ischemic_purpura" },
+    "context": { "usState": "US-TX", "monthIndex": 5, "incidentLocation": "garage_shed", "timeElapsed": "over_2_days", "primarySensation": "severe_pain", "emergencyScreening": { "difficultyBreathing": false, "facialSwelling": false, "dizzinessOrConfusion": false, "spreadingHives": false } }
   },
   {
     "id": "recluse_02",
     "name": "Brown Recluse - Violaceous Bulla",
     "skinTone": "Type IV (Olive)",
     "expectedSpecies": "brown_recluse",
-    "expectedMorphology": {
-      "pattern": "indurated_plaque",
-      "centralFeatures": "vesicle_blister",
-      "primaryReaction": "ischemic_purpura"
-    },
-    "context": {
-      "usState": "US-MO",
-      "monthIndex": 6,
-      "incidentLocation": "garage_shed",
-      "timeElapsed": "1_to_2_days",
-      "primarySensation": "moderate_pain",
-      "emergencyScreening": {
-        "difficultyBreathing": false,
-        "facialSwelling": false,
-        "dizzinessOrConfusion": false,
-        "spreadingHives": false
-      }
-    }
+    "expectedMorphology": { "pattern": "indurated_plaque", "centralFeatures": "vesicle_blister", "primaryReaction": "ischemic_purpura" },
+    "context": { "usState": "US-MO", "monthIndex": 6, "incidentLocation": "garage_shed", "timeElapsed": "1_to_2_days", "primarySensation": "moderate_pain", "emergencyScreening": { "difficultyBreathing": false, "facialSwelling": false, "dizzinessOrConfusion": false, "spreadingHives": false } }
   },
   {
     "id": "recluse_03",
     "name": "Brown Recluse - Attended Eschar",
     "skinTone": "Type III (Medium)",
     "expectedSpecies": "brown_recluse",
-    "expectedMorphology": {
-      "pattern": "indurated_plaque",
-      "centralFeatures": "necrotic_ulcer",
-      "primaryReaction": "ischemic_purpura"
-    },
-    "context": {
-      "usState": "US-KS",
-      "monthIndex": 4,
-      "incidentLocation": "indoor_other",
-      "timeElapsed": "over_2_days",
-      "primarySensation": "severe_pain",
-      "emergencyScreening": {
-        "difficultyBreathing": false,
-        "facialSwelling": false,
-        "dizzinessOrConfusion": false,
-        "spreadingHives": false
-      }
-    }
+    "expectedMorphology": { "pattern": "indurated_plaque", "centralFeatures": "necrotic_ulcer", "primaryReaction": "ischemic_purpura" },
+    "context": { "usState": "US-KS", "monthIndex": 4, "incidentLocation": "indoor_other", "timeElapsed": "over_2_days", "primarySensation": "severe_pain", "emergencyScreening": { "difficultyBreathing": false, "facialSwelling": false, "dizzinessOrConfusion": false, "spreadingHives": false } }
   },
   {
     "id": "recluse_04",
     "name": "Brown Recluse - Red White & Blue Sign (Fair Skin)",
     "skinTone": "Type I (Fair)",
     "expectedSpecies": "brown_recluse",
-    "expectedMorphology": {
-      "pattern": "indurated_plaque",
-      "centralFeatures": "necrotic_ulcer",
-      "primaryReaction": "ischemic_purpura"
-    },
-    "context": {
-      "usState": "US-AR",
-      "monthIndex": 5,
-      "incidentLocation": "garage_shed",
-      "timeElapsed": "over_2_days",
-      "primarySensation": "severe_pain",
-      "emergencyScreening": {
-        "difficultyBreathing": false,
-        "facialSwelling": false,
-        "dizzinessOrConfusion": false,
-        "spreadingHives": false
-      }
-    }
+    "expectedMorphology": { "pattern": "indurated_plaque", "centralFeatures": "necrotic_ulcer", "primaryReaction": "ischemic_purpura" },
+    "context": { "usState": "US-AR", "monthIndex": 5, "incidentLocation": "garage_shed", "timeElapsed": "over_2_days", "primarySensation": "severe_pain", "emergencyScreening": { "difficultyBreathing": false, "facialSwelling": false, "dizzinessOrConfusion": false, "spreadingHives": false } }
   },
   {
     "id": "recluse_05",
-    "name": "Brown Recluse - Central Eschar with Erythematous Border (Deep Dark Skin)",
+    "name": "Brown Recluse - Central Eschar (Deep Dark Skin)",
     "skinTone": "Type VI (Deep Dark)",
     "expectedSpecies": "brown_recluse",
-    "expectedMorphology": {
-      "pattern": "indurated_plaque",
-      "centralFeatures": "necrotic_ulcer",
-      "primaryReaction": "ischemic_purpura"
-    },
-    "context": {
-      "usState": "US-TN",
-      "monthIndex": 6,
-      "incidentLocation": "garage_shed",
-      "timeElapsed": "over_2_days",
-      "primarySensation": "severe_pain",
-      "emergencyScreening": {
-        "difficultyBreathing": false,
-        "facialSwelling": false,
-        "dizzinessOrConfusion": false,
-        "spreadingHives": false
-      }
-    }
+    "expectedMorphology": { "pattern": "indurated_plaque", "centralFeatures": "necrotic_ulcer", "primaryReaction": "ischemic_purpura" },
+    "context": { "usState": "US-TN", "monthIndex": 6, "incidentLocation": "garage_shed", "timeElapsed": "over_2_days", "primarySensation": "severe_pain", "emergencyScreening": { "difficultyBreathing": false, "facialSwelling": false, "dizzinessOrConfusion": false, "spreadingHives": false } }
   },
   {
     "id": "recluse_06",
     "name": "Brown Recluse - Ischemic Purpuric Lesion (Dark Skin)",
     "skinTone": "Type V (Dark)",
     "expectedSpecies": "brown_recluse",
-    "expectedMorphology": {
-      "pattern": "indurated_plaque",
-      "centralFeatures": "necrotic_ulcer",
-      "primaryReaction": "ischemic_purpura"
-    },
-    "context": {
-      "usState": "US-OK",
-      "monthIndex": 7,
-      "incidentLocation": "indoor_other",
-      "timeElapsed": "over_2_days",
-      "primarySensation": "severe_pain",
-      "emergencyScreening": {
-        "difficultyBreathing": false,
-        "facialSwelling": false,
-        "dizzinessOrConfusion": false,
-        "spreadingHives": false
-      }
-    }
+    "expectedMorphology": { "pattern": "indurated_plaque", "centralFeatures": "necrotic_ulcer", "primaryReaction": "ischemic_purpura" },
+    "context": { "usState": "US-OK", "monthIndex": 7, "incidentLocation": "indoor_other", "timeElapsed": "over_2_days", "primarySensation": "severe_pain", "emergencyScreening": { "difficultyBreathing": false, "facialSwelling": false, "dizzinessOrConfusion": false, "spreadingHives": false } }
+  },
+  {
+    "id": "widow_01",
+    "name": "Black Widow - Targetoid Erythematous Flare (Fair Skin)",
+    "skinTone": "Type I (Fair)",
+    "expectedSpecies": "black_widow",
+    "expectedMorphology": { "pattern": "solitary_wheal", "centralFeatures": "punctum_bite_mark", "primaryReaction": "urticarial_hive" },
+    "context": { "usState": "US-CA", "monthIndex": 6, "incidentLocation": "garage_shed", "timeElapsed": "under_2h", "primarySensation": "severe_pain", "emergencyScreening": { "difficultyBreathing": false, "facialSwelling": false, "dizzinessOrConfusion": false, "spreadingHives": false } }
+  },
+  {
+    "id": "widow_02",
+    "name": "Black Widow - Localized Diaphoresis & Induration (Medium Skin)",
+    "skinTone": "Type III (Medium)",
+    "expectedSpecies": "black_widow",
+    "expectedMorphology": { "pattern": "solitary_wheal", "centralFeatures": "punctum_bite_mark", "primaryReaction": "urticarial_hive" },
+    "context": { "usState": "US-AZ", "monthIndex": 7, "incidentLocation": "outdoor_other", "timeElapsed": "2_to_12h", "primarySensation": "severe_pain", "emergencyScreening": { "difficultyBreathing": false, "facialSwelling": false, "dizzinessOrConfusion": false, "spreadingHives": false } }
+  },
+  {
+    "id": "widow_03",
+    "name": "Black Widow - Central Fang Puncta (Deep Dark Skin)",
+    "skinTone": "Type VI (Deep Dark)",
+    "expectedSpecies": "black_widow",
+    "expectedMorphology": { "pattern": "solitary_wheal", "centralFeatures": "punctum_bite_mark", "primaryReaction": "urticarial_hive" },
+    "context": { "usState": "US-TX", "monthIndex": 8, "incidentLocation": "garage_shed", "timeElapsed": "under_2h", "primarySensation": "severe_pain", "emergencyScreening": { "difficultyBreathing": false, "facialSwelling": false, "dizzinessOrConfusion": false, "spreadingHives": false } }
+  },
+  {
+    "id": "fireant_01",
+    "name": "Fire Ant - Sterile Pustule Cluster (Fair Skin)",
+    "skinTone": "Type II (Fair)",
+    "expectedSpecies": "fire_ant",
+    "expectedMorphology": { "pattern": "solitary_wheal", "centralFeatures": "punctum_bite_mark", "primaryReaction": "urticarial_hive" },
+    "context": { "usState": "US-FL", "monthIndex": 5, "incidentLocation": "yard_garden", "timeElapsed": "under_2h", "primarySensation": "severe_pain", "emergencyScreening": { "difficultyBreathing": false, "facialSwelling": false, "dizzinessOrConfusion": false, "spreadingHives": false } }
+  },
+  {
+    "id": "fireant_02",
+    "name": "Fire Ant - Circular Lawn Sting Ring (Olive Skin)",
+    "skinTone": "Type IV (Olive)",
+    "expectedSpecies": "fire_ant",
+    "expectedMorphology": { "pattern": "solitary_wheal", "centralFeatures": "punctum_bite_mark", "primaryReaction": "urticarial_hive" },
+    "context": { "usState": "US-TX", "monthIndex": 6, "incidentLocation": "yard_garden", "timeElapsed": "2_to_12h", "primarySensation": "severe_pain", "emergencyScreening": { "difficultyBreathing": false, "facialSwelling": false, "dizzinessOrConfusion": false, "spreadingHives": false } }
+  },
+  {
+    "id": "fireant_03",
+    "name": "Fire Ant - Umbilicated Pustules (Dark Skin)",
+    "skinTone": "Type V (Dark)",
+    "expectedSpecies": "fire_ant",
+    "expectedMorphology": { "pattern": "solitary_wheal", "centralFeatures": "punctum_bite_mark", "primaryReaction": "urticarial_hive" },
+    "context": { "usState": "US-GA", "monthIndex": 7, "incidentLocation": "yard_garden", "timeElapsed": "1_to_2_days", "primarySensation": "intense_itch", "emergencyScreening": { "difficultyBreathing": false, "facialSwelling": false, "dizzinessOrConfusion": false, "spreadingHives": false } }
+  },
+  {
+    "id": "chigger_01",
+    "name": "Chigger - Ankle Pruritic Papules (Fair Skin)",
+    "skinTone": "Type I (Fair)",
+    "expectedSpecies": "chigger",
+    "expectedMorphology": { "pattern": "linear_grouped", "centralFeatures": "punctum_bite_mark", "primaryReaction": "excoriated_papule" },
+    "context": { "usState": "US-NC", "monthIndex": 6, "incidentLocation": "tall_grass_woods", "timeElapsed": "2_to_12h", "primarySensation": "intense_itch", "emergencyScreening": { "difficultyBreathing": false, "facialSwelling": false, "dizzinessOrConfusion": false, "spreadingHives": false } }
+  },
+  {
+    "id": "chigger_02",
+    "name": "Chigger - Waistband Eruption Cluster (Medium Skin)",
+    "skinTone": "Type III (Medium)",
+    "expectedSpecies": "chigger",
+    "expectedMorphology": { "pattern": "linear_grouped", "centralFeatures": "none", "primaryReaction": "excoriated_papule" },
+    "context": { "usState": "US-VA", "monthIndex": 7, "incidentLocation": "tall_grass_woods", "timeElapsed": "1_to_2_days", "primarySensation": "intense_itch", "emergencyScreening": { "difficultyBreathing": false, "facialSwelling": false, "dizzinessOrConfusion": false, "spreadingHives": false } }
+  },
+  {
+    "id": "chigger_03",
+    "name": "Chigger - Hyperpigmented Pruritic Papules (Deep Dark Skin)",
+    "skinTone": "Type VI (Deep Dark)",
+    "expectedSpecies": "chigger",
+    "expectedMorphology": { "pattern": "linear_grouped", "centralFeatures": "none", "primaryReaction": "excoriated_papule" },
+    "context": { "usState": "US-GA", "monthIndex": 8, "incidentLocation": "yard_garden", "timeElapsed": "1_to_2_days", "primarySensation": "intense_itch", "emergencyScreening": { "difficultyBreathing": false, "facialSwelling": false, "dizzinessOrConfusion": false, "spreadingHives": false } }
+  },
+  {
+    "id": "kissing_01",
+    "name": "Kissing Bug - Painless Facial Edema (Fair Skin)",
+    "skinTone": "Type II (Light)",
+    "expectedSpecies": "kissing_bug",
+    "expectedMorphology": { "pattern": "solitary_wheal", "centralFeatures": "punctum_bite_mark", "primaryReaction": "urticarial_hive" },
+    "context": { "usState": "US-TX", "monthIndex": 5, "incidentLocation": "bed", "timeElapsed": "over_2_days", "primarySensation": "painless", "emergencyScreening": { "difficultyBreathing": false, "facialSwelling": false, "dizzinessOrConfusion": false, "spreadingHives": false } }
+  },
+  {
+    "id": "kissing_02",
+    "name": "Kissing Bug - Eyelid Nodular Swelling / Romaña Sign (Olive Skin)",
+    "skinTone": "Type IV (Olive)",
+    "expectedSpecies": "kissing_bug",
+    "expectedMorphology": { "pattern": "solitary_wheal", "centralFeatures": "punctum_bite_mark", "primaryReaction": "urticarial_hive" },
+    "context": { "usState": "US-AZ", "monthIndex": 6, "incidentLocation": "indoor_other", "timeElapsed": "1_to_2_days", "primarySensation": "painless", "emergencyScreening": { "difficultyBreathing": false, "facialSwelling": false, "dizzinessOrConfusion": false, "spreadingHives": false } }
+  },
+  {
+    "id": "kissing_03",
+    "name": "Kissing Bug - Subacute Nodule (Dark Skin)",
+    "skinTone": "Type V (Dark)",
+    "expectedSpecies": "kissing_bug",
+    "expectedMorphology": { "pattern": "solitary_wheal", "centralFeatures": "none", "primaryReaction": "urticarial_hive" },
+    "context": { "usState": "US-NM", "monthIndex": 7, "incidentLocation": "bed", "timeElapsed": "over_2_days", "primarySensation": "painless", "emergencyScreening": { "difficultyBreathing": false, "facialSwelling": false, "dizzinessOrConfusion": false, "spreadingHives": false } }
+  },
+  {
+    "id": "lyme_07",
+    "name": "Lyme Disease - Multiple Annular Rings (Light Skin)",
+    "skinTone": "Type II (Light)",
+    "expectedSpecies": "blacklegged_tick",
+    "expectedMorphology": { "pattern": "annular_target", "centralFeatures": "clear_halo", "primaryReaction": "expanding_erythema" },
+    "context": { "usState": "US-WI", "monthIndex": 6, "incidentLocation": "tall_grass_woods", "timeElapsed": "over_2_days", "primarySensation": "painless", "emergencyScreening": { "difficultyBreathing": false, "facialSwelling": false, "dizzinessOrConfusion": false, "spreadingHives": false } }
+  },
+  {
+    "id": "lyme_08",
+    "name": "Lyme Disease - Popliteal Fossa Bullseye (Medium Skin)",
+    "skinTone": "Type III (Medium)",
+    "expectedSpecies": "blacklegged_tick",
+    "expectedMorphology": { "pattern": "annular_target", "centralFeatures": "punctum_bite_mark", "primaryReaction": "expanding_erythema" },
+    "context": { "usState": "US-MN", "monthIndex": 5, "incidentLocation": "tall_grass_woods", "timeElapsed": "over_2_days", "primarySensation": "mild_itch", "emergencyScreening": { "difficultyBreathing": false, "facialSwelling": false, "dizzinessOrConfusion": false, "spreadingHives": false } }
+  },
+  {
+    "id": "mosquito_07",
+    "name": "Mosquito - Severe Histamine Papule (Fair Skin)",
+    "skinTone": "Type I (Fair)",
+    "expectedSpecies": "mosquito",
+    "expectedMorphology": { "pattern": "solitary_wheal", "centralFeatures": "punctum_bite_mark", "primaryReaction": "urticarial_hive" },
+    "context": { "usState": "US-VA", "monthIndex": 7, "incidentLocation": "yard_garden", "timeElapsed": "under_2h", "primarySensation": "intense_itch", "emergencyScreening": { "difficultyBreathing": false, "facialSwelling": false, "dizzinessOrConfusion": false, "spreadingHives": false } }
+  },
+  {
+    "id": "bedbug_07",
+    "name": "Bed Bug - Linear Forearm Papules (Medium Skin)",
+    "skinTone": "Type III (Medium)",
+    "expectedSpecies": "bed_bug",
+    "expectedMorphology": { "pattern": "linear_grouped", "centralFeatures": "punctum_bite_mark", "primaryReaction": "urticarial_hive" },
+    "context": { "usState": "US-FL", "monthIndex": 4, "incidentLocation": "bed", "timeElapsed": "1_to_2_days", "primarySensation": "intense_itch", "emergencyScreening": { "difficultyBreathing": false, "facialSwelling": false, "dizzinessOrConfusion": false, "spreadingHives": false } }
+  },
+  {
+    "id": "flea_07",
+    "name": "Flea - Bilateral Ankle Papules (Olive Skin)",
+    "skinTone": "Type IV (Olive)",
+    "expectedSpecies": "flea",
+    "expectedMorphology": { "pattern": "scattered_papules", "centralFeatures": "punctum_bite_mark", "primaryReaction": "excoriated_papule" },
+    "context": { "usState": "US-CA", "monthIndex": 8, "incidentLocation": "yard_garden", "timeElapsed": "2_to_12h", "primarySensation": "intense_itch", "emergencyScreening": { "difficultyBreathing": false, "facialSwelling": false, "dizzinessOrConfusion": false, "spreadingHives": false } }
+  },
+  {
+    "id": "recluse_07",
+    "name": "Brown Recluse - Necrotic Thigh Eschar (Dark Skin)",
+    "skinTone": "Type V (Dark)",
+    "expectedSpecies": "brown_recluse",
+    "expectedMorphology": { "pattern": "indurated_plaque", "centralFeatures": "necrotic_ulcer", "primaryReaction": "ischemic_purpura" },
+    "context": { "usState": "US-AL", "monthIndex": 6, "incidentLocation": "garage_shed", "timeElapsed": "over_2_days", "primarySensation": "severe_pain", "emergencyScreening": { "difficultyBreathing": false, "facialSwelling": false, "dizzinessOrConfusion": false, "spreadingHives": false } }
+  },
+  {
+    "id": "fireant_04",
+    "name": "Fire Ant - Lower Leg Pustule Cluster (Fair Skin)",
+    "skinTone": "Type I (Fair)",
+    "expectedSpecies": "fire_ant",
+    "expectedMorphology": { "pattern": "solitary_wheal", "centralFeatures": "punctum_bite_mark", "primaryReaction": "urticarial_hive" },
+    "context": { "usState": "US-LA", "monthIndex": 8, "incidentLocation": "yard_garden", "timeElapsed": "2_to_12h", "primarySensation": "severe_pain", "emergencyScreening": { "difficultyBreathing": false, "facialSwelling": false, "dizzinessOrConfusion": false, "spreadingHives": false } }
+  },
+  {
+    "id": "chigger_04",
+    "name": "Chigger - Sock Line Pruritic Eruption (Deep Dark Skin)",
+    "skinTone": "Type VI (Deep Dark)",
+    "expectedSpecies": "chigger",
+    "expectedMorphology": { "pattern": "linear_grouped", "centralFeatures": "none", "primaryReaction": "excoriated_papule" },
+    "context": { "usState": "US-MS", "monthIndex": 7, "incidentLocation": "tall_grass_woods", "timeElapsed": "1_to_2_days", "primarySensation": "intense_itch", "emergencyScreening": { "difficultyBreathing": false, "facialSwelling": false, "dizzinessOrConfusion": false, "spreadingHives": false } }
+  },
+  {
+    "id": "dogtick_04",
+    "name": "Dog Tick - Scalp Attachment & Flare (Light Skin)",
+    "skinTone": "Type II (Light)",
+    "expectedSpecies": "dog_tick",
+    "expectedMorphology": { "pattern": "annular_target", "centralFeatures": "punctum_bite_mark", "primaryReaction": "expanding_erythema" },
+    "context": { "usState": "US-VA", "monthIndex": 5, "incidentLocation": "tall_grass_woods", "timeElapsed": "1_to_2_days", "primarySensation": "painless", "emergencyScreening": { "difficultyBreathing": false, "facialSwelling": false, "dizzinessOrConfusion": false, "spreadingHives": false } }
+  },
+  {
+    "id": "lonestar_04",
+    "name": "Lone Star Tick - Targetoid Thigh Lesion (Olive Skin)",
+    "skinTone": "Type IV (Olive)",
+    "expectedSpecies": "lone_star_tick",
+    "expectedMorphology": { "pattern": "annular_target", "centralFeatures": "punctum_bite_mark", "primaryReaction": "expanding_erythema" },
+    "context": { "usState": "US-MO", "monthIndex": 6, "incidentLocation": "yard_garden", "timeElapsed": "over_2_days", "primarySensation": "mild_itch", "emergencyScreening": { "difficultyBreathing": false, "facialSwelling": false, "dizzinessOrConfusion": false, "spreadingHives": false } }
   }
 ]

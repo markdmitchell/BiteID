@@ -40,26 +40,10 @@ export const VECTOR_DATABASE: Record<string, VectorInfo> = {
       severe_pain: 0.1,
     },
     baseWeight: 0.25,
-    associatedPathogens: [
-      "West Nile Virus",
-      "Dengue Virus",
-      "Zika Virus",
-      "Eastern Equine Encephalitis",
-    ],
-    delayedRisks: [
-      "Secondary bacterial skin infection (Impetigo/Cellulitis)",
-      "Post-viral fatigue syndrome",
-    ],
-    firstAidAdvice: [
-      "Wash the area gently with soap and water.",
-      "Apply an ice pack for 10 minutes to decrease swelling and itch.",
-      "Apply 1% hydrocortisone cream or calamine lotion to relieve itching.",
-      "Avoid scratching to prevent secondary bacterial skin infections.",
-    ],
-    warningSigns: [
-      "High fever, severe headache, or body aches (West Nile/Dengue screening).",
-      "Spreading redness, warmth, or pus indicating secondary infection.",
-    ],
+    associatedPathogens: ["West Nile Virus", "Dengue Virus", "Eastern Equine Encephalitis"],
+    delayedRisks: ["Secondary bacterial skin infection"],
+    firstAidAdvice: ["Wash with soap and water.", "Apply ice pack or 1% hydrocortisone cream."],
+    warningSigns: ["High fever, severe headache, or body aches."],
   },
   blacklegged_tick: {
     id: "blacklegged_tick",
@@ -74,7 +58,7 @@ export const VECTOR_DATABASE: Record<string, VectorInfo> = {
     seasonalMultiplier: [0.05, 0.05, 0.3, 0.7, 1.0, 1.0, 0.9, 0.6, 0.8, 0.8, 0.4, 0.1],
     habitatScores: {
       tall_grass_woods: 1.0,
-      yard_garden: 0.7,
+      yard_garden: 0.8,
       outdoor_other: 0.5,
       garage_shed: 0.2,
       indoor_other: 0.1,
@@ -87,29 +71,11 @@ export const VECTOR_DATABASE: Record<string, VectorInfo> = {
       moderate_pain: 0.3,
       severe_pain: 0.1,
     },
-    baseWeight: 0.25,
-    associatedPathogens: [
-      "Lyme Disease (Borrelia burgdorferi)",
-      "Anaplasmosis (Anaplasma phagocytophilum)",
-      "Babesiosis (Babesia microti)",
-      "Powassan Virus",
-    ],
-    delayedRisks: [
-      "Alpha-gal syndrome (red meat allergy)",
-      "Post-Treatment Lyme Disease Syndrome (PTLDS)",
-      "Chronic Lyme Arthritis & Lyme Carditis",
-    ],
-    firstAidAdvice: [
-      "If tick is attached, use fine-tipped tweezers to grasp as close to skin as possible and pull straight up.",
-      "Clean bite area thoroughly with rubbing alcohol or soap and water.",
-      "Save the tick in a sealed container or photo for potential identification.",
-      "Monitor the site for 30 days for expanding targetoid Erythema Migrans rash.",
-      "Consult a healthcare provider immediately for prophylactic antibiotics (e.g. Doxycycline) if Erythema Migrans develops."
-    ],
-    warningSigns: [
-      "Expanding circular target/bullseye rash (Erythema Migrans hallmark of Lyme disease).",
-      "Fever, chills, body aches, fatigue, or joint pain occurring within 3-30 days post-exposure.",
-    ],
+    baseWeight: 0.5,
+    associatedPathogens: ["Lyme Disease", "Anaplasmosis", "Babesiosis"],
+    delayedRisks: ["Post-Treatment Lyme Disease Syndrome"],
+    firstAidAdvice: ["Grasp tick close to skin with tweezers and pull straight up."],
+    warningSigns: ["Expanding circular target/bullseye rash (Erythema Migrans) >5cm."],
   },
   lone_star_tick: {
     id: "lone_star_tick",
@@ -120,7 +86,7 @@ export const VECTOR_DATABASE: Record<string, VectorInfo> = {
       "US-KY", "US-WV", "US-MD", "US-DE", "US-NJ", "US-PA", "US-NY", "US-OH",
       "US-IN", "US-IL", "US-MO", "US-AR", "US-LA", "US-TX", "US-OK", "US-KS"
     ],
-    nonEndemicStates: ["US-WA", "US-OR", "US-CA", "US-NV", "US-AZ", "US-UT", "US-ID", "US-MT", "US-WY", "US-AK", "US-HI"],
+    nonEndemicStates: ["US-WA", "US-OR", "US-CA", "US-NV", "US-AZ", "US-UT", "US-AK", "US-HI"],
     seasonalMultiplier: [0.05, 0.1, 0.4, 0.8, 1.0, 1.0, 1.0, 0.9, 0.6, 0.3, 0.1, 0.05],
     habitatScores: {
       tall_grass_woods: 1.0,
@@ -133,31 +99,48 @@ export const VECTOR_DATABASE: Record<string, VectorInfo> = {
     sensationScores: {
       painless: 0.9,
       mild_itch: 1.0,
-      intense_itch: 0.8,
+      intense_itch: 0.9,
       moderate_pain: 0.4,
       severe_pain: 0.1,
     },
-    baseWeight: 0.25,
-    associatedPathogens: [
-      "Ehrlichiosis (Ehrlichia chaffeensis)",
-      "STARI (Southern Tick-Associated Rash Illness)",
-      "Heartland Virus",
-      "Bourbon Virus",
+    baseWeight: 0.3,
+    associatedPathogens: ["Ehrlichiosis", "STARI"],
+    delayedRisks: ["Alpha-gal syndrome (red meat allergy)"],
+    firstAidAdvice: ["Grasp tick close to skin with tweezers and pull straight up."],
+    warningSigns: ["Delayed allergic reaction 3-8h after eating red meat."],
+  },
+  dog_tick: {
+    id: "dog_tick",
+    name: "American Dog Tick",
+    scientificName: "Dermacentor variabilis",
+    endemicStates: [
+      "US-VA", "US-NC", "US-SC", "US-GA", "US-FL", "US-AL", "US-MS", "US-TN",
+      "US-KY", "US-WV", "US-MD", "US-DE", "US-NJ", "US-PA", "US-NY", "US-OH",
+      "US-IN", "US-IL", "US-MO", "US-AR", "US-LA", "US-TX", "US-OK", "US-KS",
+      "US-CA", "US-AZ"
     ],
-    delayedRisks: [
-      "Alpha-gal syndrome (red meat allergy)",
-      "Secondary bacterial skin infection",
-    ],
-    firstAidAdvice: [
-      "If tick is attached, use fine-tipped tweezers to grasp as close to skin as possible and pull straight up.",
-      "Clean bite area thoroughly with rubbing alcohol or soap and water.",
-      "Save the tick in a sealed container or photo for potential identification.",
-      "Monitor for fever, chills, body aches, or expanding rash over the next 30 days.",
-    ],
-    warningSigns: [
-      "Delayed allergic reaction (hives, severe stomach pain, swelling) 3-8 hours after consuming red meat or dairy (Alpha-gal syndrome).",
-      "Fever, chills, severe headache, muscle pain, or fatigue within 1-2 weeks (Ehrlichiosis screening).",
-    ],
+    nonEndemicStates: ["US-AK", "US-HI"],
+    seasonalMultiplier: [0.05, 0.1, 0.3, 0.7, 1.0, 1.0, 0.9, 0.7, 0.4, 0.2, 0.1, 0.05],
+    habitatScores: {
+      tall_grass_woods: 1.0,
+      yard_garden: 0.9,
+      outdoor_other: 0.7,
+      garage_shed: 0.3,
+      indoor_other: 0.2,
+      bed: 0.1,
+    },
+    sensationScores: {
+      painless: 1.0,
+      mild_itch: 0.8,
+      intense_itch: 0.4,
+      moderate_pain: 0.3,
+      severe_pain: 0.1,
+    },
+    baseWeight: 0.3,
+    associatedPathogens: ["Rocky Mountain Spotted Fever", "Tularemia"],
+    delayedRisks: ["RMSF Vasculitis & Systemic Illness"],
+    firstAidAdvice: ["Remove tick immediately with tweezers."],
+    warningSigns: ["High fever and spotted rash spreading inward from wrists/ankles."],
   },
   bed_bug: {
     id: "bed_bug",
@@ -181,37 +164,23 @@ export const VECTOR_DATABASE: Record<string, VectorInfo> = {
       moderate_pain: 0.2,
       severe_pain: 0.05,
     },
-    baseWeight: 0.2,
-    associatedPathogens: [
-      "Not known to transmit human pathogens directly",
-    ],
-    delayedRisks: [
-      "Bullous cutaneous eruptions & severe allergic hypersensitivity",
-      "Secondary bacterial skin infection from scratching",
-      "Chronic sleep disturbance & psychological distress",
-    ],
-    firstAidAdvice: [
-      "Wash bites with soap and warm water.",
-      "Apply OTC anti-itch cream (hydrocortisone) or take oral antihistamine.",
-      "Inspect mattress seams, headboard, and box spring for small dark spots or cast skins.",
-      "Wash and dry bedding on high heat (at least 120°F) for 30 minutes.",
-    ],
-    warningSigns: [
-      "Severe allergic reaction or localized skin infection from excessive scratching.",
-      "Multiple sequential linear bite clusters ('breakfast, lunch, dinner' pattern).",
-    ],
+    baseWeight: 0.25,
+    associatedPathogens: [],
+    delayedRisks: ["Secondary excoriation infection"],
+    firstAidAdvice: ["Wash bites with soap and water.", "Inspect mattress seams."],
+    warningSigns: ["Multiple linear bite clusters ('breakfast, lunch, dinner')."],
   },
   flea: {
     id: "flea",
     name: "Flea",
-    scientificName: "Siphonaptera",
+    scientificName: "Ctenocephalides felis",
     endemicStates: "ALL",
     nonEndemicStates: [],
     seasonalMultiplier: [0.4, 0.4, 0.5, 0.7, 0.9, 1.0, 1.0, 1.0, 0.9, 0.7, 0.5, 0.4],
     habitatScores: {
-      bed: 0.9,
-      yard_garden: 0.8,
-      indoor_other: 0.8,
+      bed: 0.8,
+      yard_garden: 0.9,
+      indoor_other: 0.9,
       tall_grass_woods: 0.5,
       outdoor_other: 0.5,
       garage_shed: 0.4,
@@ -223,24 +192,11 @@ export const VECTOR_DATABASE: Record<string, VectorInfo> = {
       painless: 0.2,
       severe_pain: 0.1,
     },
-    baseWeight: 0.15,
-    associatedPathogens: [
-      "Bartonella henselae (Cat Scratch Disease)",
-      "Rickettsia typhi (Murine Typhus)",
-    ],
-    delayedRisks: [
-      "Papular urticaria (recurrent hypersensitivity papules)",
-      "Post-inflammatory hyperpigmentation",
-    ],
-    firstAidAdvice: [
-      "Wash bites thoroughly with antiseptic soap.",
-      "Apply ice or cold compress to reduce swelling.",
-      "Use calamine lotion or topical antihistamines to curb itching.",
-      "Treat household pets with vet-approved flea control medication.",
-    ],
-    warningSigns: [
-      "Pus-filled blisters or signs of secondary bacterial infection.",
-    ],
+    baseWeight: 0.25,
+    associatedPathogens: ["Bartonellosis (Cat Scratch Disease)"],
+    delayedRisks: ["Secondary bacterial infection"],
+    firstAidAdvice: ["Wash bites with soap and cold water."],
+    warningSigns: ["Multiple small itchy papules around ankles."],
   },
   brown_recluse: {
     id: "brown_recluse",
@@ -271,65 +227,128 @@ export const VECTOR_DATABASE: Record<string, VectorInfo> = {
       mild_itch: 0.3,
       intense_itch: 0.2,
     },
-    baseWeight: 0.1,
-    associatedPathogens: [
-      "Direct cytotoxic necrotoxin (Sphingomyelinase D venom)",
-    ],
-    delayedRisks: [
-      "Necrotic eschar skin ulceration requiring surgical debridement",
-      "Systemic loxoscelism (hemolytic anemia, intravascular coagulation, renal injury)",
-    ],
-    firstAidAdvice: [
-      "Clean the bite area thoroughly with mild soap and water.",
-      "Apply a cold compress or ice pack wrapped in a cloth (10 min on, 10 min off).",
-      "Elevate the affected limb if possible to reduce localized edema.",
-      "Keep calm and avoid heating the bite site.",
-    ],
-    warningSigns: [
-      "Central bluish/purplish ulceration, necrotic skin lesion, or spreading black tissue.",
-      "Nausea, vomiting, fever, muscle aches, or dark urine (signs of loxoscelism).",
-    ],
+    baseWeight: 0.25,
+    associatedPathogens: ["Sphingomyelinase D venom"],
+    delayedRisks: ["Loxoscelism (Dermonecrosis)"],
+    firstAidAdvice: ["Clean wound with soap and water.", "Apply cold compress."],
+    warningSigns: ["Central sunken violaceous macule surrounded by pale halo."],
   },
   black_widow: {
     id: "black_widow",
     name: "Black Widow Spider",
-    scientificName: "Latrodectus",
+    scientificName: "Latrodectus mactans",
     endemicStates: "ALL",
     nonEndemicStates: ["US-AK", "US-HI"],
     seasonalMultiplier: [0.2, 0.2, 0.4, 0.7, 0.9, 1.0, 1.0, 1.0, 0.9, 0.8, 0.5, 0.2],
     habitatScores: {
       garage_shed: 1.0,
+      outdoor_other: 0.9,
       yard_garden: 0.8,
-      outdoor_other: 0.7,
       indoor_other: 0.4,
       tall_grass_woods: 0.4,
       bed: 0.1,
     },
     sensationScores: {
       severe_pain: 1.0,
-      moderate_pain: 0.8,
+      moderate_pain: 0.9,
       intense_itch: 0.2,
       mild_itch: 0.1,
       painless: 0.1,
     },
-    baseWeight: 0.1,
-    associatedPathogens: [
-      "Alpha-latrotoxin neurovenom",
+    baseWeight: 0.25,
+    associatedPathogens: ["Alpha-latrotoxin neurovenom"],
+    delayedRisks: ["Latrodectism (Severe Muscle Spasms & Pain)"],
+    firstAidAdvice: ["Wash bite site with soap and water.", "Apply cold compress."],
+    warningSigns: ["Severe abdominal muscle rigidity, chest pain, profuse sweating."],
+  },
+  fire_ant: {
+    id: "fire_ant",
+    name: "Fire Ant",
+    scientificName: "Solenopsis invicta",
+    endemicStates: [
+      "US-TX", "US-FL", "US-GA", "US-AL", "US-MS", "US-LA", "US-SC", "US-NC",
+      "US-TN", "US-AR", "US-OK", "US-VA", "US-CA"
     ],
-    delayedRisks: [
-      "Recurrent latrodectism muscle spasms & autonomic dysfunction",
-      "Persistent localized neuropathic pain",
+    nonEndemicStates: ["US-ME", "US-NH", "US-VT", "US-MA", "US-NY", "US-WI", "US-MN", "US-AK", "US-HI"],
+    seasonalMultiplier: [0.2, 0.3, 0.6, 0.8, 1.0, 1.0, 1.0, 1.0, 0.9, 0.7, 0.4, 0.2],
+    habitatScores: {
+      yard_garden: 1.0,
+      outdoor_other: 0.9,
+      tall_grass_woods: 0.5,
+      garage_shed: 0.3,
+      indoor_other: 0.1,
+      bed: 0.05,
+    },
+    sensationScores: {
+      severe_pain: 1.0,
+      intense_itch: 0.9,
+      moderate_pain: 0.7,
+      mild_itch: 0.3,
+      painless: 0.05,
+    },
+    baseWeight: 0.25,
+    associatedPathogens: ["Solenopsin alkaloid venom"],
+    delayedRisks: ["Sterile pustule development"],
+    firstAidAdvice: ["Wash stings gently with soap and water.", "Apply cold compress."],
+    warningSigns: ["Multiple burning stings forming sterile pustules."],
+  },
+  chigger: {
+    id: "chigger",
+    name: "Chigger (Harvest Mite)",
+    scientificName: "Trombiculidae",
+    endemicStates: "ALL",
+    nonEndemicStates: [],
+    seasonalMultiplier: [0.05, 0.1, 0.3, 0.6, 0.9, 1.0, 1.0, 1.0, 0.8, 0.5, 0.2, 0.05],
+    habitatScores: {
+      tall_grass_woods: 1.0,
+      yard_garden: 0.9,
+      outdoor_other: 0.6,
+      garage_shed: 0.2,
+      indoor_other: 0.1,
+      bed: 0.1,
+    },
+    sensationScores: {
+      intense_itch: 1.0,
+      mild_itch: 0.7,
+      moderate_pain: 0.2,
+      painless: 0.1,
+      severe_pain: 0.05,
+    },
+    baseWeight: 0.25,
+    associatedPathogens: [],
+    delayedRisks: ["Severe excoriation & secondary infection"],
+    firstAidAdvice: ["Take a hot, soapy shower immediately after exposure."],
+    warningSigns: ["Intensely itchy red papules around waistbands or ankles."],
+  },
+  kissing_bug: {
+    id: "kissing_bug",
+    name: "Kissing Bug (Triatomine)",
+    scientificName: "Triatoma spp.",
+    endemicStates: [
+      "US-TX", "US-AZ", "US-NM", "US-CA", "US-FL", "US-GA", "US-AL", "US-LA"
     ],
-    firstAidAdvice: [
-      "Wash the bite site with soap and water immediately.",
-      "Apply an ice pack to slow venom absorption and ease pain.",
-      "Do NOT apply a tourniquet or attempt to cut/suck the venom.",
-      "Seek prompt medical evaluation for potential antivenom administration if symptoms progress.",
-    ],
-    warningSigns: [
-      "Severe abdominal cramping or rigidity, muscle spasms, chest pain, or nausea.",
-      "Profuse sweating, hypertension, or difficulty breathing (systemic latrodectism).",
-    ],
+    nonEndemicStates: ["US-NY", "US-MA", "US-ME", "US-WI", "US-MN", "US-AK", "US-HI"],
+    seasonalMultiplier: [0.2, 0.3, 0.5, 0.8, 1.0, 1.0, 1.0, 0.9, 0.7, 0.4, 0.2, 0.1],
+    habitatScores: {
+      indoor_other: 0.9,
+      bed: 0.9,
+      garage_shed: 0.8,
+      outdoor_other: 0.4,
+      yard_garden: 0.3,
+      tall_grass_woods: 0.2,
+    },
+    sensationScores: {
+      painless: 1.0,
+      mild_itch: 0.8,
+      intense_itch: 0.4,
+      moderate_pain: 0.2,
+      severe_pain: 0.05,
+    },
+    baseWeight: 0.25,
+    associatedPathogens: ["Chagas Disease"],
+    delayedRisks: ["Chronic Chagas Cardiomyopathy"],
+    firstAidAdvice: ["Wash bite site thoroughly with soap and water."],
+    warningSigns: ["Painless eyelid swelling (Romaña sign) or firm nodule."],
   },
 };
 
@@ -438,6 +457,12 @@ export function evaluateRegionalLikelihood(
       if ((lower.includes("amblyomma") || lower.includes("lone star")) && key === "lone_star_tick") {
         score *= 10.0;
       }
+      if ((lower.includes("dermacentor") || lower.includes("dog tick")) && key === "dog_tick") {
+        score *= 10.0;
+      }
+      if ((lower.includes("solenopsis") || lower.includes("fire ant")) && key === "fire_ant") {
+        score *= 10.0;
+      }
     }
 
     // 5. Morphological Overrides & Multipliers
@@ -445,13 +470,17 @@ export function evaluateRegionalLikelihood(
       if (morphObj.pattern === "linear_grouped") {
         if (key === "bed_bug") score *= 5.0;
         if (key === "flea") score *= 3.0;
+        if (key === "chigger") score *= 4.0;
       }
       if (morphObj.pattern === "solitary_wheal" && morphObj.centralFeatures === "punctum_bite_mark") {
         if (key === "mosquito") score *= 3.0;
+        if (key === "fire_ant" && sensation === "severe_pain") score *= 4.0;
+        if (key === "black_widow" && sensation === "severe_pain") score *= 5.0;
       }
       if (morphObj.pattern === "scattered_papules" || morphObj.primaryReaction === "excoriated_papule") {
         if (key === "flea") score *= 4.0;
         if (key === "bed_bug") score *= 2.0;
+        if (key === "chigger") score *= 4.0;
       }
       if (
         morphObj.centralFeatures === "necrotic_ulcer" ||
@@ -465,13 +494,14 @@ export function evaluateRegionalLikelihood(
     rawScores[key] = score;
   }
 
-  // Mandatory Precedence Override for Erythema Migrans (Lyme Disease / Blacklegged Tick)
+  // Targetoid Rash Prior Alignment
   if (isAnnularTarget) {
-    const otherSum = Object.entries(rawScores)
-      .filter(([k]) => k !== "blacklegged_tick")
-      .reduce((sum, [, val]) => sum + val, 0);
-
-    rawScores["blacklegged_tick"] = Math.max(rawScores["blacklegged_tick"] || 1.0, otherSum * 10.0);
+    if (["US-NY", "US-CT", "US-MA", "US-RI", "US-NH", "US-VT", "US-ME", "US-WI", "US-MN", "US-PA", "US-NJ", "US-VA"].includes(state)) {
+      rawScores["blacklegged_tick"] = (rawScores["blacklegged_tick"] || 1.0) * 100.0;
+    } else if (["US-NC", "US-SC", "US-GA", "US-FL", "US-AL", "US-MS", "US-TN", "US-KY", "US-AR", "US-LA", "US-TX", "US-OK", "US-MO"].includes(state)) {
+      rawScores["lone_star_tick"] = (rawScores["lone_star_tick"] || 1.0) * 8.0;
+      rawScores["blacklegged_tick"] = (rawScores["blacklegged_tick"] || 1.0) * 7.5;
+    }
   }
 
   // Normalize scores to probabilities summing to 1.0
@@ -490,13 +520,10 @@ export function evaluateRegionalLikelihood(
   }
 
   // HARD DETERMINISTIC MID-ATLANTIC OVERRIDE RULE
-  // Rule Logic: If region is Mid-Atlantic AND lesionMorphology equals annular_target,
-  // cap mosquito probability at <= 5% and escalate tick probability to > 90%.
   if (isMidAtlantic && isAnnularTarget) {
     probabilities["blacklegged_tick"] = 0.92;
     probabilities["mosquito"] = 0.03;
 
-    // Scale remaining keys to fill 0.05
     const remainingKeys = Object.keys(probabilities).filter(
       (k) => k !== "blacklegged_tick" && k !== "mosquito"
     );
