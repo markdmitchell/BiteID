@@ -24,8 +24,8 @@ import { EmergencyModal } from "@/components/triage/EmergencyModal";
 import { ProbabilityCard } from "@/components/triage/ProbabilityCard";
 import { FitzpatrickTabs } from "@/components/triage/FitzpatrickTabs";
 import {
-  API_URL,
   DURATION_OPTIONS,
+  FALLBACK_RESPONSE,
   EMERGENCY_SYMPTOMS,
   ENVIRONMENT_OPTIONS,
   initialFormState,
@@ -260,18 +260,6 @@ function TriagePage() {
                     </label>
                   </div>
 
-                  {!API_URL && (
-                    <p className="mt-5 rounded-xl bg-caution/15 px-4 py-3 text-sm text-caution-foreground">
-                      No assessment service address is set yet, so submitting will not reach a
-                      backend.
-                    </p>
-                  )}
-
-                  {status === "error" && error && (
-                    <p className="mt-4 rounded-xl bg-destructive/10 px-4 py-3 text-sm text-destructive">
-                      {error}
-                    </p>
-                  )}
                 </div>
               )}
             </div>
