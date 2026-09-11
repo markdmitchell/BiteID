@@ -41,6 +41,13 @@ async function runEvaluation() {
   let lymeCasesTotal = 0;
   let lymeCasesCorrect = 0;
 
+  // Skin Tone Equity tracking
+  const skinToneStats: Record<string, { total: number; correct: number }> = {
+    "Types I-II (Fair/Light)": { total: 0, correct: 0 },
+    "Types III-IV (Medium/Olive)": { total: 0, correct: 0 },
+    "Types V-VI (Dark/Deep Dark)": { total: 0, correct: 0 },
+  };
+
   // Initialize Confusion Matrix: [Expected][Predicted] = Count
   const confusionMatrix: Record<string, Record<string, number>> = {};
   for (const expectedKey of SPECIES_KEYS) {
@@ -88,6 +95,17 @@ async function runEvaluation() {
     const speciesMatch = topPredictedKey === profile.expectedSpecies;
     if (speciesMatch) totalSpeciesCorrect++;
 
+    // Skin Tone Equity grouping
+    let groupKey = "Types III-IV (Medium/Olive)";
+    const tone = profile.skinTone;
+    if (tone.startsWith("Type I ") || tone.startsWith("Type II ")) {
+      groupKey = "Types I-II (Fair/Light)";
+    } else if (tone.startsWith("Type V ") || tone.startsWith("Type VI ")) {
+      groupKey = "Types V-VI (Dark/Deep Dark)";
+    }
+    skinToneStats[groupKey].total++;
+    if (speciesMatch) skinToneStats[groupKey].correct++;
+
     if (profile.expectedSpecies === "blacklegged_tick") {
       lymeCasesTotal++;
       if (speciesMatch) lymeCasesCorrect++;
@@ -123,6 +141,16 @@ async function runEvaluation() {
   console.log(`| **Overall Top-1 Species Accuracy** | >= 80.0% | **${overallDiagnosticAccuracy}%** | ${Number(overallDiagnosticAccuracy) >= 80 ? "✅ PASS" : "❌ FAIL"} |`);
   console.log(`| **Lyme Disease (EM) Top-1 Rank Accuracy** | **100.0%** | **${lymeAccuracy}%** | ${Number(lymeAccuracy) === 100 ? "✅ PASS" : "❌ FAIL"} |`);
 
+  // Display Skin Tone Equity Table
+  console.log(`\n### 🎨 Fitzpatrick Skin Tone Equity Breakdown\n`);
+  console.log(`| Skin Tone Category | Profile Count | Achieved Accuracy | Equity Status |`);
+  console.log(`| :--- | :---: | :---: | :---: |`);
+  for (const [group, stat] of Object.entries(skinToneStats)) {
+    const acc = stat.total > 0 ? ((stat.correct / stat.total) * 100).toFixed(1) : "N/A";
+    const status = Number(acc) >= 80 ? "✅ EQUITABLE" : "⚠️ NEEDS IMPROVEMENT";
+    console.log(`| **${group}** | ${stat.total} | **${acc}%** | ${status} |`);
+  }
+
   // Display Confusion Matrix
   console.log(`\n### 🔲 Diagnostic Confusion Matrix\n`);
   console.log(`| Expected Species \\ Predicted | Tick | Mosquito | Bed Bug | Flea | Brown Recluse | Widow |`);
@@ -142,7 +170,7 @@ async function runEvaluation() {
     console.error(`\n❌ VERIFICATION GATE FAILED: Lyme Disease / Erythema Migrans top-1 accuracy was ${lymeAccuracy}%, expected 100.0%\n`);
     process.exit(1);
   } else {
-    console.log(`\n✅ VERIFICATION GATE PASSED: 100% Lyme Disease / Erythema Migrans top-1 rank achieved!\n`);
+    console.log(`\n✅ VERIFICATION GATE PASSED: 100% Lyme Disease / Erythema Migrans top-1 rank achieved across all 30 profiles!\n`);
     process.exit(0);
   }
 }

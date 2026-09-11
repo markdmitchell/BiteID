@@ -30,21 +30,26 @@ async def run_entomologist_node(
 ) -> EntomologistNodeOutput:
     """
     Node A: The Entomologist
-    Extracts insect taxonomy from the provided culprit bug photo.
+    Extracts insect taxonomy from the provided culprit bug photo using fine-grained morphological criteria.
     """
     prompt = """You are Node A (The Entomologist), an expert medical entomologist.
-Analyze the insect/arthropod photo provided.
-Identify the insect's taxonomic species or genus.
-Morphological criteria:
-- Female Lone Star Tick (Amblyomma americanum): Distinct central white/silver dot on scutum.
-- Male Lone Star Tick (Amblyomma americanum): White festoon / inverted horseshoe edge markings along scutum.
-- Blacklegged Tick (Ixodes scapularis): Dark scutum, teardrop body shape, long palps.
-- Brown Recluse Spider (Loxosceles reclusa): Dark violin/fiddle pattern on cephalothorax.
+Analyze the insect or arthropod photo provided. Identify key anatomical landmarks and classify the species/genus.
+
+Morphological anatomical diagnostic criteria:
+- Female Lone Star Tick (Amblyomma americanum): Distinct central white/silver spot or single star on posterior scutum.
+- Male Lone Star Tick (Amblyomma americanum): White festoons and inverted horseshoe/garland markings along scutum edges.
+- Blacklegged / Deer Tick (Ixodes scapularis): Dark dark brown to black scutum, oval teardrop body shape, long slender palps, no scutum ornamentation.
+- American Dog Tick (Dermacentor variabilis): Ornate whitish/grey marbling patterns on dark scutum, short blunt palps.
+- Brown Recluse Spider (Loxosceles reclusa): Dark brown violin/fiddle pattern on cephalothorax pointing toward abdomen, 6 eyes in 3 pairs (dyads).
+- Black Widow Spider (Latrodectus mactans): Shiny black spherical abdomen with red/orange hourglass marking on ventral surface.
+- Bed Bug (Cimex lectularius): Oval, flat, reddish-brown, wingless insect with broad segmented abdomen.
+- Flea (Ctenocephalides felis / Pulex irritans): Small (1-3mm), laterally compressed brown body with long hind legs built for jumping.
+- Mosquito (Culicidae): Slender body, long delicate legs, narrow scaled wings, long forward-pointing proboscis.
 
 Output MUST be valid JSON strictly adhering to:
 {
   "bugPhotoProvided": true,
-  "identifiedBugTaxonomy": "Scientific taxonomy name (e.g., Amblyomma americanum, Ixodes scapularis) or null"
+  "identifiedBugTaxonomy": "Scientific taxonomy name (e.g., Amblyomma americanum, Ixodes scapularis, Loxosceles reclusa, Cimex lectularius, Culicidae) or null"
 }"""
 
     try:
@@ -75,16 +80,21 @@ async def run_dermatologist_node(
 ) -> DermatologistNodeOutput:
     """
     Node B: The Dermatologist
-    Classifies skin lesion visual morphology from the provided lesion photo.
+    Classifies skin lesion visual morphology from the provided photo, accounting for Fitzpatrick skin tone variations (Types I-VI).
     """
-    prompt = """You are Node B (The Dermatologist), a board-certified dermatologist specializing in arthropod bite reactions.
+    prompt = """You are Node B (The Dermatologist), a board-certified dermatologist specializing in arthropod bite reactions and tropical dermatology.
 Analyze the provided skin reaction photo and classify its primary visual morphology.
-Select exactly one lesionMorphology enum value from:
-- "annular_target": Expanding circular rash with central clearing (>5cm) characteristic of Erythema Migrans (tick bite).
-- "edematous_wheal": Small localized hives or acute histamine papule (<2cm) (mosquito/fly).
-- "linear_cluster": Sequential linear bite pattern ('breakfast, lunch, dinner') (bed bug/flea).
-- "necrotic_macule": Violaceous plaque with central ulceration or necrosis (brown recluse).
-- "other": Non-specific rash or other skin presentation.
+
+Account for skin tone variations (Fitzpatrick Types I-VI):
+- On Fair/Light skin (Types I-III): Erythema presents as bright pink/red. Targetoid clearance is pale or skin-toned.
+- On Dark/Deep Dark skin (Types IV-VI): Erythema may present as subtle violaceous, dark purple, hyperpigmented brown rings, or indurated plaques.
+
+Select exactly one lesionMorphology enum value:
+- "annular_target": Expanding circular or oval rash with distinct outer margin and central clearing or central punctum (>5cm diameter) characteristic of Erythema Migrans (Lyme disease tick bite) or STARI.
+- "edematous_wheal": Small acute urticarial hive or localized histamine papule (<2cm) with central punctum (mosquito, fly, or immediate histamine flare).
+- "linear_cluster": Sequential linear, zigzag, or triangular grouping of 3+ pruritic papules ('breakfast, lunch, dinner' distribution) typical of bed bug or flea bites.
+- "necrotic_macule": Indurated plaque with violaceous central necrosis, central bulla/blistering, or dark eschar surrounded by pale ischemic ring (Brown Recluse spider bite).
+- "other": Non-specific papular rash, diffuse excoriation, or non-arthropod cutaneous presentation.
 
 Output MUST be valid JSON strictly adhering to:
 {
@@ -120,7 +130,7 @@ async def orchestrate_triage_pipeline(
     culprit_mime: str = "image/jpeg"
 ) -> AnalysisResult:
     """
-    Multi-node AI Orchestrator running Nodes A, B, and C with deterministic prior engine.
+    Multi-node AI Orchestrator running Nodes A, B, and C with deterministic prior engine and uncertainty calibration.
     """
     # 0. Emergency Short-Circuit Check
     emerg = context.emergencyScreening
@@ -157,6 +167,8 @@ async def orchestrate_triage_pipeline(
     )
 
     top_candidate = ranked_candidates[0] if ranked_candidates else None
+    second_candidate = ranked_candidates[1] if len(ranked_candidates) > 1 else None
+
     primary_cause = top_candidate.name if top_candidate else "Unknown Vector"
 
     vision_analysis = VisionAnalysisOutput(
@@ -166,7 +178,7 @@ async def orchestrate_triage_pipeline(
         primarySuspectedCause=primary_cause
     )
 
-    # Construct DermatologicalMorphology summary if targetoid
+    # Construct DermatologicalMorphology summary
     morph_obj = None
     if detected_morphology == "annular_target":
         morph_obj = DermatologicalMorphology(
@@ -180,8 +192,31 @@ async def orchestrate_triage_pipeline(
             centralFeatures="punctum_bite_mark",
             primaryReaction="urticarial_hive"
         )
+    elif detected_morphology == "linear_cluster":
+        morph_obj = DermatologicalMorphology(
+            pattern="linear_grouped",
+            centralFeatures="clear_halo",
+            primaryReaction="urticarial_hive"
+        )
+    elif detected_morphology == "necrotic_macule":
+        morph_obj = DermatologicalMorphology(
+            pattern="indurated_plaque",
+            centralFeatures="necrotic_ulcer",
+            primaryReaction="ischemic_purpura"
+        )
 
-    summary_text = f"Primary suspected vector: {primary_cause} ({top_candidate.probabilityScore * 100:.0f}% confidence score)." if top_candidate else "Analysis complete."
+    # Uncertainty Calibration: Check if top 2 candidates are close in score (differential margin <= 15%)
+    summary_text = ""
+    if top_candidate and second_candidate and (top_candidate.probabilityScore - second_candidate.probabilityScore <= 0.15):
+        summary_text = (
+            f"Primary candidate: {top_candidate.name} ({top_candidate.probabilityScore * 100:.0f}% match). "
+            f"Differential candidate: {second_candidate.name} ({second_candidate.probabilityScore * 100:.0f}% match). "
+            "Both possibilities remain clinically plausible based on the presented context and morphology."
+        )
+    elif top_candidate:
+        summary_text = f"Primary suspected vector: {primary_cause} ({top_candidate.probabilityScore * 100:.0f}% confidence score)."
+    else:
+        summary_text = "Analysis complete."
 
     results_list = [
         {

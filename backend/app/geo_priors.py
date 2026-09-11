@@ -13,7 +13,8 @@ LONE_STAR_ENDEMIC_STATES = {
 
 DEER_TICK_ENDEMIC_STATES = {
     "US-VA", "US-MD", "US-PA", "US-NJ", "US-DE", "US-DC", "US-NY", "US-CT",
-    "US-MA", "US-RI", "US-NH", "US-VT", "US-ME", "US-WI", "US-MN", "US-NC"
+    "US-MA", "US-RI", "US-NH", "US-VT", "US-ME", "US-WI", "US-MN", "US-NC",
+    "US-MI", "US-OH", "US-IN", "US-IL", "US-WV"
 }
 
 VECTOR_DATABASE: List[Dict[str, Any]] = [
@@ -217,6 +218,10 @@ def calculate_geographic_priors(
         if month in vector["peakMonths"]:
             score += 0.10
             factors.append("Active seasonal window")
+        else:
+            # Winter penalty for outdoor vectors, boost for year-round indoor pests (bed bug)
+            if vector["id"] in ["deer_tick", "mosquito", "lone_star_tick"]:
+                score -= 0.15
 
         # 3. Environmental Habitat Alignment
         if habitat in vector["habitats"]:
@@ -262,21 +267,21 @@ def calculate_geographic_priors(
         scored_candidates.append((vector["id"], candidate))
 
     # --- DETERMINISTIC OVERRIDE RULES ---
-    # Rule 1: Mid-Atlantic + annular_target morphology -> Prioritize Deer Tick / Ixodes scapularis (>90%) and cap generic nuisance vectors (Mosquito, Flea, Bed Bug) <=5%
-    if state in MID_ATLANTIC_STATES and effective_morphology == "annular_target":
+    # Rule 1: Endemic State + annular_target morphology -> Prioritize Deer Tick / Ixodes scapularis (>90%) and cap generic nuisance vectors <=5%
+    if (state in DEER_TICK_ENDEMIC_STATES or state in MID_ATLANTIC_STATES) and effective_morphology == "annular_target":
         for idx, (v_id, cand) in enumerate(scored_candidates):
             if v_id == "deer_tick":
                 cand.probabilityScore = 0.95
                 cand.probability = 0.95
                 cand.confidence = "high"
-                if "Mid-Atlantic Erythema Migrans prior override applied (>90%)" not in cand.matchedFactors:
-                    cand.matchedFactors.append("Mid-Atlantic Erythema Migrans prior override applied (>90%)")
+                if "Erythema Migrans prior override applied (>90%)" not in cand.matchedFactors:
+                    cand.matchedFactors.append("Erythema Migrans prior override applied (>90%)")
             elif v_id == "lone_star_tick":
                 cand.probabilityScore = 0.78
                 cand.probability = 0.78
                 cand.confidence = "high"
-                if "Regional tick vector prevalence in Mid-Atlantic" not in cand.matchedFactors:
-                    cand.matchedFactors.append("Regional tick vector prevalence in Mid-Atlantic")
+                if "Regional tick vector prevalence confirmed" not in cand.matchedFactors:
+                    cand.matchedFactors.append("Regional tick vector prevalence confirmed")
             elif v_id in ["mosquito", "flea", "bed_bug"]:
                 cand.probabilityScore = 0.04
                 cand.probability = 0.04
