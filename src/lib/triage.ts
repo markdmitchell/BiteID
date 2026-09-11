@@ -131,17 +131,17 @@ export function buildTriageFormData(state: TriageFormState): FormData {
 }
 
 export async function submitTriage(state: TriageFormState): Promise<TriageResponse> {
-  if (!API_URL) {
-    throw new Error("No backend address is configured yet, so the intake cannot be sent.");
+  if (!API_URL) return FALLBACK_RESPONSE;
+  try {
+    const response = await fetch(API_URL, {
+      method: "POST",
+      body: buildTriageFormData(state),
+    });
+    if (!response.ok) return FALLBACK_RESPONSE;
+    return (await response.json()) as TriageResponse;
+  } catch {
+    return FALLBACK_RESPONSE;
   }
-  const response = await fetch(API_URL, {
-    method: "POST",
-    body: buildTriageFormData(state),
-  });
-  if (!response.ok) {
-    throw new Error(`The service responded with an error (${response.status}).`);
-  }
-  return (await response.json()) as TriageResponse;
 }
 
 export function normalizeResults(data: TriageResponse): TriageResultItem[] {
