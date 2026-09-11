@@ -273,13 +273,9 @@ function TriagePage() {
                 </Button>
               ) : (
                 <div className="flex flex-col items-end gap-2">
-                  <Button onClick={handleSubmit} disabled={status === "sending"}>
+                  <Button onClick={handleSubmit}>
                     {status === "sending" && <Loader2 className="size-4 animate-spin" />}
-                    {status === "sending"
-                      ? "Sending your intake…"
-                      : status === "error"
-                        ? "Try again"
-                        : "Get assessment"}
+                    {status === "sending" ? "Sending your intake…" : "Get assessment"}
                   </Button>
                   {hasEmergency && (
                     <span className="text-xs font-medium text-destructive">
