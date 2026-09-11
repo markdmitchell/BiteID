@@ -405,6 +405,72 @@ VECTOR_DATABASE: List[Dict[str, Any]] = [
         "warningSignsToWatch": [
             "Intensely itchy red papules concentrated around nape of neck, behind ears, or along clothing friction lines."
         ]
+    },
+    {
+        "id": "no_see_um",
+        "pestName": "No-see-ums / Biting Midges",
+        "name": "No-see-ums / Biting Midges",
+        "scientificName": "Ceratopogonidae",
+        "endemicStates": ["ALL"],
+        "peakMonths": [3, 4, 5, 6, 7, 8, 9, 10],
+        "habitats": ["outdoor_other", "yard_garden", "tall_grass_woods"],
+        "sensations": ["intense_itch", "mild_itch"],
+        "morphologies": ["other", "linear_cluster"],
+        "associatedPathogens": ["Mansonella filariasis (rare in US)"],
+        "delayedRisks": ["Severe Persistent Pruritus & Secondary Excoriation"],
+        "firstAidAdvice": [
+            "Wash affected area with soap and cool water.",
+            "Apply OTC 1% hydrocortisone cream or calamine lotion.",
+            "Take OTC oral antihistamine to reduce intense itching."
+        ],
+        "warningSignsToWatch": [
+            "Multiple microscopic intensely itchy pinpoint red dots or papules acquired near marshes or humid waterways.",
+            "Severe delayed itching developing 12-24 hours post exposure."
+        ]
+    },
+    {
+        "id": "black_fly",
+        "pestName": "Black Fly / Buffalo Gnat",
+        "name": "Black Fly / Buffalo Gnat",
+        "scientificName": "Simuliidae",
+        "endemicStates": ["ALL"],
+        "peakMonths": [4, 5, 6, 7],
+        "habitats": ["tall_grass_woods", "outdoor_other"],
+        "sensations": ["severe_pain", "moderate_pain"],
+        "morphologies": ["edematous_wheal", "other"],
+        "associatedPathogens": ["Onchocerciasis (non-US endemic)", "Bovine Onchocerca"],
+        "delayedRisks": ["Black Fly Fever (headache, fever, nausea from multiple bites)"],
+        "firstAidAdvice": [
+            "Clean biting slash wound thoroughly with warm water and soap.",
+            "Apply cool compress to reduce swelling and localized warmth.",
+            "Apply topical antiseptic or hydrocortisone cream."
+        ],
+        "warningSignsToWatch": [
+            "Painful slash bite mark with central hemorrhagic blood spot and surrounding warm swelling.",
+            "Swollen lymph nodes or flu-like symptoms following multiple bites."
+        ]
+    },
+    {
+        "id": "blister_beetle",
+        "pestName": "Blister Beetle",
+        "name": "Blister Beetle",
+        "scientificName": "Meloidae",
+        "endemicStates": ["ALL"],
+        "peakMonths": [5, 6, 7, 8, 9],
+        "habitats": ["yard_garden", "outdoor_other", "tall_grass_woods"],
+        "sensations": ["burning", "painless"],
+        "morphologies": ["fluid_pustule", "other"],
+        "associatedPathogens": ["Cantharidin Chemical Dermatitis"],
+        "delayedRisks": ["Secondary Bacterial Infection if bullae rupture"],
+        "firstAidAdvice": [
+            "Wash contact area thoroughly with soap and cool water to remove cantharidin.",
+            "Do NOT puncture or drain intact blisters.",
+            "Cover blister loosely with sterile bandage."
+        ],
+        "warningSignsToWatch": [
+            "Tense, translucent fluid-filled blister (bulla) appearing 24-48h after crushing beetle against skin.",
+            "Linear or streaked blister pattern without central bite puncture mark."
+        ]
     }
 ]
 
@@ -589,6 +655,24 @@ def calculate_geographic_priors(
         elif "pediculus" in lower_tax or "lice" in lower_tax:
             for v_id, cand in scored_candidates:
                 if v_id == "lice":
+                    cand.probabilityScore = 0.98
+                    cand.probability = 0.98
+                    cand.confidence = "high"
+        elif "ceratopogonidae" in lower_tax or "no-see-um" in lower_tax or "midge" in lower_tax:
+            for v_id, cand in scored_candidates:
+                if v_id == "no_see_um":
+                    cand.probabilityScore = 0.98
+                    cand.probability = 0.98
+                    cand.confidence = "high"
+        elif "simuliidae" in lower_tax or "black fly" in lower_tax or "buffalo gnat" in lower_tax:
+            for v_id, cand in scored_candidates:
+                if v_id == "black_fly":
+                    cand.probabilityScore = 0.98
+                    cand.probability = 0.98
+                    cand.confidence = "high"
+        elif "meloidae" in lower_tax or "blister beetle" in lower_tax or "cantharidin" in lower_tax:
+            for v_id, cand in scored_candidates:
+                if v_id == "blister_beetle":
                     cand.probabilityScore = 0.98
                     cand.probability = 0.98
                     cand.confidence = "high"

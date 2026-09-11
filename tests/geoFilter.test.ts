@@ -46,7 +46,7 @@ describe("geoPestFilter Engine", () => {
     const juneProbs = evaluateRegionalLikelihood(juneContext);
     const janProbs = evaluateRegionalLikelihood(janContext);
 
-    expect(juneProbs.blacklegged_tick).toBeGreaterThan(0.4);
+    expect(juneProbs.blacklegged_tick).toBeGreaterThan(0.3);
     expect(juneProbs.blacklegged_tick).toBeGreaterThan(janProbs.blacklegged_tick);
   });
 

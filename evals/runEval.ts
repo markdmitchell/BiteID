@@ -13,7 +13,7 @@ interface GoldenProfile {
   context: TriageContext;
 }
 
-// Vector ID to canonical name map for 16 species
+// Vector ID to canonical name map for 19 species
 const SPECIES_NAMES: Record<string, string> = {
   blacklegged_tick: "Blacklegged (Deer) Tick",
   lone_star_tick: "Lone Star Tick",
@@ -31,6 +31,9 @@ const SPECIES_NAMES: Record<string, string> = {
   scorpion: "Bark Scorpion",
   horse_fly: "Horse Fly / Deer Fly",
   lice: "Head / Body Lice",
+  no_see_um: "No-see-ums / Biting Midges",
+  black_fly: "Black Fly / Buffalo Gnat",
+  blister_beetle: "Blister Beetle",
 };
 
 const SPECIES_KEYS = Object.keys(SPECIES_NAMES);
@@ -41,7 +44,7 @@ async function runEvaluation() {
   const profiles: GoldenProfile[] = JSON.parse(datasetRaw);
 
   console.log(`\n======================================================`);
-  console.log(`🧪 BiteID Deep Evaluation Harness - 16-Species Clinical Benchmark`);
+  console.log(`🧪 BiteID Deep Evaluation Harness - 19-Species Clinical Benchmark`);
   console.log(`======================================================\n`);
   console.log(`Loaded ${profiles.length} clinical benchmark profiles from goldenDataset.json\n`);
 

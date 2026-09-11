@@ -542,5 +542,85 @@
     "expectedSpecies": "lice",
     "expectedMorphology": { "pattern": "linear_grouped", "centralFeatures": "none", "primaryReaction": "excoriated_papule" },
     "context": { "usState": "US-IL", "monthIndex": 10, "incidentLocation": "indoor_other", "timeElapsed": "over_2_days", "primarySensation": "intense_itch", "emergencyScreening": { "difficultyBreathing": false, "facialSwelling": false, "dizzinessOrConfusion": false, "spreadingHives": false } }
+  },
+  {
+    "id": "midge_01",
+    "name": "No-see-ums - Microscopic Pinpoint Dots (Coastal FL, Fair Skin)",
+    "skinTone": "Type I (Fair)",
+    "expectedSpecies": "no_see_um",
+    "expectedMorphology": { "pattern": "scattered_papules", "centralFeatures": "punctum_bite_mark", "primaryReaction": "urticarial_hive" },
+    "context": { "usState": "US-FL", "monthIndex": 5, "incidentLocation": "outdoor_other", "timeElapsed": "1_to_2_days", "primarySensation": "intense_itch", "emergencyScreening": { "difficultyBreathing": false, "facialSwelling": false, "dizzinessOrConfusion": false, "spreadingHives": false } }
+  },
+  {
+    "id": "midge_02",
+    "name": "Biting Midges - Dense Pruritic Papules (Marshland SC, Medium Skin)",
+    "skinTone": "Type III (Medium)",
+    "expectedSpecies": "no_see_um",
+    "expectedMorphology": { "pattern": "scattered_papules", "centralFeatures": "none", "primaryReaction": "excoriated_papule" },
+    "context": { "usState": "US-SC", "monthIndex": 6, "incidentLocation": "yard_garden", "timeElapsed": "1_to_2_days", "primarySensation": "intense_itch", "emergencyScreening": { "difficultyBreathing": false, "facialSwelling": false, "dizzinessOrConfusion": false, "spreadingHives": false } }
+  },
+  {
+    "id": "midge_03",
+    "name": "No-see-ums - Delayed Intense Itching (Outer Banks NC, Dark Skin)",
+    "skinTone": "Type V (Dark)",
+    "expectedSpecies": "no_see_um",
+    "expectedMorphology": { "pattern": "scattered_papules", "centralFeatures": "none", "primaryReaction": "excoriated_papule" },
+    "context": { "usState": "US-NC", "monthIndex": 7, "incidentLocation": "outdoor_other", "timeElapsed": "over_2_days", "primarySensation": "intense_itch", "emergencyScreening": { "difficultyBreathing": false, "facialSwelling": false, "dizzinessOrConfusion": false, "spreadingHives": false } }
+  },
+  {
+    "id": "blackfly_01",
+    "name": "Black Fly - Hemorrhagic Slash Bite (Maine Stream, Light Skin)",
+    "skinTone": "Type II (Light)",
+    "expectedSpecies": "black_fly",
+    "expectedMorphology": { "pattern": "solitary_wheal", "centralFeatures": "punctum_bite_mark", "primaryReaction": "urticarial_hive" },
+    "context": { "usState": "US-ME", "monthIndex": 5, "incidentLocation": "tall_grass_woods", "timeElapsed": "under_2h", "primarySensation": "severe_pain", "emergencyScreening": { "difficultyBreathing": false, "facialSwelling": false, "dizzinessOrConfusion": false, "spreadingHives": false } }
+  },
+  {
+    "id": "blackfly_02",
+    "name": "Buffalo Gnat - Painful Blood Crust Welt (Wisconsin River, Olive Skin)",
+    "skinTone": "Type IV (Olive)",
+    "expectedSpecies": "black_fly",
+    "expectedMorphology": { "pattern": "solitary_wheal", "centralFeatures": "punctum_bite_mark", "primaryReaction": "urticarial_hive" },
+    "context": { "usState": "US-WI", "monthIndex": 6, "incidentLocation": "outdoor_other", "timeElapsed": "2_to_12h", "primarySensation": "moderate_pain", "emergencyScreening": { "difficultyBreathing": false, "facialSwelling": false, "dizzinessOrConfusion": false, "spreadingHives": false } }
+  },
+  {
+    "id": "blackfly_03",
+    "name": "Black Fly - Swarm Bites with Local Warmth (Appalachian Trail, Fair Skin)",
+    "skinTone": "Type I (Fair)",
+    "expectedSpecies": "black_fly",
+    "expectedMorphology": { "pattern": "solitary_wheal", "centralFeatures": "punctum_bite_mark", "primaryReaction": "urticarial_hive" },
+    "context": { "usState": "US-VA", "monthIndex": 5, "incidentLocation": "tall_grass_woods", "timeElapsed": "2_to_12h", "primarySensation": "severe_pain", "emergencyScreening": { "difficultyBreathing": false, "facialSwelling": false, "dizzinessOrConfusion": false, "spreadingHives": false } }
+  },
+  {
+    "id": "blister_01",
+    "name": "Blister Beetle - Linear Cantharidin Bulla (Kansas Garden, Light Skin)",
+    "skinTone": "Type II (Light)",
+    "expectedSpecies": "blister_beetle",
+    "expectedMorphology": { "pattern": "linear_grouped", "centralFeatures": "none", "primaryReaction": "fluid_pustule" },
+    "context": { "usState": "US-KS", "monthIndex": 6, "incidentLocation": "yard_garden", "timeElapsed": "1_to_2_days", "primarySensation": "burning", "emergencyScreening": { "difficultyBreathing": false, "facialSwelling": false, "dizzinessOrConfusion": false, "spreadingHives": false } }
+  },
+  {
+    "id": "blister_02",
+    "name": "Blister Beetle - Fluid-Filled Bullae without Punctum (Texas Field, Dark Skin)",
+    "skinTone": "Type V (Dark)",
+    "expectedSpecies": "blister_beetle",
+    "expectedMorphology": { "pattern": "solitary_wheal", "centralFeatures": "none", "primaryReaction": "fluid_pustule" },
+    "context": { "usState": "US-TX", "monthIndex": 7, "incidentLocation": "outdoor_other", "timeElapsed": "1_to_2_days", "primarySensation": "burning", "emergencyScreening": { "difficultyBreathing": false, "facialSwelling": false, "dizzinessOrConfusion": false, "spreadingHives": false } }
+  },
+  {
+    "id": "blister_03",
+    "name": "Blister Beetle - Streaked Chemical Burn (California Farm, Medium Skin)",
+    "skinTone": "Type III (Medium)",
+    "expectedSpecies": "blister_beetle",
+    "expectedMorphology": { "pattern": "linear_grouped", "centralFeatures": "none", "primaryReaction": "fluid_pustule" },
+    "context": { "usState": "US-CA", "monthIndex": 8, "incidentLocation": "tall_grass_woods", "timeElapsed": "1_to_2_days", "primarySensation": "burning", "emergencyScreening": { "difficultyBreathing": false, "facialSwelling": false, "dizzinessOrConfusion": false, "spreadingHives": false } }
+  },
+  {
+    "id": "blister_04",
+    "name": "Blister Beetle - Intact Translucent Blister (Iowa Farm, Deep Dark Skin)",
+    "skinTone": "Type VI (Deep Dark)",
+    "expectedSpecies": "blister_beetle",
+    "expectedMorphology": { "pattern": "solitary_wheal", "centralFeatures": "none", "primaryReaction": "fluid_pustule" },
+    "context": { "usState": "US-IA", "monthIndex": 7, "incidentLocation": "yard_garden", "timeElapsed": "1_to_2_days", "primarySensation": "painless", "emergencyScreening": { "difficultyBreathing": false, "facialSwelling": false, "dizzinessOrConfusion": false, "spreadingHives": false } }
   }
 ]

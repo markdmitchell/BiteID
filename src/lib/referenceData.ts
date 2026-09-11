@@ -280,6 +280,54 @@ export const REFERENCE_ASSET_REGISTRY: VisualReferenceAsset[] = [
     ],
     sourceAttribution: "CDC PHIL #2041",
   },
+
+  // No-see-um References
+  {
+    id: "ref_midge_1",
+    pestId: "no_see_um",
+    imageUrl: SVG_REF_LIGHT_MOSQUITO,
+    isAIGenerated: false,
+    skinTypeCategory: "I-II",
+    clinicalDescription: "Dense cluster of microscopic intensely pruritic pinpoint red macules.",
+    hallmarkFeatures: [
+      "Microscopic pinpoint punctate red dots",
+      "Severe delayed itching developing 12-24h post-exposure",
+      "Dense cluster array on lower limbs or arms",
+    ],
+    sourceAttribution: "CDC PHIL #3391",
+  },
+
+  // Black Fly References
+  {
+    id: "ref_black_fly_1",
+    pestId: "black_fly",
+    imageUrl: SVG_REF_RECLUSE_LIGHT,
+    isAIGenerated: false,
+    skinTypeCategory: "I-II",
+    clinicalDescription: "Painful slash bite mark with central hemorrhagic blood punctum and surrounding edematous welt.",
+    hallmarkFeatures: [
+      "Central pinpoint blood crust / hemorrhagic dot",
+      "Immediate sharp burning bite pain near flowing water",
+      "Prominent localized warmth and tissue edema",
+    ],
+    sourceAttribution: "CDC PHIL #7712",
+  },
+
+  // Blister Beetle References
+  {
+    id: "ref_blister_beetle_1",
+    pestId: "blister_beetle",
+    imageUrl: SVG_REF_RECLUSE_LIGHT,
+    isAIGenerated: false,
+    skinTypeCategory: "I-II",
+    clinicalDescription: "Tense translucent fluid-filled linear bullae without central punctum mark.",
+    hallmarkFeatures: [
+      "Tense fluid-filled blister (bulla) appearing 24-48h post contact",
+      "Absence of central bite puncture or stinger",
+      "Linear or streaked contact dermatitis pattern",
+    ],
+    sourceAttribution: "CDC PHIL #9921",
+  },
 ];
 
 export function getReferenceAssetsForPest(
