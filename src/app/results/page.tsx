@@ -455,8 +455,8 @@ export default function ResultsPage() {
 
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
           <div>
-            <span className="text-slate-400 block font-medium">Patient Region</span>
-            <span className="font-bold text-slate-800">{context?.usState || "US-VA"}</span>
+            <span className="text-slate-400 block font-medium">Patient Location</span>
+            <span className="font-bold text-slate-800">{context?.cityState || context?.usState || "US-VA"}</span>
           </div>
           <div>
             <span className="text-slate-400 block font-medium">Environment</span>

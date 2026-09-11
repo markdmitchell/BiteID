@@ -40,6 +40,7 @@ class DermatologicalMorphology(BaseModel):
 class TriageContext(BaseModel):
     coordinates: Optional[Coordinates] = None
     usState: str = "US-VA"
+    cityState: Optional[str] = None
     monthIndex: int = Field(default=8, ge=0, le=11)
     incidentLocation: Literal[
         "bed",

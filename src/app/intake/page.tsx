@@ -18,6 +18,8 @@ import {
   FileImage,
   Bug,
   Target,
+  Navigation,
+  Loader2,
 } from "lucide-react";
 import {
   EmergencySymptoms,
@@ -26,27 +28,13 @@ import {
   PrimarySensation,
 } from "@/lib/schema";
 import { EmergencyModal } from "@/components/EmergencyModal";
+import { ALL_US_STATES, getStateByCode, reverseGeocodeLocation } from "@/lib/usStates";
 
 const SAMPLE_LESION_DATA_URL =
   "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='400' height='300' viewBox='0 0 400 300'><rect width='400' height='300' fill='%23fecdd3'/><circle cx='200' cy='150' r='50' fill='%23f43f5e' opacity='0.7'/><circle cx='200' cy='150' r='10' fill='%23881337'/></svg>";
 
 const SAMPLE_CULPRIT_DATA_URL =
   "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='400' height='300' viewBox='0 0 400 300'><rect width='400' height='300' fill='%23e2e8f0'/><ellipse cx='200' cy='150' rx='25' ry='35' fill='%23451a03'/><line x1='175' y1='130' x2='150' y2='110' stroke='%23451a03' stroke-width='4'/><line x1='225' y1='130' x2='250' y2='110' stroke='%23451a03' stroke-width='4'/><line x1='175' y1='150' x2='145' y2='150' stroke='%23451a03' stroke-width='4'/><line x1='225' y1='150' x2='255' y2='150' stroke='%23451a03' stroke-width='4'/><line x1='175' y1='170' x2='150' y2='190' stroke='%23451a03' stroke-width='4'/><line x1='225' y1='170' x2='250' y2='190' stroke='%23451a03' stroke-width='4'/></svg>";
-
-const US_STATES = [
-  { code: "US-VA", name: "Virginia" },
-  { code: "US-WA", name: "Washington State" },
-  { code: "US-NY", name: "New York" },
-  { code: "US-TX", name: "Texas" },
-  { code: "US-CA", name: "California" },
-  { code: "US-FL", name: "Florida" },
-  { code: "US-MA", name: "Massachusetts" },
-  { code: "US-IL", name: "Illinois" },
-  { code: "US-NC", name: "North Carolina" },
-  { code: "US-GA", name: "Georgia" },
-  { code: "US-PA", name: "Pennsylvania" },
-  { code: "US-OH", name: "Ohio" },
-];
 
 const MONTHS = [
   "January", "February", "March", "April", "May", "June",
@@ -123,6 +111,12 @@ export default function IntakePage() {
 
   // Step 2: Context
   const [usState, setUsState] = useState<string>("US-VA");
+  const [cityInput, setCityInput] = useState<string>("");
+  const [coordinates, setCoordinates] = useState<{ lat: number; lng: number } | null>(null);
+  const [isDetectingGeo, setIsDetectingGeo] = useState<boolean>(false);
+  const [geoSuccessMessage, setGeoSuccessMessage] = useState<string | null>(null);
+  const [geoError, setGeoError] = useState<string | null>(null);
+
   const [monthIndex, setMonthIndex] = useState<number>(new Date().getMonth());
   const [incidentLocation, setIncidentLocation] = useState<IncidentLocation>("tall_grass_woods");
   const [timeElapsed, setTimeElapsed] = useState<TimeElapsed>("under_2h");
@@ -177,12 +171,42 @@ export default function IntakePage() {
   };
 
   const handleGeoLocate = () => {
-    if ("geolocation" in navigator) {
-      navigator.geolocation.getCurrentPosition(
-        () => setUsState("US-VA"),
-        () => setUsState("US-VA")
-      );
+    if (!("geolocation" in navigator)) {
+      setGeoError("Geolocation is not supported by your browser.");
+      return;
     }
+
+    setIsDetectingGeo(true);
+    setGeoError(null);
+    setGeoSuccessMessage(null);
+
+    navigator.geolocation.getCurrentPosition(
+      async (pos) => {
+        try {
+          const { latitude, longitude } = pos.coords;
+          setCoordinates({ lat: latitude, lng: longitude });
+
+          const geoResult = await reverseGeocodeLocation(latitude, longitude);
+          setUsState(geoResult.stateCode);
+          if (geoResult.city) {
+            setCityInput(geoResult.city);
+          }
+
+          setGeoSuccessMessage(
+            `📍 Location auto-detected: ${geoResult.formattedLocation} (${geoResult.stateCode}) • Coordinates: ${latitude.toFixed(2)}°, ${longitude.toFixed(2)}°`
+          );
+        } catch (err) {
+          setGeoError("Location detected via GPS. Please confirm your state.");
+        } finally {
+          setIsDetectingGeo(false);
+        }
+      },
+      (err) => {
+        setIsDetectingGeo(false);
+        setGeoError("Unable to access GPS location. Please select your State manually.");
+      },
+      { timeout: 10000 }
+    );
   };
 
   const handleSubmit = async () => {
@@ -195,8 +219,15 @@ export default function IntakePage() {
     setIsSubmitting(true);
 
     try {
+      const stateObj = getStateByCode(usState);
+      const formattedCityState = cityInput.trim()
+        ? `${cityInput.trim()}, ${stateObj?.abbr || usState.replace("US-", "")}`
+        : (stateObj?.name || usState);
+
       const contextObj = {
         usState,
+        cityState: formattedCityState,
+        coordinates: coordinates || (stateObj ? { lat: stateObj.lat, lng: stateObj.lng } : undefined),
         monthIndex,
         incidentLocation,
         timeElapsed,
@@ -434,34 +465,83 @@ export default function IntakePage() {
               <p className="text-xs text-slate-500 mt-1">Configure endemic regional state boundaries, active seasonal months, and habitat environments.</p>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              {/* State Dropdown Bento Tile */}
-              <div className="bento-card bg-slate-50/70 p-4 space-y-2">
-                <label className="text-xs font-bold text-slate-700 uppercase tracking-wider flex items-center gap-1.5">
-                  <MapPin className="w-4 h-4 text-emerald-600" /> State / Region
-                </label>
-                <div className="flex gap-2">
-                  <select
-                    value={usState}
-                    onChange={(e) => setUsState(e.target.value)}
-                    className="flex-1 rounded-xl border border-slate-300 px-3.5 py-2.5 text-xs bg-white focus:ring-2 focus:ring-emerald-500 focus:outline-none shadow-xs font-semibold"
-                  >
-                    {US_STATES.map((st) => (
-                      <option key={st.code} value={st.code}>
-                        {st.name} ({st.code})
-                      </option>
-                    ))}
-                  </select>
+            <div className="grid grid-cols-1 gap-4">
+              {/* State & City Geographic Location Bento Tile */}
+              <div className="bento-card bg-slate-50/70 p-4 space-y-3 border border-slate-200/80">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-200/60 pb-2">
+                  <div>
+                    <label className="text-xs font-bold text-slate-800 uppercase tracking-wider flex items-center gap-1.5">
+                      <MapPin className="w-4 h-4 text-emerald-600" /> Patient Geographic Location
+                    </label>
+                    <p className="text-[11px] text-slate-500 mt-0.5">
+                      Supports all 50 Contiguous & US States. Specify your city & state or auto-detect via GPS.
+                    </p>
+                  </div>
                   <button
                     type="button"
                     onClick={handleGeoLocate}
-                    title="Auto-detect current location"
-                    className="bg-white hover:bg-slate-100 text-slate-700 p-2.5 rounded-xl border border-slate-300 shadow-xs transition-all"
+                    disabled={isDetectingGeo}
+                    className="inline-flex items-center gap-1.5 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 text-xs font-bold px-3 py-2 rounded-xl border border-emerald-200 shadow-xs transition-all cursor-pointer disabled:opacity-50"
                   >
-                    <MapPin className="w-4 h-4 text-emerald-600" />
+                    {isDetectingGeo ? (
+                      <Loader2 className="w-3.5 h-3.5 animate-spin text-emerald-600" />
+                    ) : (
+                      <Navigation className="w-3.5 h-3.5 text-emerald-600" />
+                    )}
+                    <span>{isDetectingGeo ? "Detecting..." : "Detect My Location"}</span>
                   </button>
                 </div>
+
+                {geoSuccessMessage && (
+                  <div className="bg-emerald-50 border border-emerald-200 rounded-xl p-2.5 flex items-center gap-2 text-xs text-emerald-800 font-medium animate-in fade-in">
+                    <CheckCircle2 className="w-4 h-4 text-emerald-600 flex-shrink-0" />
+                    <span>{geoSuccessMessage}</span>
+                  </div>
+                )}
+
+                {geoError && (
+                  <div className="bg-amber-50 border border-amber-200 rounded-xl p-2.5 flex items-center gap-2 text-xs text-amber-800 font-medium animate-in fade-in">
+                    <AlertTriangle className="w-4 h-4 text-amber-600 flex-shrink-0" />
+                    <span>{geoError}</span>
+                  </div>
+                )}
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
+                  <div>
+                    <label className="text-[11px] font-semibold text-slate-600 block mb-1">
+                      City / Town (Optional)
+                    </label>
+                    <input
+                      type="text"
+                      value={cityInput}
+                      onChange={(e) => setCityInput(e.target.value)}
+                      placeholder="e.g. Richmond, Austin, Seattle, or ZIP"
+                      className="w-full rounded-xl border border-slate-300 px-3.5 py-2.5 text-xs bg-white focus:ring-2 focus:ring-emerald-500 focus:outline-none shadow-xs font-semibold text-slate-800 placeholder:text-slate-400"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="text-[11px] font-semibold text-slate-600 block mb-1">
+                      State / Region (All 50 US States + DC)
+                    </label>
+                    <select
+                      value={usState}
+                      onChange={(e) => {
+                        setUsState(e.target.value);
+                        setGeoSuccessMessage(null);
+                      }}
+                      className="w-full rounded-xl border border-slate-300 px-3.5 py-2.5 text-xs bg-white focus:ring-2 focus:ring-emerald-500 focus:outline-none shadow-xs font-semibold text-slate-800"
+                    >
+                      {ALL_US_STATES.map((st) => (
+                        <option key={st.code} value={st.code}>
+                          {st.name} ({st.abbr})
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
               </div>
+            </div>
 
               {/* Month Selector Bento Tile */}
               <div className="bento-card bg-slate-50/70 p-4 space-y-2">

@@ -69,6 +69,7 @@ export const TriageContextSchema = z.object({
     })
     .optional(),
   usState: z.string().default("US-VA"),
+  cityState: z.string().optional(),
   monthIndex: z.number().min(0).max(11).default(new Date().getMonth()),
   incidentLocation: IncidentLocationEnum.default("yard_garden"),
   timeElapsed: TimeElapsedEnum.default("under_2h"),
