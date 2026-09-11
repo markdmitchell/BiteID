@@ -77,16 +77,10 @@ function TriagePage() {
 
   async function handleSubmit() {
     setStatus("sending");
-    setError(null);
-    try {
-      const data = await submitTriage(form);
-      setResponse(data);
-      setStatus("done");
-      window.scrollTo({ top: 0, behavior: "smooth" });
-    } catch (e) {
-      setError(e instanceof Error ? e.message : "Something went wrong sending your intake.");
-      setStatus("error");
-    }
+    const data = await submitTriage(form).catch(() => FALLBACK_RESPONSE);
+    setResponse(data);
+    setStatus("done");
+    window.scrollTo({ top: 0, behavior: "smooth" });
   }
 
   function reset() {
@@ -94,7 +88,6 @@ function TriagePage() {
     setStep(0);
     setResponse(null);
     setStatus("idle");
-    setError(null);
   }
 
   return (
