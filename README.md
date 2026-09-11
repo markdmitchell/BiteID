@@ -1,10 +1,12 @@
 # 🦟 BiteID - Multimodal Insect & Spider Bite Triage Prototype
 
-BiteID is a functional, self-contained Next.js & Streamlit application for insect and spider bite triage. The app triages bite reactions by combining:
+BiteID is a functional, self-contained Next.js & Streamlit application for 19-species insect and spider bite triage. For a detailed breakdown of our multi-stage Bayesian prior engine, red-flag emergency screening, and Fitzpatrick phototype equity methodology, see [docs/METHODOLOGY.md](file:///c:/Users/MarkD/Documents/antigravity/bold-franklin/docs/METHODOLOGY.md).
+
+The app triages bite reactions by combining:
 1. **Multimodal Vision**: Lesion image + optional captured culprit pest image.
-2. **Geo-Seasonal Intelligence**: Endemic state maps, temperature activity curves, and habitat/temporal context.
+2. **Geo-Seasonal Intelligence**: 50-State endemicity maps, monthly activity curves, and habitat/temporal context.
 3. **Deterministic Safety Interception**: Red-flag emergency screening for anaphylaxis/systemic symptoms (911 / Poison Control quick-dial).
-4. **Clinical Reference Engine**: Side-by-side visual reference comparisons across Fitzpatrick skin types I–VI with verified CDC PHIL attributions.
+4. **Clinical Reference Engine**: Side-by-side visual reference comparisons across discrete Fitzpatrick skin types I–VI with verified CDC PHIL attributions.
 5. **Bento Box & Liquid Glass UI**: Responsive modular dashboard design system.
 
 ---
