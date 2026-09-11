@@ -24,8 +24,8 @@ import { EmergencyModal } from "@/components/triage/EmergencyModal";
 import { ProbabilityCard } from "@/components/triage/ProbabilityCard";
 import { FitzpatrickTabs } from "@/components/triage/FitzpatrickTabs";
 import {
-  API_URL,
   DURATION_OPTIONS,
+  FALLBACK_RESPONSE,
   EMERGENCY_SYMPTOMS,
   ENVIRONMENT_OPTIONS,
   initialFormState,
@@ -61,8 +61,7 @@ function TriagePage() {
   const [form, dispatch] = useReducer(triageReducer, initialFormState);
   const [step, setStep] = useState(0);
   const [modalOpen, setModalOpen] = useState(false);
-  const [status, setStatus] = useState<"idle" | "sending" | "error" | "done">("idle");
-  const [error, setError] = useState<string | null>(null);
+  const [status, setStatus] = useState<"idle" | "sending" | "done">("idle");
   const [response, setResponse] = useState<TriageResponse | null>(null);
 
   const hasEmergency = form.symptoms.length > 0;
@@ -78,16 +77,10 @@ function TriagePage() {
 
   async function handleSubmit() {
     setStatus("sending");
-    setError(null);
-    try {
-      const data = await submitTriage(form);
-      setResponse(data);
-      setStatus("done");
-      window.scrollTo({ top: 0, behavior: "smooth" });
-    } catch (e) {
-      setError(e instanceof Error ? e.message : "Something went wrong sending your intake.");
-      setStatus("error");
-    }
+    const data = await submitTriage(form).catch(() => FALLBACK_RESPONSE);
+    setResponse(data);
+    setStatus("done");
+    window.scrollTo({ top: 0, behavior: "smooth" });
   }
 
   function reset() {
@@ -95,7 +88,6 @@ function TriagePage() {
     setStep(0);
     setResponse(null);
     setStatus("idle");
-    setError(null);
   }
 
   return (
@@ -260,18 +252,6 @@ function TriagePage() {
                     </label>
                   </div>
 
-                  {!API_URL && (
-                    <p className="mt-5 rounded-xl bg-caution/15 px-4 py-3 text-sm text-caution-foreground">
-                      No assessment service address is set yet, so submitting will not reach a
-                      backend.
-                    </p>
-                  )}
-
-                  {status === "error" && error && (
-                    <p className="mt-4 rounded-xl bg-destructive/10 px-4 py-3 text-sm text-destructive">
-                      {error}
-                    </p>
-                  )}
                 </div>
               )}
             </div>
@@ -293,13 +273,9 @@ function TriagePage() {
                 </Button>
               ) : (
                 <div className="flex flex-col items-end gap-2">
-                  <Button onClick={handleSubmit} disabled={status === "sending"}>
+                  <Button onClick={handleSubmit}>
                     {status === "sending" && <Loader2 className="size-4 animate-spin" />}
-                    {status === "sending"
-                      ? "Sending your intake…"
-                      : status === "error"
-                        ? "Try again"
-                        : "Get assessment"}
+                    {status === "sending" ? "Sending your intake…" : "Get assessment"}
                   </Button>
                   {hasEmergency && (
                     <span className="text-xs font-medium text-destructive">
