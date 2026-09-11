@@ -15,6 +15,33 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
+# Custom Bento Grid CSS
+st.markdown("""
+<style>
+    .bento-card {
+        background-color: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 16px;
+        padding: 20px;
+        margin-bottom: 16px;
+        backdrop-filter: blur(10px);
+    }
+    .bento-badge {
+        display: inline-block;
+        padding: 4px 12px;
+        border-radius: 20px;
+        font-size: 11px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin-bottom: 8px;
+    }
+    .badge-emerald { background-color: rgba(16, 185, 129, 0.2); color: #10b981; border: 1px solid rgba(16, 185, 129, 0.3); }
+    .badge-amber { background-color: rgba(245, 158, 11, 0.2); color: #f59e0b; border: 1px solid rgba(245, 158, 11, 0.3); }
+    .badge-red { background-color: rgba(239, 68, 68, 0.2); color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.3); }
+</style>
+""", unsafe_allow_html=True)
+
 PROMPT_NODE_A = """You are Node A (The Entomologist), a world-class entomologist.
 Analyze the provided bug photo. Determine the scientific taxonomy of the specimen (e.g. Amblyomma americanum, Ixodes scapularis, Cimex lectularius, Culicidae, Loxosceles reclusa).
 Pay close attention to key morphological identification hallmarks:
@@ -400,6 +427,16 @@ if st.button("🚀 Run BiteID Triage Assessment", type="primary", use_container_
 
     st.markdown("---")
     st.subheader("🎯 Triage Assessment Results")
+
+    # Fitzpatrick Skin Tone Reference Selector Card
+    st.markdown("##### 🎨 Fitzpatrick Skin Tone Reference Presentation")
+    tone_tab1, tone_tab2, tone_tab3 = st.tabs(["Types I–II (Fair)", "Types III–IV (Medium)", "Types V–VI (Deep)"])
+    with tone_tab1:
+        st.info("Fair skin presentation — reactions usually appear bright pink or red with distinct central erythema.")
+    with tone_tab2:
+        st.info("Medium skin presentation — reactions often appear red-brown and less obvious against surrounding skin.")
+    with tone_tab3:
+        st.info("Deep skin presentation — reactions often appear violet, grey, hyperpigmented or darker than surrounding skin.")
 
     # Banner Card
     res_col1, res_col2 = st.columns([2, 1])
