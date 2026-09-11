@@ -61,8 +61,7 @@ function TriagePage() {
   const [form, dispatch] = useReducer(triageReducer, initialFormState);
   const [step, setStep] = useState(0);
   const [modalOpen, setModalOpen] = useState(false);
-  const [status, setStatus] = useState<"idle" | "sending" | "error" | "done">("idle");
-  const [error, setError] = useState<string | null>(null);
+  const [status, setStatus] = useState<"idle" | "sending" | "done">("idle");
   const [response, setResponse] = useState<TriageResponse | null>(null);
 
   const hasEmergency = form.symptoms.length > 0;
