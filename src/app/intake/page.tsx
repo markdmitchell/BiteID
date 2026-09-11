@@ -541,7 +541,6 @@ export default function IntakePage() {
                   </div>
                 </div>
               </div>
-            </div>
 
               {/* Month Selector Bento Tile */}
               <div className="bento-card bg-slate-50/70 p-4 space-y-2">
