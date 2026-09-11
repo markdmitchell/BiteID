@@ -146,7 +146,7 @@ export function ResultsDashboard({
                     <span>Special Risk Warning: Alpha-gal Syndrome (Red Meat Allergy)</span>
                   </div>
                   <p className="text-amber-800 dark:text-amber-300 leading-relaxed">
-                    Lone Star Ticks inject galactose-alpha-1,3-galactose ("alpha-gal") sugar molecules via saliva. Symptoms (severe hives, facial swelling, severe GI cramps) typically occur <strong>3 to 8 hours</strong> after consuming beef, pork, lamb, venison, or dairy. Request a specific IgE blood test from your physician if symptoms occur post-ingestion.
+                    Lone Star Ticks inject galactose-alpha-1,3-galactose (&quot;alpha-gal&quot;) sugar molecules via saliva. Symptoms (severe hives, facial swelling, severe GI cramps) typically occur <strong>3 to 8 hours</strong> after consuming beef, pork, lamb, venison, or dairy. Request a specific IgE blood test from your physician if symptoms occur post-ingestion.
                   </p>
                 </div>
               )}
