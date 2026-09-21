@@ -1,3 +1,4 @@
+import { createGoogleGenerativeAI } from "@ai-sdk/google";
 import { createOpenAI } from "@ai-sdk/openai";
 
 const LOVABLE_AIG_RUN_ID_HEADER = "X-Lovable-AIG-Run-ID";
@@ -32,5 +33,12 @@ export function createLovableResponsesProvider(lovableApiKey: string) {
       "X-Lovable-AIG-SDK": "vercel-ai-sdk",
     },
     fetch: runIdFetch.fetch,
+  });
+}
+
+/** Google Gemini Generative AI provider. Server-side only. */
+export function createGoogleProvider(geminiApiKey: string) {
+  return createGoogleGenerativeAI({
+    apiKey: geminiApiKey,
   });
 }

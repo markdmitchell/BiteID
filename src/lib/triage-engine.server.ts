@@ -1,5 +1,5 @@
 import { streamText } from "ai";
-import { createLovableResponsesProvider } from "./ai-gateway.server";
+import { createGoogleProvider, createLovableResponsesProvider } from "./ai-gateway.server";
 import {
   MID_ATLANTIC_STATES,
   VECTOR_DATABASE,
@@ -51,11 +51,11 @@ export type EngineResultItem = {
 
 export type EngineResponse = {
   results: EngineResultItem[];
-  guidance?: string | undefined;
+  guidance: string;
   disclaimer: string;
-  isEmergencyRedirect?: boolean | undefined;
-  culpritDetectedFromPhoto?: boolean | undefined;
-  lesionReading?: string | undefined;
+  isEmergencyRedirect?: boolean;
+  culpritDetectedFromPhoto?: boolean;
+  lesionReading?: string;
 };
 
 const DISCLAIMER =
@@ -101,6 +101,20 @@ type VisionReading = {
   lesionDescription: string;
 };
 
+type VisionProvider = { type: "google"; apiKey: string } | { type: "lovable"; apiKey: string };
+
+function resolveVisionProvider(): VisionProvider | null {
+  const geminiKey = process.env["GEMINI_API_KEY"] || process.env["GOOGLE_GENERATIVE_AI_API_KEY"];
+  if (geminiKey) {
+    return { type: "google", apiKey: geminiKey };
+  }
+  const lovableKey = process.env["LOVABLE_API_KEY"];
+  if (lovableKey) {
+    return { type: "lovable", apiKey: lovableKey };
+  }
+  return null;
+}
+
 const PATTERNS = [
   "solitary_wheal",
   "annular_target",
@@ -133,9 +147,10 @@ function parseJsonBlock(text: string): Record<string, unknown> | null {
 }
 
 /** Vision pass: entomology (bug photo) + dermatology (lesion morphology). */
-async function readPhotos(intake: EngineIntake, apiKey: string): Promise<VisionReading | null> {
-  const lovable = createLovableResponsesProvider(apiKey);
-
+async function readPhotos(
+  intake: EngineIntake,
+  provider: VisionProvider,
+): Promise<VisionReading | null> {
   const instructions = `You are a two-part visual analysis node in an arthropod bite triage pipeline.
 Part 1 (entomology): if a second image of a captured arthropod is provided, identify it as precisely as possible (genus/species where visible).
 Part 2 (dermatology): describe ONLY the observable morphology of the skin image. Do not diagnose a disease and do not name a treatment.
@@ -160,20 +175,31 @@ Return a single JSON object, no prose, no markdown fences:
   ];
   if (intake.bugImage) content.push({ type: "image", image: intake.bugImage });
 
-  const result = streamText({
-    model: lovable.responses(MODEL),
-    system: instructions,
-    messages: [{ role: "user", content }],
-    providerOptions: {
-      openai: {
-        forceReasoning: true,
-        reasoningEffort: "low",
-        reasoningSummary: "auto",
-        store: false,
-        include: ["reasoning.encrypted_content"],
+  let result;
+  if (provider.type === "google") {
+    const google = createGoogleProvider(provider.apiKey);
+    result = streamText({
+      model: google("gemini-3.6-flash"),
+      system: instructions,
+      messages: [{ role: "user", content }],
+    });
+  } else {
+    const lovable = createLovableResponsesProvider(provider.apiKey);
+    result = streamText({
+      model: lovable.responses(MODEL),
+      system: instructions,
+      messages: [{ role: "user", content }],
+      providerOptions: {
+        openai: {
+          forceReasoning: true,
+          reasoningEffort: "low",
+          reasoningSummary: "auto",
+          store: false,
+          include: ["reasoning.encrypted_content"],
+        },
       },
-    },
-  });
+    });
+  }
 
   const text = await result.text;
   const parsed = parseJsonBlock(text);
@@ -194,11 +220,11 @@ Return a single JSON object, no prose, no markdown fences:
 export async function analyseIntake(intake: EngineIntake): Promise<EngineResponse> {
   if (intake.symptoms.length > 0) return emergencyResponse();
 
-  const apiKey = process.env["LOVABLE_API_KEY"];
+  const provider = resolveVisionProvider();
   let reading: VisionReading | null = null;
-  if (apiKey) {
+  if (provider) {
     try {
-      reading = await readPhotos(intake, apiKey);
+      reading = await readPhotos(intake, provider);
     } catch (error) {
       console.error("BiteID vision analysis failed", error);
     }
@@ -211,7 +237,7 @@ export async function analyseIntake(intake: EngineIntake): Promise<EngineRespons
     centralFeatures: "punctum_bite_mark",
     primaryReaction: "urticarial_hive",
     primarySensation: "mild_itch",
-    lesionDescription: apiKey
+    lesionDescription: provider
       ? "Visual analysis was inconclusive; assessment derived from regional epidemiological prevalence, seasonal activity, and habitat context."
       : "Visual AI key not configured; assessment derived from regional epidemiological prevalence, seasonal activity, and habitat context.",
   };
