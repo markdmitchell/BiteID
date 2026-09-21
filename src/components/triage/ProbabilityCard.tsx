@@ -7,6 +7,23 @@ type ProbabilityCardProps = {
   rank: number;
 };
 
+function DetailList({ title, items }: { title: string; items?: string[] | undefined }) {
+  if (!items || items.length === 0) return null;
+  return (
+    <div className="mt-4">
+      <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">{title}</p>
+      <ul className="mt-1.5 space-y-1">
+        {items.map((entry, i) => (
+          <li key={i} className="flex gap-2 text-sm leading-relaxed text-foreground">
+            <span className="mt-1.5 size-1.5 shrink-0 rounded-full bg-primary" />
+            <span>{entry}</span>
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+
 export function ProbabilityCard({ item, rank }: ProbabilityCardProps) {
   const value = Math.max(0, Math.min(100, confidenceOf(item)));
   const [width, setWidth] = useState(0);
@@ -27,6 +44,9 @@ export function ProbabilityCard({ item, rank }: ProbabilityCardProps) {
           </span>
           <div>
             <h3 className="font-display text-base font-semibold text-foreground">{nameOf(item)}</h3>
+            {item.scientificName && (
+              <p className="text-xs italic text-muted-foreground">{item.scientificName}</p>
+            )}
             {urgency && (
               <span
                 className={cn(
@@ -55,11 +75,17 @@ export function ProbabilityCard({ item, rank }: ProbabilityCardProps) {
         />
       </div>
 
-      {(item.description ?? item.summary) && (
+      {(item.description ?? item.summary) && rank === 0 && (
         <p className="mt-4 text-sm leading-relaxed text-muted-foreground">
           {item.description ?? item.summary}
         </p>
       )}
+
+      <DetailList title="Why it matched" items={item.matchedFactors} />
+      <DetailList title="Can carry" items={item.associatedPathogens} />
+      <DetailList title="Delayed risks" items={item.delayedRisks} />
+      <DetailList title="First aid" items={item.firstAidAdvice} />
+      <DetailList title="Warning signs to watch" items={item.warningSignsToWatch} />
     </div>
   );
 }

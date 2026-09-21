@@ -34,6 +34,7 @@ import {
   triageReducer,
   type TriageResponse,
 } from "@/lib/triage";
+import { US_STATE_OPTIONS } from "@/lib/us-states";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -72,7 +73,7 @@ function TriagePage() {
 
   const canContinue =
     (step === 0 && !!form.lesionImage) ||
-    (step === 1 && !!form.environment && !!form.duration) ||
+    (step === 1 && !!form.environment && !!form.duration && !!form.usState) ||
     step === 2;
 
   async function handleSubmit() {
@@ -180,6 +181,29 @@ function TriagePage() {
                           ))}
                         </SelectContent>
                       </Select>
+                    </div>
+                    <div>
+                      <label className="text-sm font-medium text-foreground">
+                        Which state were you in?
+                      </label>
+                      <Select
+                        value={form.usState}
+                        onValueChange={(value) => dispatch({ type: "setUsState", value })}
+                      >
+                        <SelectTrigger className="mt-2 w-full">
+                          <SelectValue placeholder="Choose a state" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {US_STATE_OPTIONS.map((o) => (
+                            <SelectItem key={o.value} value={o.value}>
+                              {o.label}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      <p className="mt-2 text-xs text-muted-foreground">
+                        Which insects are active depends on where and when you were bitten.
+                      </p>
                     </div>
                     <div>
                       <label className="text-sm font-medium text-foreground">

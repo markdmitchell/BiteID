@@ -1,3 +1,5 @@
+import { analyseIntakeFn } from "./triage.functions";
+
 export type EnvironmentOption = {
   value: string;
   label: string;
@@ -34,6 +36,7 @@ export type TriageFormState = {
   bugImage: File | null;
   environment: string;
   duration: string;
+  usState: string;
   symptoms: string[];
   noneOfThese: boolean;
 };
@@ -43,6 +46,7 @@ export const initialFormState: TriageFormState = {
   bugImage: null,
   environment: "",
   duration: "",
+  usState: "",
   symptoms: [],
   noneOfThese: false,
 };
@@ -52,6 +56,7 @@ export type TriageAction =
   | { type: "setBug"; file: File | null }
   | { type: "setEnvironment"; value: string }
   | { type: "setDuration"; value: string }
+  | { type: "setUsState"; value: string }
   | { type: "toggleSymptom"; value: string }
   | { type: "setNoneOfThese"; value: boolean }
   | { type: "reset" };
@@ -66,6 +71,8 @@ export function triageReducer(state: TriageFormState, action: TriageAction): Tri
       return { ...state, environment: action.value };
     case "setDuration":
       return { ...state, duration: action.value };
+    case "setUsState":
+      return { ...state, usState: action.value };
     case "toggleSymptom": {
       const has = state.symptoms.includes(action.value);
       const symptoms = has
@@ -82,11 +89,12 @@ export function triageReducer(state: TriageFormState, action: TriageAction): Tri
   }
 }
 
-/** Ranked result item as returned by the backend. Rendered as-is. */
+/** Ranked result item as returned by the analysis step. Rendered as-is. */
 export type TriageResultItem = {
   name?: string;
   condition?: string;
   label?: string;
+  scientificName?: string;
   probability?: number;
   confidence?: number;
   score?: number;
@@ -94,6 +102,11 @@ export type TriageResultItem = {
   summary?: string;
   urgency?: string;
   severity?: string;
+  matchedFactors?: string[];
+  associatedPathogens?: string[];
+  delayedRisks?: string[];
+  firstAidAdvice?: string[];
+  warningSignsToWatch?: string[];
 };
 
 export type TriageResponse = {
@@ -105,40 +118,45 @@ export type TriageResponse = {
   [key: string]: unknown;
 };
 
-const API_URL = import.meta.env["VITE_API_URL"] as string | undefined;
-
 /**
- * Neutral placeholder shown when the service cannot be reached. Contains no
+ * Neutral placeholder shown when the analysis cannot be completed. Contains no
  * findings, scoring or interpretation — only generic safety guidance.
  */
 export const FALLBACK_RESPONSE: TriageResponse = {
   results: [],
   guidance:
-    "We could not reach the assessment service, so there is nothing ranked to show for this intake yet.\n\nKeep the area clean, watch for spreading redness, swelling or fever, and speak with a clinician if anything worsens.",
+    "The assessment could not be completed for this intake. Please try again in a moment, and speak with a clinician if anything about the area is worsening.",
   disclaimer:
     "Alpha version — for testing only. BiteID is not a medical service and does not provide a diagnosis.",
 };
 
-export function buildTriageFormData(state: TriageFormState): FormData {
-  const fd = new FormData();
-  if (state.lesionImage) fd.append("skin_lesion_image", state.lesionImage, state.lesionImage.name);
-  if (state.bugImage) fd.append("bug_image", state.bugImage, state.bugImage.name);
-  fd.append("environment", state.environment);
-  fd.append("duration", state.duration);
-  fd.append("emergency_symptoms", JSON.stringify(state.symptoms));
-  fd.append("has_emergency_symptoms", String(state.symptoms.length > 0));
-  return fd;
+function fileToDataUrl(file: File): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(String(reader.result));
+    reader.onerror = () => reject(reader.error);
+    reader.readAsDataURL(file);
+  });
 }
 
+/** Sends the intake to the in-app analysis step. Never throws. */
 export async function submitTriage(state: TriageFormState): Promise<TriageResponse> {
-  if (!API_URL) return FALLBACK_RESPONSE;
   try {
-    const response = await fetch(API_URL, {
-      method: "POST",
-      body: buildTriageFormData(state),
+    if (!state.lesionImage) return FALLBACK_RESPONSE;
+    const lesionImage = await fileToDataUrl(state.lesionImage);
+    const bugImage = state.bugImage ? await fileToDataUrl(state.bugImage) : null;
+    const result = await analyseIntakeFn({
+      data: {
+        lesionImage,
+        bugImage,
+        environment: state.environment,
+        duration: state.duration,
+        usState: state.usState,
+        monthIndex: new Date().getMonth(),
+        symptoms: state.symptoms,
+      },
     });
-    if (!response.ok) return FALLBACK_RESPONSE;
-    return (await response.json()) as TriageResponse;
+    return result as TriageResponse;
   } catch {
     return FALLBACK_RESPONSE;
   }
