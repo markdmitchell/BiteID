@@ -810,59 +810,164 @@ export function evaluateRegionalLikelihood(
     // Calculate composite base score
     let score = vector.baseWeight * geoFactor * seasonalFactor * habitatFactor * sensationFactor;
 
-    // Entomologist bug taxonomy override if bug photo detected tick
+    // Entomologist bug taxonomy override if bug photo detected arthropod
     if (bugTaxonomy) {
       const lower = bugTaxonomy.toLowerCase();
-      if (lower.includes("ixodes") && key === "blacklegged_tick") {
-        score *= 10.0;
+      if (
+        (lower.includes("cimex") || lower.includes("bed bug") || lower.includes("bedbug")) &&
+        key === "bed_bug"
+      ) {
+        score *= 100.0;
+      }
+      if (
+        (lower.includes("ixodes") ||
+          lower.includes("deer tick") ||
+          lower.includes("blacklegged")) &&
+        key === "blacklegged_tick"
+      ) {
+        score *= 100.0;
       }
       if (
         (lower.includes("amblyomma") || lower.includes("lone star")) &&
         key === "lone_star_tick"
       ) {
-        score *= 10.0;
+        score *= 100.0;
       }
-      if ((lower.includes("dermacentor") || lower.includes("dog tick")) && key === "dog_tick") {
-        score *= 10.0;
+      if (
+        (lower.includes("dermacentor") ||
+          lower.includes("dog tick") ||
+          lower.includes("wood tick")) &&
+        key === "dog_tick"
+      ) {
+        score *= 100.0;
       }
       if ((lower.includes("solenopsis") || lower.includes("fire ant")) && key === "fire_ant") {
-        score *= 10.0;
+        score *= 100.0;
       }
       if (
         (lower.includes("apis") || lower.includes("honey bee") || lower.includes("bee")) &&
         key === "honey_bee"
       ) {
-        score *= 10.0;
+        score *= 100.0;
       }
       if (
-        (lower.includes("vespula") || lower.includes("wasp") || lower.includes("yellow jacket")) &&
+        (lower.includes("vespula") ||
+          lower.includes("polistes") ||
+          lower.includes("wasp") ||
+          lower.includes("yellow jacket") ||
+          lower.includes("hornet")) &&
         key === "wasp"
       ) {
-        score *= 10.0;
+        score *= 100.0;
       }
       if ((lower.includes("centruroides") || lower.includes("scorpion")) && key === "scorpion") {
-        score *= 10.0;
+        score *= 100.0;
       }
       if (
         (lower.includes("tabanidae") ||
+          lower.includes("tabanus") ||
+          lower.includes("chrysops") ||
           lower.includes("horse fly") ||
           lower.includes("deer fly")) &&
         key === "horse_fly"
       ) {
-        score *= 10.0;
+        score *= 100.0;
       }
-      if ((lower.includes("pediculus") || lower.includes("lice")) && key === "lice") {
-        score *= 10.0;
+      if (
+        (lower.includes("pediculus") ||
+          lower.includes("phthirus") ||
+          lower.includes("lice") ||
+          lower.includes("louse")) &&
+        key === "lice"
+      ) {
+        score *= 100.0;
+      }
+      if (
+        (lower.includes("culicidae") ||
+          lower.includes("anopheles") ||
+          lower.includes("aedes") ||
+          lower.includes("culex") ||
+          lower.includes("mosquito")) &&
+        key === "mosquito"
+      ) {
+        score *= 100.0;
+      }
+      if (
+        (lower.includes("ctenocephalides") || lower.includes("pulex") || lower.includes("flea")) &&
+        key === "flea"
+      ) {
+        score *= 100.0;
+      }
+      if (
+        (lower.includes("loxosceles") ||
+          lower.includes("brown recluse") ||
+          lower.includes("recluse")) &&
+        key === "brown_recluse"
+      ) {
+        score *= 100.0;
+      }
+      if (
+        (lower.includes("latrodectus") ||
+          lower.includes("black widow") ||
+          lower.includes("widow")) &&
+        key === "black_widow"
+      ) {
+        score *= 100.0;
+      }
+      if (
+        (lower.includes("trombiculidae") ||
+          lower.includes("trombicula") ||
+          lower.includes("chigger") ||
+          lower.includes("harvest mite")) &&
+        key === "chigger"
+      ) {
+        score *= 100.0;
+      }
+      if (
+        (lower.includes("triatoma") ||
+          lower.includes("kissing bug") ||
+          lower.includes("triatomine") ||
+          lower.includes("reduviid")) &&
+        key === "kissing_bug"
+      ) {
+        score *= 100.0;
+      }
+      if (
+        (lower.includes("ceratopogonidae") ||
+          lower.includes("culicoides") ||
+          lower.includes("no-see-um") ||
+          lower.includes("midge") ||
+          lower.includes("punkie")) &&
+        key === "no_see_um"
+      ) {
+        score *= 100.0;
+      }
+      if (
+        (lower.includes("simuliidae") ||
+          lower.includes("simulium") ||
+          lower.includes("black fly") ||
+          lower.includes("buffalo gnat")) &&
+        key === "black_fly"
+      ) {
+        score *= 100.0;
+      }
+      if (
+        (lower.includes("meloidae") ||
+          lower.includes("epicauta") ||
+          lower.includes("blister beetle")) &&
+        key === "blister_beetle"
+      ) {
+        score *= 100.0;
       }
     }
 
     // 5. Morphological Overrides & Multipliers
     if (morphObj) {
       if (morphObj.pattern === "linear_grouped") {
-        if (key === "bed_bug") score *= 10.0;
+        if (key === "bed_bug") score *= 15.0;
         if (key === "flea") score *= 4.0;
         if (key === "chigger") score *= 4.0;
-        if (key === "lice") score *= 5.0;
+        if (key === "lice") score *= 4.0;
       }
       if (
         morphObj.pattern === "solitary_wheal" &&
@@ -883,10 +988,10 @@ export function evaluateRegionalLikelihood(
         morphObj.pattern === "scattered_papules" ||
         morphObj.primaryReaction === "excoriated_papule"
       ) {
-        if (key === "lice") score *= 8.0;
+        if (key === "bed_bug") score *= 6.0;
         if (key === "flea") score *= 5.0;
         if (key === "chigger") score *= 5.0;
-        if (key === "bed_bug") score *= 0.3;
+        if (key === "lice") score *= 4.0;
       }
       if (
         morphObj.centralFeatures === "necrotic_ulcer" ||

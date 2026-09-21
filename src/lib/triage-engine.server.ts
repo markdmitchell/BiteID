@@ -152,12 +152,12 @@ async function readPhotos(
   provider: VisionProvider,
 ): Promise<VisionReading | null> {
   const instructions = `You are a two-part visual analysis node in an arthropod bite triage pipeline.
-Part 1 (entomology): if a second image of a captured arthropod is provided, identify it as precisely as possible (genus/species where visible).
-Part 2 (dermatology): describe ONLY the observable morphology of the skin image. Do not diagnose a disease and do not name a treatment.
+- Part 1 (entomology): If ANY image contains a captured arthropod, insect, spider, tick, mite, or bug, identify it as precisely as possible (genus/species if visible, plus common name). Set "bugTaxonomy" and "bugCommonName". If no arthropod is shown in any image, set both to null.
+- Part 2 (dermatology): If ANY image shows a skin lesion, bite, sting, or cutaneous reaction, describe ONLY the observable morphology. Do not diagnose a disease and do not name a treatment.
 
 Return a single JSON object, no prose, no markdown fences:
 {
-  "bugTaxonomy": string|null,          // scientific name if a bug image was provided, else null
+  "bugTaxonomy": string|null,          // scientific name if an arthropod is provided in any image, else null
   "bugCommonName": string|null,        // common name if identified, else null
   "pattern": one of ${PATTERNS.join(" | ")},
   "centralFeatures": one of ${CENTRAL.join(" | ")},
@@ -169,7 +169,7 @@ Return a single JSON object, no prose, no markdown fences:
   const content: Array<{ type: "text"; text: string } | { type: "image"; image: string }> = [
     {
       type: "text",
-      text: `Skin lesion image follows.${intake.bugImage ? " A captured-arthropod image follows it." : " No arthropod image was provided."} Reported environment: ${intake.environment}. Time since onset: ${intake.duration}.`,
+      text: `User images follow.${intake.bugImage ? " Two images provided (skin lesion and/or specimen)." : " One image provided."} Reported environment: ${intake.environment}. Time since onset: ${intake.duration}.`,
     },
     { type: "image", image: intake.lesionImage },
   ];
