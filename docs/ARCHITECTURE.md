@@ -1,8 +1,10 @@
 # BiteID — Architecture
 
-BiteID is an **alpha** front end for bite / sting / rash intake. It is a *dumb client*:
-it collects photos and answers, POSTs them to an external service, and renders whatever
-JSON comes back. It contains **no medical logic, no scoring, no API keys**.
+BiteID is an **alpha** app for bite / sting / rash intake. The browser stays a *dumb
+client*: it collects photos and answers, hands them to one server function, and renders
+what comes back. All medical logic, prompts, priors, and secrets live server-side only
+(`*.server.ts` + `createServerFn`). See
+[BACKEND_CONTRACT.md](BACKEND_CONTRACT.md) for the pipeline.
 
 ## Stack
 
@@ -10,7 +12,8 @@ JSON comes back. It contains **no medical logic, no scoring, no API keys**.
 - Tailwind CSS v4 via `src/styles.css` (`@theme` tokens, no `tailwind.config.js`).
 - shadcn/Radix primitives in `src/components/ui`.
 - lucide-react icons.
-- No backend in this repo: no Lovable Cloud, no database, no server functions.
+- No database and no Lovable Cloud. Analysis runs in a TanStack `createServerFn`
+  calling Lovable AI (`openai/gpt-6-astra`, Responses API) plus local geo/seasonal priors.
 
 ## File map
 
@@ -18,7 +21,12 @@ JSON comes back. It contains **no medical logic, no scoring, no API keys**.
 | --- | --- |
 | `src/routes/index.tsx` | The whole app: 3-step wizard + results dashboard. Owns all state. |
 | `src/routes/__root.tsx` | App shell, font `<link>` tags, base metadata. |
-| `src/lib/triage.ts` | Options, state reducer, FormData builder, POST call, response helpers. |
+| `src/lib/triage.ts` | Options, state reducer, `submitTriage()` (files → data URLs → server fn), response helpers. |
+| `src/lib/triage.functions.ts` | `analyseIntakeFn` — the only client→server entry point. |
+| `src/lib/triage-engine.server.ts` | Emergency gate, vision pass, ranking, guidance. Server only. |
+| `src/lib/geo-pest.server.ts` | Vector database + `evaluateRegionalLikelihood()` (geo/season/habitat priors). |
+| `src/lib/ai-gateway.server.ts` | Lovable AI Gateway provider (Responses API, run-id passthrough). |
+| `src/lib/us-states.ts` | `US_STATE_OPTIONS` for the step-1 state selector. |
 | `src/components/triage/UploadCard.tsx` | File picker + drag/drop + preview + remove/replace. |
 | `src/components/triage/StepNav.tsx` | Step indicator (`Photos → Context → Safety check`). |
 | `src/components/triage/EmergencyModal.tsx` | Red full-bleed dialog shown when an emergency symptom is ticked. |
@@ -44,11 +52,11 @@ Reducer invariants:
 
 ```text
 step 0  photos      lesion photo REQUIRED, bug photo optional  -> Continue gated on lesionImage
-step 1  context     environment + duration                     -> Continue gated on both
+step 1  context     environment + US state + duration          -> Continue gated on all three
 step 2  safety      emergency checklist                        -> Submit
         any symptom ticked -> EmergencyModal opens immediately
                             + persistent red banner + submit-button reminder
-submit  buildTriageFormData -> POST -> await res.json() -> status "done"
+submit  submitTriage -> analyseIntakeFn (server) -> status "done" (never throws)
 done    ResultsDashboard (ranked cards, guidance, Fitzpatrick tabs, disclaimer)
         "Start over" -> reset()
 ```
@@ -56,9 +64,10 @@ done    ResultsDashboard (ranked cards, guidance, Fitzpatrick tabs, disclaimer)
 ## Rules for agents editing this app
 
 1. **Never** add diagnosis, scoring, ranking heuristics, or symptom interpretation on the
-   client. Sorting by the confidence value the backend supplies is the only allowed
-   derivation.
-2. **Never** put an API key or secret in this repo. The only config is `VITE_API_URL`.
+   client. Sorting by the confidence the server returns is the only allowed derivation.
+   Medical logic belongs in `*.server.ts` behind `analyseIntakeFn`.
+2. **Never** put an API key or secret in client code. `LOVABLE_API_KEY` is read with
+   `process.env` inside the server boundary only.
 3. Keep the emergency path loud: modal on first tick, banner while any symptom is set,
    reminder next to submit. Do not make the modal blocking-only or silently dismissible
    without the banner.
