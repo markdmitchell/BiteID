@@ -37,6 +37,7 @@ export type EngineIntake = {
 };
 
 export type EngineResultItem = {
+  id?: string | undefined;
   name: string;
   scientificName?: string | undefined;
   description?: string | undefined;
@@ -255,6 +256,7 @@ export async function analyseIntake(intake: EngineIntake): Promise<EngineRespons
     }
 
     return {
+      id: vector?.id,
       name: vector?.name ?? key,
       scientificName: vector?.scientificName,
       description: vector ? reading?.lesionDescription : undefined,

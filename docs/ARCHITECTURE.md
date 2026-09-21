@@ -32,7 +32,9 @@ what comes back. All medical logic, prompts, priors, and secrets live server-sid
 | `src/components/triage/EmergencyModal.tsx` | Red full-bleed dialog shown when an emergency symptom is ticked. |
 | `src/components/triage/ProbabilityCard.tsx` | One ranked finding: percent, animated bar, urgency chip. |
 | `src/components/triage/FitzpatrickTabs.tsx` | Types I–II / III–IV / V–VI tabs swapping a reference image. |
-| `src/assets/fitz-*.jpg` | **AI-generated placeholders.** Replace with real clinical references. |
+| `src/lib/creature-images.ts` | Client-safe map from stable vector IDs to bundled visual-reference assets. |
+| `src/assets/fitz-*.jpg` | AI-generated skin-reaction references, labeled as non-clinical visual aids. |
+| `src/assets/creatures/*.jpg` | AI-generated field-guide references for common ranked creatures. |
 
 ## State
 

@@ -49,6 +49,7 @@ client  submitTriage(state)                    src/lib/triage.ts
 {
   "results": [
     {
+      "id": "blacklegged_tick",
       "name": "Blacklegged (Deer) Tick",
       "scientificName": "Ixodes scapularis",
       "confidence": 92,
@@ -67,7 +68,9 @@ client  submitTriage(state)                    src/lib/triage.ts
 }
 ```
 
-`confidence` is a percentage (0–100). `src/lib/triage.ts` still tolerates the
+`id` is the stable vector key used only to select a bundled visual-reference
+image; unknown or missing IDs render the existing text-only card. `confidence`
+is a percentage (0–100). `src/lib/triage.ts` still tolerates the
 older aliases (`predictions`, `condition`/`label`, `probability`/`score`,
 `summary`, `advice`) and sorts by confidence descending — no other interpretation
 happens in the client.

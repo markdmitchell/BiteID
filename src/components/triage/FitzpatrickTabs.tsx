@@ -54,11 +54,14 @@ export function FitzpatrickTabs() {
             <img
               src={tone.image}
               alt={`Reference skin reactions shown on Fitzpatrick ${tone.label}`}
-              width={1024}
-              height={640}
+              width={1200}
+              height={752}
               loading="lazy"
               className="w-full rounded-xl border border-border object-cover"
             />
+            <p className="mt-2 text-xs text-muted-foreground">
+              AI-generated visual reference — not a clinical example or diagnosis
+            </p>
             <p className="mt-3 text-sm text-muted-foreground">{tone.note}</p>
           </TabsContent>
         ))}

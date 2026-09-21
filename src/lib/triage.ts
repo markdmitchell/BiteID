@@ -91,6 +91,7 @@ export function triageReducer(state: TriageFormState, action: TriageAction): Tri
 
 /** Ranked result item as returned by the analysis step. Rendered as-is. */
 export type TriageResultItem = {
+  id?: string;
   name?: string;
   condition?: string;
   label?: string;
