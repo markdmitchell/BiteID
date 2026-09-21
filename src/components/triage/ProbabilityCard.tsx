@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
+import { creatureReferenceOf } from "@/lib/creature-images";
 import { confidenceOf, nameOf, type TriageResultItem } from "@/lib/triage";
 
 type ProbabilityCardProps = {
@@ -34,6 +35,7 @@ export function ProbabilityCard({ item, rank }: ProbabilityCardProps) {
   }, [value, rank]);
 
   const urgency = item.urgency ?? item.severity;
+  const creatureReference = creatureReferenceOf(item.id);
 
   return (
     <div className="rounded-2xl border border-border bg-card p-5">
@@ -74,6 +76,22 @@ export function ProbabilityCard({ item, rank }: ProbabilityCardProps) {
           style={{ width: `${width}%` }}
         />
       </div>
+
+      {creatureReference && (
+        <figure className="mt-4 overflow-hidden rounded-xl border border-border bg-muted/30">
+          <img
+            src={creatureReference.src}
+            alt={creatureReference.alt}
+            width={1008}
+            height={704}
+            loading="lazy"
+            className="aspect-[3/2] w-full object-cover"
+          />
+          <figcaption className="border-t border-border px-3 py-2 text-xs text-muted-foreground">
+            AI-generated visual reference — not confirmation
+          </figcaption>
+        </figure>
+      )}
 
       {(item.description ?? item.summary) && rank === 0 && (
         <p className="mt-4 text-sm leading-relaxed text-muted-foreground">
