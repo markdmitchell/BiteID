@@ -1000,6 +1000,16 @@ export function evaluateRegionalLikelihood(
       ) {
         if (key === "brown_recluse") score *= 8.0;
       }
+      if (morphObj.centralFeatures === "vesicle_blister") {
+        if (key === "fire_ant" && (sensation === "severe_pain" || sensation === "intense_itch")) {
+          score *= 16.0;
+        }
+        if (key === "blister_beetle") score *= 12.0;
+      }
+      if (morphObj.centralFeatures === "clear_halo") {
+        if (key === "blacklegged_tick" || key === "lone_star_tick") score *= 6.0;
+        if (key === "brown_recluse") score *= 4.0;
+      }
     }
 
     rawScores[key] = score;
@@ -1062,7 +1072,14 @@ export function evaluateRegionalLikelihood(
   }
 
   // HARD DETERMINISTIC MID-ATLANTIC OVERRIDE RULE
-  if (isMidAtlantic && isAnnularTarget) {
+  // Applies to targetoid rashes when no conflicting non-Lyme specimen was identified
+  const hasNonLymeTaxonomy =
+    bugTaxonomy &&
+    !bugTaxonomy.toLowerCase().includes("ixodes") &&
+    !bugTaxonomy.toLowerCase().includes("deer tick") &&
+    !bugTaxonomy.toLowerCase().includes("blacklegged");
+
+  if (isMidAtlantic && isAnnularTarget && !hasNonLymeTaxonomy) {
     probabilities["blacklegged_tick"] = 0.92;
     probabilities["mosquito"] = 0.03;
 
