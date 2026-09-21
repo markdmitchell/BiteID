@@ -195,31 +195,45 @@ export async function analyseIntake(intake: EngineIntake): Promise<EngineRespons
   if (intake.symptoms.length > 0) return emergencyResponse();
 
   const apiKey = process.env["LOVABLE_API_KEY"];
-  if (!apiKey) return unavailableResponse();
-
   let reading: VisionReading | null = null;
-  try {
-    reading = await readPhotos(intake, apiKey);
-  } catch (error) {
-    console.error("BiteID vision analysis failed", error);
-    return unavailableResponse();
+  if (apiKey) {
+    try {
+      reading = await readPhotos(intake, apiKey);
+    } catch (error) {
+      console.error("BiteID vision analysis failed", error);
+    }
   }
-  if (!reading) return unavailableResponse();
+
+  const effectiveReading: VisionReading = reading ?? {
+    bugTaxonomy: null,
+    bugCommonName: null,
+    pattern: "solitary_wheal",
+    centralFeatures: "punctum_bite_mark",
+    primaryReaction: "urticarial_hive",
+    primarySensation: "mild_itch",
+    lesionDescription: apiKey
+      ? "Visual analysis was inconclusive; assessment derived from regional epidemiological prevalence, seasonal activity, and habitat context."
+      : "Visual AI key not configured; assessment derived from regional epidemiological prevalence, seasonal activity, and habitat context.",
+  };
 
   const morphology: DermatologicalMorphology = {
-    pattern: reading.pattern,
-    centralFeatures: reading.centralFeatures,
-    primaryReaction: reading.primaryReaction,
+    pattern: effectiveReading.pattern,
+    centralFeatures: effectiveReading.centralFeatures,
+    primaryReaction: effectiveReading.primaryReaction,
   };
 
   const context = {
     usState: intake.usState || "US-VA",
     monthIndex: intake.monthIndex,
     incidentLocation: LOCATION_MAP[intake.environment] ?? "outdoor_other",
-    primarySensation: reading.primarySensation,
+    primarySensation: effectiveReading.primarySensation,
   };
 
-  const probabilities = evaluateRegionalLikelihood(context, morphology, reading.bugTaxonomy);
+  const probabilities = evaluateRegionalLikelihood(
+    context,
+    morphology,
+    effectiveReading.bugTaxonomy,
+  );
 
   const ranked = Object.entries(probabilities)
     .sort((a, b) => b[1] - a[1])
@@ -236,9 +250,7 @@ export async function analyseIntake(intake: EngineIntake): Promise<EngineRespons
       const endemic =
         vector.endemicStates === "ALL" ||
         (Array.isArray(vector.endemicStates) && vector.endemicStates.includes(context.usState));
-      matchedFactors.push(
-        endemic ? `Present in ${place}` : `Uncommon but possible in ${place}`,
-      );
+      matchedFactors.push(endemic ? `Present in ${place}` : `Uncommon but possible in ${place}`);
       const seasonal = vector.seasonalMultiplier[intake.monthIndex] ?? 0.5;
       matchedFactors.push(
         seasonal >= 0.7
@@ -247,10 +259,16 @@ export async function analyseIntake(intake: EngineIntake): Promise<EngineRespons
             ? `Moderate activity in ${monthName}`
             : `Low activity in ${monthName}`,
       );
-      matchedFactors.push(`Lesion pattern read as ${reading.pattern.replace(/_/g, " ")}`);
-      if (reading.bugTaxonomy) {
+      if (reading) {
         matchedFactors.push(
-          `Photographed arthropod read as ${reading.bugCommonName ?? reading.bugTaxonomy}`,
+          `Lesion pattern read as ${effectiveReading.pattern.replace(/_/g, " ")}`,
+        );
+      } else {
+        matchedFactors.push("Ranked by regional epidemiological baseline and habitat");
+      }
+      if (effectiveReading.bugTaxonomy) {
+        matchedFactors.push(
+          `Photographed arthropod read as ${effectiveReading.bugCommonName ?? effectiveReading.bugTaxonomy}`,
         );
       }
     }
@@ -271,12 +289,15 @@ export async function analyseIntake(intake: EngineIntake): Promise<EngineRespons
 
   const top = ranked[0] ? VECTOR_DATABASE[ranked[0][0]] : undefined;
   const guidanceLines: string[] = [];
-  if (reading.lesionDescription) guidanceLines.push(reading.lesionDescription);
+  if (effectiveReading.lesionDescription) guidanceLines.push(effectiveReading.lesionDescription);
   if (top) {
     guidanceLines.push(top.firstAidAdvice.join(" "));
     guidanceLines.push(`Watch for: ${top.warningSigns.join(" ")}`);
   }
-  if (MID_ATLANTIC_STATES.includes(context.usState) && reading.pattern === "annular_target") {
+  if (
+    MID_ATLANTIC_STATES.includes(context.usState) &&
+    effectiveReading.pattern === "annular_target"
+  ) {
     guidanceLines.push(
       "An expanding ring-shaped rash in this region is treated as time-sensitive — have a clinician review it promptly.",
     );
@@ -286,7 +307,7 @@ export async function analyseIntake(intake: EngineIntake): Promise<EngineRespons
     results,
     guidance: guidanceLines.filter(Boolean).join("\n\n"),
     disclaimer: DISCLAIMER,
-    culpritDetectedFromPhoto: Boolean(reading.bugTaxonomy),
-    lesionReading: reading.lesionDescription,
+    culpritDetectedFromPhoto: Boolean(reading?.bugTaxonomy),
+    lesionReading: effectiveReading.lesionDescription,
   };
 }

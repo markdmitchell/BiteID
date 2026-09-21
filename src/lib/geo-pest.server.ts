@@ -9,16 +9,9 @@ export type DermatologicalMorphology = {
     | "scattered_papules"
     | "indurated_plaque";
   centralFeatures:
-    | "punctum_bite_mark"
-    | "clear_halo"
-    | "vesicle_blister"
-    | "necrotic_ulcer"
-    | "none";
+    "punctum_bite_mark" | "clear_halo" | "vesicle_blister" | "necrotic_ulcer" | "none";
   primaryReaction:
-    | "urticarial_hive"
-    | "expanding_erythema"
-    | "excoriated_papule"
-    | "ischemic_purpura";
+    "urticarial_hive" | "expanding_erythema" | "excoriated_papule" | "ischemic_purpura";
 };
 
 export type TriageContext = {
@@ -27,7 +20,6 @@ export type TriageContext = {
   incidentLocation?: string;
   primarySensation?: string;
 };
-
 
 export interface VectorInfo {
   id: string;
@@ -79,9 +71,26 @@ export const VECTOR_DATABASE: Record<string, VectorInfo> = {
     name: "Blacklegged (Deer) Tick",
     scientificName: "Ixodes scapularis",
     endemicStates: [
-      "US-VA", "US-MD", "US-PA", "US-NY", "US-NJ", "US-CT", "US-MA", "US-RI",
-      "US-NH", "US-VT", "US-ME", "US-WI", "US-MN", "US-MI", "US-NC", "US-WV",
-      "US-DE", "US-OH", "US-IN", "US-IL"
+      "US-VA",
+      "US-MD",
+      "US-PA",
+      "US-NY",
+      "US-NJ",
+      "US-CT",
+      "US-MA",
+      "US-RI",
+      "US-NH",
+      "US-VT",
+      "US-ME",
+      "US-WI",
+      "US-MN",
+      "US-MI",
+      "US-NC",
+      "US-WV",
+      "US-DE",
+      "US-OH",
+      "US-IN",
+      "US-IL",
     ],
     nonEndemicStates: ["US-WA", "US-OR", "US-CA", "US-NV", "US-AZ", "US-NM", "US-AK", "US-HI"],
     seasonalMultiplier: [0.05, 0.05, 0.3, 0.7, 1.0, 1.0, 0.9, 0.6, 0.8, 0.8, 0.4, 0.1],
@@ -111,9 +120,30 @@ export const VECTOR_DATABASE: Record<string, VectorInfo> = {
     name: "Lone Star Tick",
     scientificName: "Amblyomma americanum",
     endemicStates: [
-      "US-VA", "US-NC", "US-SC", "US-GA", "US-FL", "US-AL", "US-MS", "US-TN",
-      "US-KY", "US-WV", "US-MD", "US-DE", "US-NJ", "US-PA", "US-NY", "US-OH",
-      "US-IN", "US-IL", "US-MO", "US-AR", "US-LA", "US-TX", "US-OK", "US-KS"
+      "US-VA",
+      "US-NC",
+      "US-SC",
+      "US-GA",
+      "US-FL",
+      "US-AL",
+      "US-MS",
+      "US-TN",
+      "US-KY",
+      "US-WV",
+      "US-MD",
+      "US-DE",
+      "US-NJ",
+      "US-PA",
+      "US-NY",
+      "US-OH",
+      "US-IN",
+      "US-IL",
+      "US-MO",
+      "US-AR",
+      "US-LA",
+      "US-TX",
+      "US-OK",
+      "US-KS",
     ],
     nonEndemicStates: ["US-WA", "US-OR", "US-CA", "US-NV", "US-AZ", "US-UT", "US-AK", "US-HI"],
     seasonalMultiplier: [0.05, 0.1, 0.4, 0.8, 1.0, 1.0, 1.0, 0.9, 0.6, 0.3, 0.1, 0.05],
@@ -143,10 +173,32 @@ export const VECTOR_DATABASE: Record<string, VectorInfo> = {
     name: "American Dog Tick",
     scientificName: "Dermacentor variabilis",
     endemicStates: [
-      "US-VA", "US-NC", "US-SC", "US-GA", "US-FL", "US-AL", "US-MS", "US-TN",
-      "US-KY", "US-WV", "US-MD", "US-DE", "US-NJ", "US-PA", "US-NY", "US-OH",
-      "US-IN", "US-IL", "US-MO", "US-AR", "US-LA", "US-TX", "US-OK", "US-KS",
-      "US-CA", "US-AZ"
+      "US-VA",
+      "US-NC",
+      "US-SC",
+      "US-GA",
+      "US-FL",
+      "US-AL",
+      "US-MS",
+      "US-TN",
+      "US-KY",
+      "US-WV",
+      "US-MD",
+      "US-DE",
+      "US-NJ",
+      "US-PA",
+      "US-NY",
+      "US-OH",
+      "US-IN",
+      "US-IL",
+      "US-MO",
+      "US-AR",
+      "US-LA",
+      "US-TX",
+      "US-OK",
+      "US-KS",
+      "US-CA",
+      "US-AZ",
     ],
     nonEndemicStates: ["US-AK", "US-HI"],
     seasonalMultiplier: [0.05, 0.1, 0.3, 0.7, 1.0, 1.0, 0.9, 0.7, 0.4, 0.2, 0.1, 0.05],
@@ -232,13 +284,48 @@ export const VECTOR_DATABASE: Record<string, VectorInfo> = {
     name: "Brown Recluse Spider",
     scientificName: "Loxosceles reclusa",
     endemicStates: [
-      "US-TX", "US-OK", "US-KS", "US-MO", "US-AR", "US-LA", "US-MS", "US-AL",
-      "US-TN", "US-KY", "US-IL", "US-IN", "US-GA", "US-NE", "US-IA"
+      "US-TX",
+      "US-OK",
+      "US-KS",
+      "US-MO",
+      "US-AR",
+      "US-LA",
+      "US-MS",
+      "US-AL",
+      "US-TN",
+      "US-KY",
+      "US-IL",
+      "US-IN",
+      "US-GA",
+      "US-NE",
+      "US-IA",
     ],
     nonEndemicStates: [
-      "US-WA", "US-OR", "US-CA", "US-ID", "US-NV", "US-AZ", "US-UT", "US-MT",
-      "US-WY", "US-CO", "US-NM", "US-ND", "US-SD", "US-MN", "US-WI", "US-MI",
-      "US-NY", "US-VT", "US-NH", "US-ME", "US-MA", "US-RI", "US-CT", "US-AK", "US-HI"
+      "US-WA",
+      "US-OR",
+      "US-CA",
+      "US-ID",
+      "US-NV",
+      "US-AZ",
+      "US-UT",
+      "US-MT",
+      "US-WY",
+      "US-CO",
+      "US-NM",
+      "US-ND",
+      "US-SD",
+      "US-MN",
+      "US-WI",
+      "US-MI",
+      "US-NY",
+      "US-VT",
+      "US-NH",
+      "US-ME",
+      "US-MA",
+      "US-RI",
+      "US-CT",
+      "US-AK",
+      "US-HI",
     ],
     seasonalMultiplier: [0.2, 0.2, 0.4, 0.6, 0.9, 1.0, 1.0, 1.0, 0.9, 0.7, 0.4, 0.2],
     habitatScores: {
@@ -295,10 +382,31 @@ export const VECTOR_DATABASE: Record<string, VectorInfo> = {
     name: "Fire Ant",
     scientificName: "Solenopsis invicta",
     endemicStates: [
-      "US-TX", "US-FL", "US-GA", "US-AL", "US-MS", "US-LA", "US-SC", "US-NC",
-      "US-TN", "US-AR", "US-OK", "US-VA", "US-CA"
+      "US-TX",
+      "US-FL",
+      "US-GA",
+      "US-AL",
+      "US-MS",
+      "US-LA",
+      "US-SC",
+      "US-NC",
+      "US-TN",
+      "US-AR",
+      "US-OK",
+      "US-VA",
+      "US-CA",
     ],
-    nonEndemicStates: ["US-ME", "US-NH", "US-VT", "US-MA", "US-NY", "US-WI", "US-MN", "US-AK", "US-HI"],
+    nonEndemicStates: [
+      "US-ME",
+      "US-NH",
+      "US-VT",
+      "US-MA",
+      "US-NY",
+      "US-WI",
+      "US-MN",
+      "US-AK",
+      "US-HI",
+    ],
     seasonalMultiplier: [0.2, 0.3, 0.6, 0.8, 1.0, 1.0, 1.0, 1.0, 0.9, 0.7, 0.4, 0.2],
     habitatScores: {
       yard_garden: 1.0,
@@ -353,9 +461,7 @@ export const VECTOR_DATABASE: Record<string, VectorInfo> = {
     id: "kissing_bug",
     name: "Kissing Bug (Triatomine)",
     scientificName: "Triatoma spp.",
-    endemicStates: [
-      "US-TX", "US-AZ", "US-NM", "US-CA", "US-FL", "US-GA", "US-AL", "US-LA"
-    ],
+    endemicStates: ["US-TX", "US-AZ", "US-NM", "US-CA", "US-FL", "US-GA", "US-AL", "US-LA"],
     nonEndemicStates: ["US-NY", "US-MA", "US-ME", "US-WI", "US-MN", "US-AK", "US-HI"],
     seasonalMultiplier: [0.2, 0.3, 0.5, 0.8, 1.0, 1.0, 1.0, 0.9, 0.7, 0.4, 0.2, 0.1],
     habitatScores: {
@@ -404,7 +510,9 @@ export const VECTOR_DATABASE: Record<string, VectorInfo> = {
     baseWeight: 0.35,
     associatedPathogens: [],
     delayedRisks: ["Anaphylaxis (IgE allergy)", "Secondary infection"],
-    firstAidAdvice: ["Scrape stinger off immediately with fingernail or card. Wash with soap and water."],
+    firstAidAdvice: [
+      "Scrape stinger off immediately with fingernail or card. Wash with soap and water.",
+    ],
     warningSigns: ["Barbed stinger in skin, difficulty breathing, or facial swelling."],
   },
   wasp: {
@@ -625,7 +733,7 @@ export const MID_ATLANTIC_STATES = [
 export function evaluateRegionalLikelihood(
   context: TriageContext,
   morphology?: DermatologicalMorphology | string,
-  bugTaxonomy?: string | null
+  bugTaxonomy?: string | null,
 ): Record<string, number> {
   const rawScores: Record<string, number> = {};
 
@@ -708,7 +816,10 @@ export function evaluateRegionalLikelihood(
       if (lower.includes("ixodes") && key === "blacklegged_tick") {
         score *= 10.0;
       }
-      if ((lower.includes("amblyomma") || lower.includes("lone star")) && key === "lone_star_tick") {
+      if (
+        (lower.includes("amblyomma") || lower.includes("lone star")) &&
+        key === "lone_star_tick"
+      ) {
         score *= 10.0;
       }
       if ((lower.includes("dermacentor") || lower.includes("dog tick")) && key === "dog_tick") {
@@ -717,16 +828,27 @@ export function evaluateRegionalLikelihood(
       if ((lower.includes("solenopsis") || lower.includes("fire ant")) && key === "fire_ant") {
         score *= 10.0;
       }
-      if ((lower.includes("apis") || lower.includes("honey bee") || lower.includes("bee")) && key === "honey_bee") {
+      if (
+        (lower.includes("apis") || lower.includes("honey bee") || lower.includes("bee")) &&
+        key === "honey_bee"
+      ) {
         score *= 10.0;
       }
-      if ((lower.includes("vespula") || lower.includes("wasp") || lower.includes("yellow jacket")) && key === "wasp") {
+      if (
+        (lower.includes("vespula") || lower.includes("wasp") || lower.includes("yellow jacket")) &&
+        key === "wasp"
+      ) {
         score *= 10.0;
       }
       if ((lower.includes("centruroides") || lower.includes("scorpion")) && key === "scorpion") {
         score *= 10.0;
       }
-      if ((lower.includes("tabanidae") || lower.includes("horse fly") || lower.includes("deer fly")) && key === "horse_fly") {
+      if (
+        (lower.includes("tabanidae") ||
+          lower.includes("horse fly") ||
+          lower.includes("deer fly")) &&
+        key === "horse_fly"
+      ) {
         score *= 10.0;
       }
       if ((lower.includes("pediculus") || lower.includes("lice")) && key === "lice") {
@@ -742,15 +864,25 @@ export function evaluateRegionalLikelihood(
         if (key === "chigger") score *= 4.0;
         if (key === "lice") score *= 5.0;
       }
-      if (morphObj.pattern === "solitary_wheal" && morphObj.centralFeatures === "punctum_bite_mark") {
+      if (
+        morphObj.pattern === "solitary_wheal" &&
+        morphObj.centralFeatures === "punctum_bite_mark"
+      ) {
         if (key === "mosquito") score *= 4.0;
-        if (key === "fire_ant" && (sensation === "severe_pain" || sensation === "intense_itch")) score *= 9.0;
-        if (key === "honey_bee" && (sensation === "severe_pain" || sensation === "moderate_pain")) score *= 9.0;
-        if (key === "wasp" && (sensation === "severe_pain" || sensation === "moderate_pain")) score *= 9.0;
+        if (key === "fire_ant" && (sensation === "severe_pain" || sensation === "intense_itch"))
+          score *= 9.0;
+        if (key === "honey_bee" && (sensation === "severe_pain" || sensation === "moderate_pain"))
+          score *= 9.0;
+        if (key === "wasp" && (sensation === "severe_pain" || sensation === "moderate_pain"))
+          score *= 9.0;
         if (key === "scorpion" && sensation === "severe_pain") score *= 9.0;
-        if (key === "horse_fly" && (sensation === "severe_pain" || sensation === "moderate_pain")) score *= 9.0;
+        if (key === "horse_fly" && (sensation === "severe_pain" || sensation === "moderate_pain"))
+          score *= 9.0;
       }
-      if (morphObj.pattern === "scattered_papules" || morphObj.primaryReaction === "excoriated_papule") {
+      if (
+        morphObj.pattern === "scattered_papules" ||
+        morphObj.primaryReaction === "excoriated_papule"
+      ) {
         if (key === "lice") score *= 8.0;
         if (key === "flea") score *= 5.0;
         if (key === "chigger") score *= 5.0;
@@ -770,9 +902,40 @@ export function evaluateRegionalLikelihood(
 
   // Targetoid Rash Prior Alignment
   if (isAnnularTarget) {
-    if (["US-NY", "US-CT", "US-MA", "US-RI", "US-NH", "US-VT", "US-ME", "US-WI", "US-MN", "US-PA", "US-NJ", "US-VA"].includes(state)) {
+    if (
+      [
+        "US-NY",
+        "US-CT",
+        "US-MA",
+        "US-RI",
+        "US-NH",
+        "US-VT",
+        "US-ME",
+        "US-WI",
+        "US-MN",
+        "US-PA",
+        "US-NJ",
+        "US-VA",
+      ].includes(state)
+    ) {
       rawScores["blacklegged_tick"] = (rawScores["blacklegged_tick"] || 1.0) * 100.0;
-    } else if (["US-NC", "US-SC", "US-GA", "US-FL", "US-AL", "US-MS", "US-TN", "US-KY", "US-AR", "US-LA", "US-TX", "US-OK", "US-MO"].includes(state)) {
+    } else if (
+      [
+        "US-NC",
+        "US-SC",
+        "US-GA",
+        "US-FL",
+        "US-AL",
+        "US-MS",
+        "US-TN",
+        "US-KY",
+        "US-AR",
+        "US-LA",
+        "US-TX",
+        "US-OK",
+        "US-MO",
+      ].includes(state)
+    ) {
       rawScores["lone_star_tick"] = (rawScores["lone_star_tick"] || 1.0) * 8.0;
       rawScores["blacklegged_tick"] = (rawScores["blacklegged_tick"] || 1.0) * 7.5;
     }
@@ -781,7 +944,7 @@ export function evaluateRegionalLikelihood(
   // Normalize scores to probabilities summing to 1.0
   const totalScore = Object.values(rawScores).reduce((sum, val) => sum + val, 0);
 
-  let probabilities: Record<string, number> = {};
+  const probabilities: Record<string, number> = {};
   if (totalScore <= 0) {
     const count = Object.keys(VECTOR_DATABASE).length;
     for (const key of Object.keys(VECTOR_DATABASE)) {
@@ -799,7 +962,7 @@ export function evaluateRegionalLikelihood(
     probabilities["mosquito"] = 0.03;
 
     const remainingKeys = Object.keys(probabilities).filter(
-      (k) => k !== "blacklegged_tick" && k !== "mosquito"
+      (k) => k !== "blacklegged_tick" && k !== "mosquito",
     );
     const remCount = remainingKeys.length || 1;
     const remShare = 0.05 / remCount;

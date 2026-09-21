@@ -275,7 +275,6 @@ function TriagePage() {
                       </span>
                     </label>
                   </div>
-
                 </div>
               )}
             </div>

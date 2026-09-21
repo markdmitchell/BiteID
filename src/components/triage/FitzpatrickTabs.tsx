@@ -29,7 +29,7 @@ type FitzpatrickTabsProps = {
 
 export function FitzpatrickTabs({ resultId, resultName }: FitzpatrickTabsProps) {
   const reference = bitePatternOf(resultId);
-  const referenceName = resultId ? resultName ?? reference.label : reference.label;
+  const referenceName = resultId ? (resultName ?? reference.label) : reference.label;
 
   return (
     <div className="rounded-2xl border border-border bg-card p-5">
