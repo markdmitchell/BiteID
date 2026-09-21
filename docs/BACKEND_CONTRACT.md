@@ -1,67 +1,85 @@
-# BiteID — Backend contract
+# BiteID — Analysis pipeline contract
 
-The client talks to exactly one endpoint, read from `import.meta.env.VITE_API_URL`
-(see `.env.example`). If it is unset, step 3 shows an inline notice and `submitTriage`
-throws instead of failing silently.
+Analysis now runs **inside this app**. There is no external endpoint and no
+`VITE_API_URL`. The browser never sees prompts, scoring data, or API keys.
 
-## Request
+```text
+client  submitTriage(state)                    src/lib/triage.ts
+          ↓ files -> data URLs
+        analyseIntakeFn({ data })              src/lib/triage.functions.ts  (createServerFn, POST)
+          ↓ (server only)
+        analyseIntake(intake)                  src/lib/triage-engine.server.ts
+          ├─ emergency short-circuit
+          ├─ vision pass (Lovable AI, openai/gpt-6-astra, Responses API, streamed)
+          └─ evaluateRegionalLikelihood(...)   src/lib/geo-pest.server.ts
+```
 
-`POST {VITE_API_URL}` with a browser-native `FormData` body.
-No `Content-Type` header is set — the browser adds the multipart boundary. Do not set it.
+## Server function input
+
+`analyseIntakeFn` (`src/lib/triage.functions.ts`), validated in `validate()`:
 
 | Field | Type | Notes |
 | --- | --- | --- |
-| `skin_lesion_image` | binary file | required; only omitted if the user bypassed the gate |
-| `bug_image` | binary file | optional |
-| `environment` | string | one of `woods`, `bed`, `yard`, `water`, `travel`, `unsure` |
-| `duration` | string | one of `under-24h`, `1-3d`, `4-7d`, `1-2w`, `over-2w` |
-| `emergency_symptoms` | JSON string | array of `breathing`, `swelling`, `streaks`, `confusion`, `expanding`, `neck` |
-| `has_emergency_symptoms` | `"true"` / `"false"` | convenience flag |
+| `lesionImage` | string | required `data:image/...;base64,...` URL |
+| `bugImage` | string \| null | optional data URL |
+| `environment` | string | `woods`, `bed`, `yard`, `water`, `travel`, `unsure` |
+| `duration` | string | `under-24h`, `1-3d`, `4-7d`, `1-2w`, `over-2w` |
+| `usState` | string | `US-XX` (see `src/lib/us-states.ts`), defaults `US-VA` |
+| `monthIndex` | number | 0–11, set from the browser clock |
+| `symptoms` | string[] | emergency checklist values |
 
-Built by `buildTriageFormData()` in `src/lib/triage.ts`. Changing a field name here means
-changing that function and this table together.
+## Server-side steps
 
-## Response
+1. **Emergency gate** — any `symptoms` entry returns `emergencyResponse()`
+   immediately: no model call, empty `results`, urgent-care guidance.
+2. **Vision pass** — one streamed Responses-API call with the lesion image and,
+   when present, the arthropod image. It returns JSON only:
+   `bugTaxonomy`, `bugCommonName`, `pattern`, `centralFeatures`,
+   `primaryReaction`, `primarySensation`, `lesionDescription`.
+   Every enum value is clamped to the allowed list before use.
+3. **Ranking** — `evaluateRegionalLikelihood(context, morphology, bugTaxonomy)`,
+   ported verbatim from the engine repo (`src/lib/geoPestFilter.ts`): state
+   endemicity, monthly activity, habitat, sensation, bug-taxonomy overrides,
+   morphology multipliers, targetoid-rash priors, and the hard Mid-Atlantic
+   annular-target override. Probabilities are normalised; the top five are returned.
 
-JSON. Every field is optional and rendered as-is; unknown keys are ignored.
+## Response shape
 
 ```json
 {
   "results": [
     {
-      "name": "Mosquito bite",
-      "probability": 0.62,
-      "description": "Short human-readable explanation.",
-      "urgency": "low"
+      "name": "Blacklegged (Deer) Tick",
+      "scientificName": "Ixodes scapularis",
+      "confidence": 92,
+      "description": "Descriptive lesion reading (top card only).",
+      "matchedFactors": ["Present in Virginia", "Peak activity in September"],
+      "associatedPathogens": ["Lyme Disease"],
+      "delayedRisks": ["Post-Treatment Lyme Disease Syndrome"],
+      "firstAidAdvice": ["Grasp tick close to skin with tweezers…"],
+      "warningSignsToWatch": ["Expanding bullseye rash >5cm."]
     }
   ],
-  "guidance": "Free text shown under \"What to do next\". Newlines preserved.",
-  "disclaimer": "Optional extra text shown at the bottom of the results."
+  "guidance": "Shown under \"What to do next\". Newlines preserved.",
+  "disclaimer": "Alpha version — for testing only…",
+  "isEmergencyRedirect": false,
+  "culpritDetectedFromPhoto": true
 }
 ```
 
-Tolerated aliases (handled in `src/lib/triage.ts`):
+`confidence` is a percentage (0–100). `src/lib/triage.ts` still tolerates the
+older aliases (`predictions`, `condition`/`label`, `probability`/`score`,
+`summary`, `advice`) and sorts by confidence descending — no other interpretation
+happens in the client.
 
-- list: `results` or `predictions`
-- name: `name` | `condition` | `label`
-- confidence: `probability` | `confidence` | `score` — `0–1` is scaled to `0–100`, `>1` used as-is
-- text: `description` | `summary`
-- urgency chip: `urgency` | `severity` — matched case-insensitively against
-  `emerg|urgent|high|severe` (red), `moderate|medium|soon` (amber), else teal
-- guidance: `guidance` | `advice`
+## Failure behaviour
 
-The client sorts results by confidence descending. It performs no other interpretation.
+Nothing throws and no error banner exists. Any failure — missing
+`LOVABLE_API_KEY`, gateway error, unparsable model output, RPC failure — returns
+`unavailableResponse()` / `FALLBACK_RESPONSE`: empty `results` plus neutral
+guidance and the alpha disclaimer.
 
-## Errors
+## Secrets
 
-- Non-2xx → `The service responded with an error (<status>).`
-- Network / thrown error → message surfaced in a red box on step 3 with a "Try again" button.
-- Missing `VITE_API_URL` → `No backend address is configured yet, so the intake cannot be sent.`
-
-## Local testing
-
-```sh
-echo 'VITE_API_URL=http://localhost:4000/api/triage' > .env
-```
-
-Any stub returning the JSON above renders the full dashboard.
+`LOVABLE_API_KEY` is read with `process.env` inside the server boundary only.
+Never expose it through `VITE_*`, loader data, or client props.
