@@ -1,4 +1,4 @@
-# BiteID — Application Overview
+# BiteID
 
 **BiteID** is an AI-assisted dermatological and entomological triage web application designed to help individuals quickly assess unknown insect, spider, and arthropod bites, stings, and skin reactions. 
 
