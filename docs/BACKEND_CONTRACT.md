@@ -68,8 +68,10 @@ client  submitTriage(state)                    src/lib/triage.ts
 }
 ```
 
-`id` is the stable vector key used only to select a bundled visual-reference
-image; unknown or missing IDs render the existing text-only card. `confidence`
+`id` is the stable vector key used to select bundled creature and tone-specific
+reaction references. Unknown or missing IDs keep the result card text-only and use
+the general three-image skin-tone set. The reference lookup is display-only and does
+not alter ranking or diagnosis. `confidence`
 is a percentage (0–100). `src/lib/triage.ts` still tolerates the
 older aliases (`predictions`, `condition`/`label`, `probability`/`score`,
 `summary`, `advice`) and sorts by confidence descending — no other interpretation

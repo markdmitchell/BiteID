@@ -31,10 +31,12 @@ what comes back. All medical logic, prompts, priors, and secrets live server-sid
 | `src/components/triage/StepNav.tsx` | Step indicator (`Photos → Context → Safety check`). |
 | `src/components/triage/EmergencyModal.tsx` | Red full-bleed dialog shown when an emergency symptom is ticked. |
 | `src/components/triage/ProbabilityCard.tsx` | One ranked finding: percent, animated bar, urgency chip. |
-| `src/components/triage/FitzpatrickTabs.tsx` | Types I–II / III–IV / V–VI tabs swapping a reference image. |
+| `src/components/triage/FitzpatrickTabs.tsx` | Tone tabs showing reaction-pattern references for the top-ranked result. |
 | `src/lib/creature-images.ts` | Client-safe map from stable vector IDs to bundled visual-reference assets. |
+| `src/lib/bite-pattern-images.ts` | Client-safe map from stable vector IDs to three tone-specific reaction images, with a general fallback. |
 | `src/assets/fitz-*.jpg` | AI-generated skin-reaction references, labeled as non-clinical visual aids. |
 | `src/assets/creatures/*.jpg` | AI-generated field-guide references for common ranked creatures. |
+| `src/assets/bite-patterns/*.jpg` | AI-generated mild reaction-pattern references for 10 common results across three tone groups. |
 
 ## State
 
@@ -59,7 +61,7 @@ step 2  safety      emergency checklist                        -> Submit
         any symptom ticked -> EmergencyModal opens immediately
                             + persistent red banner + submit-button reminder
 submit  submitTriage -> analyseIntakeFn (server) -> status "done" (never throws)
-done    ResultsDashboard (ranked cards, guidance, Fitzpatrick tabs, disclaimer)
+done    ResultsDashboard (ranked cards, guidance, top-result reaction references, disclaimer)
         "Start over" -> reset()
 ```
 
@@ -82,5 +84,7 @@ done    ResultsDashboard (ranked cards, guidance, Fitzpatrick tabs, disclaimer)
    `src/routeTree.gen.ts`.
 8. Keep the alpha framing (header pill + footer note) until the user says the app is out
    of alpha.
+9. Reaction images are non-diagnostic visual references selected from the top result's
+   stable ID. Keep the general `fitz-*.jpg` set as the fallback for unknown or absent IDs.
 
 See [BACKEND_CONTRACT.md](./BACKEND_CONTRACT.md) for the request/response shape.
