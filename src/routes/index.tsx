@@ -373,7 +373,7 @@ function ResultsDashboard({
         </div>
       )}
 
-      <FitzpatrickTabs />
+      <FitzpatrickTabs resultId={results[0]?.id} resultName={results[0]?.name} />
 
       {response.disclaimer && (
         <p className="rounded-2xl bg-muted px-5 py-4 text-xs leading-relaxed text-muted-foreground">
