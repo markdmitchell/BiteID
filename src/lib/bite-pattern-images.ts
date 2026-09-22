@@ -34,6 +34,33 @@ import waspVvi from "@/assets/bite-patterns/wasp-v-vi.jpg";
 import erythemaMigransIii from "@/assets/bite-patterns/erythema-migrans-i-ii.jpg";
 import erythemaMigransIiiIv from "@/assets/bite-patterns/erythema-migrans-iii-iv.jpg";
 import erythemaMigransVvi from "@/assets/bite-patterns/erythema-migrans-v-vi.jpg";
+import fireAntIii from "@/assets/bite-patterns/fire-ant-i-ii.jpg";
+import fireAntIiiIv from "@/assets/bite-patterns/fire-ant-iii-iv.jpg";
+import fireAntVvi from "@/assets/bite-patterns/fire-ant-v-vi.jpg";
+import chiggerIii from "@/assets/bite-patterns/chigger-i-ii.jpg";
+import chiggerIiiIv from "@/assets/bite-patterns/chigger-iii-iv.jpg";
+import chiggerVvi from "@/assets/bite-patterns/chigger-v-vi.jpg";
+import kissingBugIii from "@/assets/bite-patterns/kissing-bug-i-ii.jpg";
+import kissingBugIiiIv from "@/assets/bite-patterns/kissing-bug-iii-iv.jpg";
+import kissingBugVvi from "@/assets/bite-patterns/kissing-bug-v-vi.jpg";
+import scorpionIii from "@/assets/bite-patterns/scorpion-i-ii.jpg";
+import scorpionIiiIv from "@/assets/bite-patterns/scorpion-iii-iv.jpg";
+import scorpionVvi from "@/assets/bite-patterns/scorpion-v-vi.jpg";
+import horseFlyIii from "@/assets/bite-patterns/horse-fly-i-ii.jpg";
+import horseFlyIiiIv from "@/assets/bite-patterns/horse-fly-iii-iv.jpg";
+import horseFlyVvi from "@/assets/bite-patterns/horse-fly-v-vi.jpg";
+import liceIii from "@/assets/bite-patterns/lice-i-ii.jpg";
+import liceIiiIv from "@/assets/bite-patterns/lice-iii-iv.jpg";
+import liceVvi from "@/assets/bite-patterns/lice-v-vi.jpg";
+import noSeeUmIii from "@/assets/bite-patterns/no-see-um-i-ii.jpg";
+import noSeeUmIiiIv from "@/assets/bite-patterns/no-see-um-iii-iv.jpg";
+import noSeeUmVvi from "@/assets/bite-patterns/no-see-um-v-vi.jpg";
+import blackFlyIii from "@/assets/bite-patterns/black-fly-i-ii.jpg";
+import blackFlyIiiIv from "@/assets/bite-patterns/black-fly-iii-iv.jpg";
+import blackFlyVvi from "@/assets/bite-patterns/black-fly-v-vi.jpg";
+import blisterBeetleIii from "@/assets/bite-patterns/blister-beetle-i-ii.jpg";
+import blisterBeetleIiiIv from "@/assets/bite-patterns/blister-beetle-iii-iv.jpg";
+import blisterBeetleVvi from "@/assets/bite-patterns/blister-beetle-v-vi.jpg";
 
 export type BitePatternSet = {
   label: string;
@@ -110,6 +137,51 @@ const BITE_PATTERNS: Record<string, BitePatternSet> = {
       "iii-iv": erythemaMigransIiiIv,
       "v-vi": erythemaMigransVvi,
     },
+  },
+  fire_ant: {
+    label: "Fire ant",
+    pattern: "multiple intensely itchy, pustular welts with an erythematous base",
+    images: { "i-ii": fireAntIii, "iii-iv": fireAntIiiIv, "v-vi": fireAntVvi },
+  },
+  chigger: {
+    label: "Chigger (Harvest mite)",
+    pattern: "clustered, intensely pruritic erythematous papules along clothing seams",
+    images: { "i-ii": chiggerIii, "iii-iv": chiggerIiiIv, "v-vi": chiggerVvi },
+  },
+  kissing_bug: {
+    label: "Kissing bug (Triatomine)",
+    pattern: "painless large erythematous wheals, often facial with periorbital swelling",
+    images: { "i-ii": kissingBugIii, "iii-iv": kissingBugIiiIv, "v-vi": kissingBugVvi },
+  },
+  scorpion: {
+    label: "Scorpion",
+    pattern: "localized immediate sharp pain with minimal puncture mark or mild swelling",
+    images: { "i-ii": scorpionIii, "iii-iv": scorpionIiiIv, "v-vi": scorpionVvi },
+  },
+  horse_fly: {
+    label: "Horse fly or deer fly",
+    pattern: "painful sharp laceration welt with central puncture and surrounding edema",
+    images: { "i-ii": horseFlyIii, "iii-iv": horseFlyIiiIv, "v-vi": horseFlyVvi },
+  },
+  lice: {
+    label: "Lice (Pediculosis)",
+    pattern: "tiny pruritic punctate erythematous papules and excoriations",
+    images: { "i-ii": liceIii, "iii-iv": liceIiiIv, "v-vi": liceVvi },
+  },
+  no_see_um: {
+    label: "No-see-um (Biting midge)",
+    pattern: "dense cluster of sharply stinging, tiny punctate erythematous welts",
+    images: { "i-ii": noSeeUmIii, "iii-iv": noSeeUmIiiIv, "v-vi": noSeeUmVvi },
+  },
+  black_fly: {
+    label: "Black fly (Buffalo gnat)",
+    pattern: "painful edematous wheal with a central puncture mark",
+    images: { "i-ii": blackFlyIii, "iii-iv": blackFlyIiiIv, "v-vi": blackFlyVvi },
+  },
+  blister_beetle: {
+    label: "Blister beetle (Cantharidin)",
+    pattern: "delayed-onset linear or localized tense, fluid-filled epidermal blisters",
+    images: { "i-ii": blisterBeetleIii, "iii-iv": blisterBeetleIiiIv, "v-vi": blisterBeetleVvi },
   },
 };
 

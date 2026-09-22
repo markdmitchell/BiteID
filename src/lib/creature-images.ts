@@ -1,12 +1,21 @@
 import americanDogTick from "@/assets/creatures/american-dog-tick.jpg";
 import bedBug from "@/assets/creatures/bed-bug.jpg";
+import blackFly from "@/assets/creatures/black-fly.jpg";
 import blackWidow from "@/assets/creatures/black-widow.jpg";
 import blackleggedTick from "@/assets/creatures/blacklegged-tick.jpg";
+import blisterBeetle from "@/assets/creatures/blister-beetle.jpg";
 import brownRecluse from "@/assets/creatures/brown-recluse.jpg";
+import chigger from "@/assets/creatures/chigger.jpg";
+import fireAnt from "@/assets/creatures/fire-ant.jpg";
 import flea from "@/assets/creatures/flea.jpg";
 import honeyBee from "@/assets/creatures/honey-bee.jpg";
+import horseFly from "@/assets/creatures/horse-fly.jpg";
+import kissingBug from "@/assets/creatures/kissing-bug.jpg";
+import lice from "@/assets/creatures/lice.jpg";
 import loneStarTick from "@/assets/creatures/lone-star-tick.jpg";
 import mosquito from "@/assets/creatures/mosquito.jpg";
+import noSeeUm from "@/assets/creatures/no-see-um.jpg";
+import scorpion from "@/assets/creatures/scorpion.jpg";
 import waspYellowJacket from "@/assets/creatures/wasp-yellow-jacket.jpg";
 
 type CreatureReference = {
@@ -47,6 +56,18 @@ const CREATURE_REFERENCES: Record<string, CreatureReference> = {
     src: blackWidow,
     alt: "AI-generated field-guide reference of a black widow spider",
   },
+  fire_ant: {
+    src: fireAnt,
+    alt: "AI-generated field-guide reference of a red imported fire ant",
+  },
+  chigger: {
+    src: chigger,
+    alt: "AI-generated field-guide reference of a chigger mite",
+  },
+  kissing_bug: {
+    src: kissingBug,
+    alt: "AI-generated field-guide reference of a kissing bug (Triatoma)",
+  },
   honey_bee: {
     src: honeyBee,
     alt: "AI-generated field-guide reference of a honey bee",
@@ -54,6 +75,30 @@ const CREATURE_REFERENCES: Record<string, CreatureReference> = {
   wasp: {
     src: waspYellowJacket,
     alt: "AI-generated field-guide reference of a yellow jacket wasp",
+  },
+  scorpion: {
+    src: scorpion,
+    alt: "AI-generated field-guide reference of a bark scorpion",
+  },
+  horse_fly: {
+    src: horseFly,
+    alt: "AI-generated field-guide reference of a biting horse fly",
+  },
+  lice: {
+    src: lice,
+    alt: "AI-generated field-guide reference of a human louse",
+  },
+  no_see_um: {
+    src: noSeeUm,
+    alt: "AI-generated field-guide reference of a biting midge (no-see-um)",
+  },
+  black_fly: {
+    src: blackFly,
+    alt: "AI-generated field-guide reference of a black fly (buffalo gnat)",
+  },
+  blister_beetle: {
+    src: blisterBeetle,
+    alt: "AI-generated field-guide reference of a striped blister beetle",
   },
 };
 
