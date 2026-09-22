@@ -197,42 +197,43 @@ function TriagePage() {
           />
         ) : (
           <section className="mt-6">
+            {step === 0 && (
+              <div className="mb-6 rounded-2xl border-2 border-primary/25 bg-gradient-to-br from-primary/5 via-card to-card p-4 sm:p-5 shadow-xs">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                  <div className="space-y-1">
+                    <span className="inline-flex items-center gap-1.5 rounded-full bg-primary/10 px-2.5 py-0.5 text-[11px] font-bold text-primary uppercase tracking-wider">
+                      <Zap className="size-3" />
+                      Skip The Photo Quiz
+                    </span>
+                    <h2 className="font-display text-base sm:text-lg font-bold text-foreground">
+                      Already know what bit or stung you?
+                    </h2>
+                    <p className="text-xs text-muted-foreground max-w-md leading-relaxed">
+                      Saw the tick, scorpion, bee, spider, or ant? Get instant clinical first-aid
+                      steps, dangerous folklore myths to avoid, and hospital red flags without an AI
+                      scan.
+                    </p>
+                  </div>
+                  <Button
+                    type="button"
+                    onClick={() => {
+                      setSelectedCulpritId(null);
+                      setKnownCulpritOpen(true);
+                    }}
+                    className="shrink-0 gap-2 font-semibold shadow-xs text-xs"
+                  >
+                    <span>I Know What Bit Me</span>
+                    <ArrowRight className="size-4" />
+                  </Button>
+                </div>
+              </div>
+            )}
+
             <StepNav current={step} />
 
             <div className="mt-7">
               {step === 0 && (
                 <div>
-                  {/* "I Know What Bit Me" Fast-Track Card */}
-                  <div className="mb-6 rounded-2xl border-2 border-primary/25 bg-gradient-to-br from-primary/5 via-card to-card p-4 sm:p-5 shadow-xs">
-                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                      <div className="space-y-1">
-                        <span className="inline-flex items-center gap-1.5 rounded-full bg-primary/10 px-2.5 py-0.5 text-[11px] font-bold text-primary uppercase tracking-wider">
-                          <Zap className="size-3" />
-                          Skip The Photo Quiz
-                        </span>
-                        <h2 className="font-display text-base sm:text-lg font-bold text-foreground">
-                          Already know what bit or stung you?
-                        </h2>
-                        <p className="text-xs text-muted-foreground max-w-md leading-relaxed">
-                          Saw the tick, scorpion, bee, spider, or ant? Get instant clinical
-                          first-aid steps, dangerous folklore myths to avoid, and hospital red flags
-                          without an AI scan.
-                        </p>
-                      </div>
-                      <Button
-                        type="button"
-                        onClick={() => {
-                          setSelectedCulpritId(null);
-                          setKnownCulpritOpen(true);
-                        }}
-                        className="shrink-0 gap-2 font-semibold shadow-xs text-xs"
-                      >
-                        <span>I Know What Bit Me</span>
-                        <ArrowRight className="size-4" />
-                      </Button>
-                    </div>
-                  </div>
-
                   <h1 className="font-display text-2xl font-bold tracking-tight text-foreground">
                     Show us the area
                   </h1>
