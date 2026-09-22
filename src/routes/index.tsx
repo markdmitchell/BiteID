@@ -20,6 +20,7 @@ import {
   WifiOff,
   Zap,
 } from "lucide-react";
+import biteIdIcon from "@/assets/biteid-icon.png";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
@@ -121,8 +122,8 @@ function TriagePage() {
       <header className="border-b border-border bg-card/70 backdrop-blur">
         <div className="mx-auto flex max-w-3xl items-center justify-between gap-3 px-5 py-4">
           <div className="flex items-center gap-3">
-            <span className="flex size-9 items-center justify-center rounded-xl bg-primary text-primary-foreground">
-              <Stethoscope className="size-5" />
+            <span className="flex size-9 items-center justify-center overflow-hidden rounded-xl shadow-xs">
+              <img src={biteIdIcon} alt="BiteID Icon" className="size-full object-cover" />
             </span>
             <div className="flex flex-wrap items-baseline gap-2">
               <p className="font-display text-base font-semibold text-foreground">BiteID</p>

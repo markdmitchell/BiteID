@@ -1,6 +1,6 @@
 // BiteID Offline Field Service Worker
 const CACHE_NAME = "biteid-field-cache-v1";
-const STATIC_ASSETS = ["/", "/favicon.ico", "/manifest.json"];
+const STATIC_ASSETS = ["/", "/favicon.ico", "/icon.png", "/manifest.json"];
 
 self.addEventListener("install", (event) => {
   event.waitUntil(

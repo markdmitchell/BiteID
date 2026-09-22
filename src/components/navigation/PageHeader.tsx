@@ -1,6 +1,7 @@
 import { Link } from "@tanstack/react-router";
 import { ArrowLeft, Compass, ShieldAlert, Stethoscope, Zap } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import biteIdIcon from "@/assets/biteid-icon.png";
 
 type PageHeaderProps = {
   activePage?: "about" | "privacy" | "terms" | "contact";
@@ -22,8 +23,8 @@ export function PageHeader({ activePage }: PageHeaderProps) {
           </Link>
 
           <Link to="/" className="flex items-center gap-2.5">
-            <span className="flex size-8 items-center justify-center rounded-xl bg-primary text-primary-foreground">
-              <Stethoscope className="size-4" />
+            <span className="flex size-8 items-center justify-center overflow-hidden rounded-xl shadow-xs">
+              <img src={biteIdIcon} alt="BiteID Icon" className="size-full object-cover" />
             </span>
             <div className="flex items-baseline gap-2">
               <span className="font-display text-base font-bold tracking-tight text-foreground">
