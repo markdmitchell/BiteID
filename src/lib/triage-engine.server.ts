@@ -56,6 +56,7 @@ export type EngineResponse = {
   isEmergencyRedirect?: boolean;
   culpritDetectedFromPhoto?: boolean;
   lesionReading?: string;
+  hasErythemaMigrans?: boolean;
 };
 
 const DISCLAIMER =
@@ -314,12 +315,24 @@ export async function analyseIntake(intake: EngineIntake): Promise<EngineRespons
   });
 
   const top = ranked[0] ? VECTOR_DATABASE[ranked[0][0]] : undefined;
+
+  const isErythemaMigrans =
+    effectiveReading.pattern === "annular_target" ||
+    (top?.id === "blacklegged_tick" &&
+      (effectiveReading.pattern === "annular_target" ||
+        effectiveReading.primaryReaction === "expanding_erythema")) ||
+    /erythema migrans|bull'?s?[- ]?eye|annular target/i.test(effectiveReading.lesionDescription);
+
   const guidanceLines: string[] = [];
   if (top) {
     guidanceLines.push(top.firstAidAdvice.join(" "));
     guidanceLines.push(`Watch for: ${top.warningSigns.join(" ")}`);
   }
-  if (
+  if (isErythemaMigrans) {
+    guidanceLines.push(
+      "Erythema Migrans (an expanding annular or bullseye rash) is a characteristic early sign of Lyme disease. Prompt clinical evaluation and antibiotic treatment by a healthcare provider are advised.",
+    );
+  } else if (
     MID_ATLANTIC_STATES.includes(context.usState) &&
     effectiveReading.pattern === "annular_target"
   ) {
@@ -334,5 +347,6 @@ export async function analyseIntake(intake: EngineIntake): Promise<EngineRespons
     disclaimer: DISCLAIMER,
     culpritDetectedFromPhoto: Boolean(reading?.bugTaxonomy),
     lesionReading: effectiveReading.lesionDescription,
+    hasErythemaMigrans: isErythemaMigrans,
   };
 }

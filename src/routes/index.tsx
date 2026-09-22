@@ -330,6 +330,7 @@ function getAdditionalGuidance(
   lesionText: string | undefined,
   firstAid: string[] | undefined,
   warningSigns: string[] | undefined,
+  isErythemaMigrans: boolean,
 ): string | null {
   if (!rawGuidance) return null;
 
@@ -351,6 +352,9 @@ function getAdditionalGuidance(
     if (/^watch for:\s*/i.test(p)) {
       return false;
     }
+    if (isErythemaMigrans && /erythema migrans|lyme disease|expanding ring-shaped rash/i.test(p)) {
+      return false;
+    }
     return true;
   });
 
@@ -369,11 +373,25 @@ function ResultsDashboard({
   const topResult = results[0];
   const secondaryResults = results.slice(1);
 
+  const isErythemaMigrans =
+    Boolean(response.hasErythemaMigrans) ||
+    /erythema migrans|bull'?s?[- ]?eye|annular target/i.test(topResult?.description ?? "") ||
+    /erythema migrans|bull'?s?[- ]?eye|annular target/i.test(
+      String(response.lesionReading ?? ""),
+    ) ||
+    Boolean(
+      topResult?.matchedFactors?.some((f) => /annular|target rash|erythema migrans/i.test(f)),
+    ) ||
+    (topResult?.id === "blacklegged_tick" &&
+      (topResult.confidence ?? 0) >= 40 &&
+      Boolean(topResult?.matchedFactors?.some((f) => /annular|target|expanding/i.test(f))));
+
   const additionalGuidance = getAdditionalGuidance(
     rawGuidance,
     topResult?.description,
     topResult?.firstAidAdvice,
     topResult?.warningSignsToWatch,
+    isErythemaMigrans,
   );
 
   const hasActionContent =
@@ -412,6 +430,43 @@ function ResultsDashboard({
               defaultExpanded={true}
             />
           </div>
+
+          {isErythemaMigrans && (
+            <div className="rounded-2xl border-2 border-caution/40 bg-caution/10 p-5 sm:p-6 shadow-sm">
+              <div className="flex items-start gap-3.5">
+                <AlertTriangle className="mt-0.5 size-5 shrink-0 text-caution-foreground" />
+                <div className="space-y-2">
+                  <div className="flex flex-wrap items-center gap-2">
+                    <h3 className="font-display text-base font-bold text-foreground">
+                      Clinical Notice: Erythema Migrans & Lyme Disease
+                    </h3>
+                    <span className="inline-flex items-center rounded-full bg-caution/20 px-2.5 py-0.5 text-xs font-semibold text-caution-foreground">
+                      Early Lyme Indicator
+                    </span>
+                  </div>
+                  <p className="text-sm leading-relaxed text-foreground">
+                    This lesion shows strong visual characteristics of{" "}
+                    <strong>Erythema Migrans</strong> (an expanding annular or bullseye rash), which
+                    is a hallmark early symptom of <strong>Lyme disease</strong> transmitted by
+                    ticks.
+                  </p>
+                  <p className="text-sm leading-relaxed text-foreground font-medium">
+                    <strong>Medical Attention Recommended:</strong> Consult a physician,
+                    dermatologist, or urgent care clinician promptly. Early clinical diagnosis and
+                    standard antibiotic therapy (such as doxycycline) are highly effective at curing
+                    Lyme disease and preventing chronic joint, neurological, or cardiac
+                    complications.
+                  </p>
+                  <div className="rounded-xl border border-caution/30 bg-card/60 p-3 text-xs leading-relaxed text-muted-foreground">
+                    <strong>Clinical Tip:</strong> Use a ballpoint pen to lightly trace the outer
+                    border of the rash and take a photo next to a coin or ruler. This helps your
+                    healthcare provider verify whether the erythema is actively expanding over 24–48
+                    hours.
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
 
           {hasActionContent && (
             <div className="rounded-2xl border-2 border-primary/25 bg-primary/5 p-5 sm:p-6 shadow-sm">

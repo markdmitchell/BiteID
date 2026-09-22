@@ -116,6 +116,7 @@ export type TriageResponse = {
   guidance?: string;
   advice?: string;
   disclaimer?: string;
+  hasErythemaMigrans?: boolean;
   [key: string]: unknown;
 };
 
