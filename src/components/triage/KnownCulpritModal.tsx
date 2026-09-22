@@ -251,9 +251,16 @@ export function KnownCulpritModal({
   }, [selectedId]);
 
   const creaturePhoto = selectedId ? creatureReferenceOf(selectedId) : undefined;
-  const lesionI_II = selectedId ? bitePatternOf(selectedId, "I-II") : undefined;
-  const lesionIII_IV = selectedId ? bitePatternOf(selectedId, "III-IV") : undefined;
-  const lesionV_VI = selectedId ? bitePatternOf(selectedId, "V-VI") : undefined;
+  const lesionSet = selectedId ? bitePatternOf(selectedId) : undefined;
+  const lesionI_II = lesionSet
+    ? { src: lesionSet.images["i-ii"], alt: `${lesionSet.label}: ${lesionSet.pattern} on Fitzpatrick I–II skin` }
+    : undefined;
+  const lesionIII_IV = lesionSet
+    ? { src: lesionSet.images["iii-iv"], alt: `${lesionSet.label}: ${lesionSet.pattern} on Fitzpatrick III–IV skin` }
+    : undefined;
+  const lesionV_VI = lesionSet
+    ? { src: lesionSet.images["v-vi"], alt: `${lesionSet.label}: ${lesionSet.pattern} on Fitzpatrick V–VI skin` }
+    : undefined;
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
