@@ -2,9 +2,11 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useReducer, useState } from "react";
 import {
   Activity,
+  AlertCircle,
   AlertTriangle,
   ArrowLeft,
   ArrowRight,
+  Eye,
   FileText,
   HeartPulse,
   Loader2,
@@ -532,6 +534,93 @@ function ResultsDashboard({
             />
           </div>
 
+          {response.mimickerAlert?.detected && (
+            <div className="rounded-2xl border-2 border-primary/30 bg-primary/5 p-5 sm:p-6 shadow-sm">
+              <div className="flex items-start gap-3.5">
+                <AlertCircle className="mt-0.5 size-5 shrink-0 text-primary" />
+                <div className="space-y-2">
+                  <div className="flex flex-wrap items-center gap-2">
+                    <h3 className="font-display text-base font-bold text-foreground">
+                      Clinical Consideration: Non-Arthropod Mimic
+                    </h3>
+                    <span className="inline-flex items-center rounded-full bg-primary/10 px-2.5 py-0.5 text-xs font-semibold text-primary capitalize">
+                      {response.mimickerAlert.condition.replace(/_/g, " ")}
+                    </span>
+                  </div>
+                  <p className="text-sm leading-relaxed text-foreground">
+                    {response.mimickerAlert.explanation ||
+                      "The visual presentation exhibits morphological overlap with non-vector skin conditions. Clinical inspection is recommended to rule out fungal or bacterial infection."}
+                  </p>
+                  <p className="text-xs text-muted-foreground">
+                    <a
+                      href="#non-vector-lookalikes"
+                      className="font-medium text-primary hover:underline"
+                    >
+                      Compare against our validated non-arthropod lookalikes below &darr;
+                    </a>
+                  </p>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {response.dermatologicalFindings && (
+            <div className="rounded-2xl border border-border bg-card p-5 sm:p-6 space-y-4 shadow-xs">
+              <div className="flex flex-wrap items-center justify-between gap-2 border-b border-border/60 pb-3">
+                <div className="flex items-center gap-2">
+                  <span className="flex size-7 items-center justify-center rounded-lg bg-primary/10 text-primary">
+                    <Eye className="size-4" />
+                  </span>
+                  <h2 className="font-display text-base font-bold text-foreground">
+                    Objective Dermatological Findings
+                  </h2>
+                </div>
+                <span className="rounded-full bg-muted px-2.5 py-0.5 text-[11px] font-medium text-muted-foreground">
+                  AI Morphological Analysis
+                </span>
+              </div>
+
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
+                <div className="rounded-xl border border-border/60 bg-muted/20 p-3 space-y-1">
+                  <span className="text-muted-foreground font-medium block">Configuration</span>
+                  <span className="font-semibold text-foreground capitalize">
+                    {response.dermatologicalFindings.pattern.replace(/_/g, " ")}
+                  </span>
+                </div>
+                <div className="rounded-xl border border-border/60 bg-muted/20 p-3 space-y-1">
+                  <span className="text-muted-foreground font-medium block">Primary Lesion</span>
+                  <span className="font-semibold text-foreground capitalize">
+                    {response.dermatologicalFindings.primaryLesion.replace(/_/g, " ")}
+                  </span>
+                </div>
+                <div className="rounded-xl border border-border/60 bg-muted/20 p-3 space-y-1">
+                  <span className="text-muted-foreground font-medium block">Central Feature</span>
+                  <span className="font-semibold text-foreground capitalize">
+                    {response.dermatologicalFindings.centralFeatures.replace(/_/g, " ")}
+                  </span>
+                </div>
+                <div className="rounded-xl border border-border/60 bg-muted/20 p-3 space-y-1">
+                  <span className="text-muted-foreground font-medium block">Estimated Size</span>
+                  <span className="font-semibold text-foreground">
+                    {response.dermatologicalFindings.estimatedDiameter === "under_1cm"
+                      ? "< 1 cm (Punctate)"
+                      : response.dermatologicalFindings.estimatedDiameter === "1_to_5cm"
+                        ? "1–5 cm (Localized)"
+                        : response.dermatologicalFindings.estimatedDiameter === "over_5cm"
+                          ? "> 5 cm (Broad Expansion)"
+                          : "Diffuse / Multi-focal"}
+                  </span>
+                </div>
+              </div>
+
+              {response.dermatologicalFindings.lesionDescription && (
+                <p className="text-xs text-muted-foreground leading-relaxed italic border-l-2 border-primary/40 pl-3">
+                  &ldquo;{response.dermatologicalFindings.lesionDescription}&rdquo;
+                </p>
+              )}
+            </div>
+          )}
+
           {isErythemaMigrans && (
             <div className="rounded-2xl border-2 border-caution/40 bg-caution/10 p-5 sm:p-6 shadow-sm">
               <div className="flex items-start gap-3.5">
@@ -734,7 +823,9 @@ function ResultsDashboard({
             isErythemaMigrans={isErythemaMigrans}
           />
 
-          <NonVectorLookalikes topResultId={topResult.id} isErythemaMigrans={isErythemaMigrans} />
+          <div id="non-vector-lookalikes">
+            <NonVectorLookalikes topResultId={topResult.id} isErythemaMigrans={isErythemaMigrans} />
+          </div>
 
           {secondaryResults.length > 0 && (
             <div className="space-y-3 pt-2">

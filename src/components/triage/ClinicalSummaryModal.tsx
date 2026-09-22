@@ -322,6 +322,59 @@ export function ClinicalSummaryModal({
             </div>
           )}
 
+          {/* Objective Visual Dermatology Findings */}
+          {response.dermatologicalFindings && (
+            <div className="rounded border border-border/80 p-3 bg-muted/10 text-xs space-y-1.5">
+              <span className="text-[10px] font-bold uppercase tracking-wide text-muted-foreground block">
+                Objective AI Visual Morphology Reading
+              </span>
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs">
+                <div>
+                  <span className="text-muted-foreground text-[10px] block">Pattern</span>
+                  <span className="font-semibold text-foreground capitalize">
+                    {response.dermatologicalFindings.pattern.replace(/_/g, " ")}
+                  </span>
+                </div>
+                <div>
+                  <span className="text-muted-foreground text-[10px] block">Primary Lesion</span>
+                  <span className="font-semibold text-foreground capitalize">
+                    {response.dermatologicalFindings.primaryLesion.replace(/_/g, " ")}
+                  </span>
+                </div>
+                <div>
+                  <span className="text-muted-foreground text-[10px] block">
+                    Central Characteristic
+                  </span>
+                  <span className="font-semibold text-foreground capitalize">
+                    {response.dermatologicalFindings.centralFeatures.replace(/_/g, " ")}
+                  </span>
+                </div>
+                <div>
+                  <span className="text-muted-foreground text-[10px] block">Estimated Size</span>
+                  <span className="font-semibold text-foreground">
+                    {response.dermatologicalFindings.estimatedDiameter === "under_1cm"
+                      ? "< 1 cm"
+                      : response.dermatologicalFindings.estimatedDiameter === "1_to_5cm"
+                        ? "1–5 cm"
+                        : response.dermatologicalFindings.estimatedDiameter === "over_5cm"
+                          ? "> 5 cm"
+                          : "Diffuse"}
+                  </span>
+                </div>
+              </div>
+              {response.mimickerAlert?.detected && (
+                <div className="mt-1 pt-1.5 border-t border-border/50 text-[11px] text-amber-900 font-medium">
+                  <strong>Differential Note:</strong> Visual traits exhibit overlap with
+                  non-arthropod{" "}
+                  <span className="capitalize">
+                    {response.mimickerAlert.condition.replace(/_/g, " ")}
+                  </span>
+                  . {response.mimickerAlert.explanation}
+                </div>
+              )}
+            </div>
+          )}
+
           {/* AI Differential Hypotheses */}
           <div className="space-y-3 border-b border-border/70 pb-4">
             <h3 className="text-xs font-bold uppercase tracking-wider text-muted-foreground border-b border-border/40 pb-1 flex items-center justify-between">

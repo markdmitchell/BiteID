@@ -7,11 +7,31 @@ export type DermatologicalMorphology = {
     | "annular_target"
     | "linear_grouped"
     | "scattered_papules"
-    | "indurated_plaque";
+    | "indurated_plaque"
+    | "vesiculobullous_cluster";
+  primaryLesion?:
+    | "urticarial_wheal"
+    | "papule"
+    | "vesicle_bulla"
+    | "sterile_pustule"
+    | "plaque"
+    | "eschar_necrosis"
+    | "macule";
   centralFeatures:
-    "punctum_bite_mark" | "clear_halo" | "vesicle_blister" | "necrotic_ulcer" | "none";
+    | "punctum_bite_mark"
+    | "twin_punctures"
+    | "vesicle_pustule"
+    | "clear_halo"
+    | "necrotic_ulcer"
+    | "none";
   primaryReaction:
-    "urticarial_hive" | "expanding_erythema" | "excoriated_papule" | "ischemic_purpura";
+    | "urticarial_hive"
+    | "expanding_erythema"
+    | "excoriated_papule"
+    | "ischemic_purpura"
+    | "vesiculobullous";
+  estimatedDiameter?: "under_1cm" | "1_to_5cm" | "over_5cm" | "diffuse";
+  fitzpatrickTone?: "type_i_ii" | "type_iii_iv" | "type_v_vi" | "indeterminate";
 };
 
 export type TriageContext = {
@@ -1176,19 +1196,36 @@ export function evaluateRegionalLikelihood(
       if (
         morphObj.centralFeatures === "necrotic_ulcer" ||
         morphObj.primaryReaction === "ischemic_purpura" ||
-        morphObj.pattern === "indurated_plaque"
+        morphObj.pattern === "indurated_plaque" ||
+        morphObj.primaryLesion === "eschar_necrosis"
       ) {
         if (key === "brown_recluse") score *= 8.0;
       }
-      if (morphObj.centralFeatures === "vesicle_blister") {
-        if (key === "fire_ant" && (sensation === "severe_pain" || sensation === "intense_itch")) {
-          score *= 16.0;
-        }
-        if (key === "blister_beetle") score *= 12.0;
+      if (morphObj.centralFeatures === "twin_punctures") {
+        if (key === "black_widow") score *= 12.0;
+        if (key === "brown_recluse") score *= 10.0;
+      }
+      if (
+        morphObj.centralFeatures === "vesicle_pustule" ||
+        morphObj.primaryLesion === "sterile_pustule"
+      ) {
+        if (key === "fire_ant") score *= 18.0;
+        if (key === "blister_beetle") score *= 10.0;
+      }
+      if (
+        morphObj.pattern === "vesiculobullous_cluster" ||
+        morphObj.primaryLesion === "vesicle_bulla" ||
+        morphObj.primaryReaction === "vesiculobullous"
+      ) {
+        if (key === "blister_beetle") score *= 16.0;
+        if (key === "fire_ant") score *= 12.0;
       }
       if (morphObj.centralFeatures === "clear_halo") {
         if (key === "blacklegged_tick" || key === "lone_star_tick") score *= 6.0;
         if (key === "brown_recluse") score *= 4.0;
+      }
+      if (morphObj.estimatedDiameter === "over_5cm" && isAnnularTarget) {
+        if (key === "blacklegged_tick") score *= 3.0;
       }
     }
 

@@ -33,14 +33,17 @@ client  submitTriage(state)                    src/lib/triage.ts
 1. **Emergency gate** — any `symptoms` entry returns `emergencyResponse()`
    immediately: no model call, empty `results`, urgent-care guidance.
 2. **Vision pass** — one streamed Responses-API call with the lesion image and,
-   when present, the arthropod image. It returns JSON only:
-   `bugTaxonomy`, `bugCommonName`, `pattern`, `centralFeatures`,
-   `primaryReaction`, `primarySensation`, `lesionDescription`.
+   when present, the arthropod image. It conducts a structured 3-part evaluation
+   (entomology, Fitzpatrick-calibrated dermatology morphology, and differential
+   mimicker screening). It returns JSON only:
+   `bugTaxonomy`, `bugCommonName`, `fitzpatrickTone`, `pattern`, `primaryLesion`,
+   `centralFeatures`, `primaryReaction`, `primarySensation`, `estimatedDiameter`,
+   `mimickerCondition`, `mimickerConfidence`, `mimickerExplanation`, `lesionDescription`.
    Every enum value is clamped to the allowed list before use.
-3. **Ranking** — `evaluateRegionalLikelihood(context, morphology, bugTaxonomy)`,
-   ported verbatim from the engine repo (`src/lib/geoPestFilter.ts`): state
+3. **Ranking** — `evaluateRegionalLikelihood(context, morphology, bugTaxonomy)`: state
    endemicity, monthly activity, habitat, sensation, bug-taxonomy overrides,
-   morphology multipliers, targetoid-rash priors, and the hard Mid-Atlantic
+   fine-grained morphology multipliers (including `twin_punctures`, `sterile_pustule`,
+   `vesicle_bulla`, `estimatedDiameter`), targetoid-rash priors, and the hard Mid-Atlantic
    annular-target override. Probabilities are normalised; the top five are returned.
 
 ## Response shape
@@ -61,6 +64,21 @@ client  submitTriage(state)                    src/lib/triage.ts
       "warningSignsToWatch": ["Expanding bullseye rash >5cm."]
     }
   ],
+  "dermatologicalFindings": {
+    "pattern": "annular_target",
+    "primaryLesion": "plaque",
+    "centralFeatures": "clear_halo",
+    "primaryReaction": "expanding_erythema",
+    "estimatedDiameter": "over_5cm",
+    "fitzpatrickTone": "type_iii_iv",
+    "lesionDescription": "Expanding annular erythematous plaque with central clearing."
+  },
+  "mimickerAlert": {
+    "detected": false,
+    "condition": "none",
+    "confidence": "low",
+    "explanation": ""
+  },
   "guidance": "Shown under \"What to do next\". Newlines preserved.",
   "disclaimer": "Alpha version — for testing only…",
   "isEmergencyRedirect": false,

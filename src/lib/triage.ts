@@ -139,6 +139,23 @@ export type TriageResultItem = {
   warningSignsToWatch?: string[];
 };
 
+export type DermatologicalFindings = {
+  pattern: string;
+  primaryLesion: string;
+  centralFeatures: string;
+  primaryReaction: string;
+  estimatedDiameter: "under_1cm" | "1_to_5cm" | "over_5cm" | "diffuse";
+  fitzpatrickTone: "type_i_ii" | "type_iii_iv" | "type_v_vi" | "indeterminate";
+  lesionDescription: string;
+};
+
+export type MimickerAlert = {
+  detected: boolean;
+  condition: "tinea_corporis" | "bacterial_abscess_mrsa" | "contact_dermatitis" | "none";
+  confidence: "low" | "moderate" | "high";
+  explanation: string;
+};
+
 export type TriageResponse = {
   results?: TriageResultItem[];
   predictions?: TriageResultItem[];
@@ -146,6 +163,8 @@ export type TriageResponse = {
   advice?: string;
   disclaimer?: string;
   hasErythemaMigrans?: boolean;
+  dermatologicalFindings?: DermatologicalFindings;
+  mimickerAlert?: MimickerAlert | null;
   [key: string]: unknown;
 };
 

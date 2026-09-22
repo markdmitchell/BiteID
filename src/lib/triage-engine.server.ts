@@ -51,6 +51,23 @@ export type EngineResultItem = {
   warningSignsToWatch?: string[] | undefined;
 };
 
+export type DermatologicalFindings = {
+  pattern: DermatologicalMorphology["pattern"];
+  primaryLesion: string;
+  centralFeatures: DermatologicalMorphology["centralFeatures"];
+  primaryReaction: DermatologicalMorphology["primaryReaction"];
+  estimatedDiameter: "under_1cm" | "1_to_5cm" | "over_5cm" | "diffuse";
+  fitzpatrickTone: "type_i_ii" | "type_iii_iv" | "type_v_vi" | "indeterminate";
+  lesionDescription: string;
+};
+
+export type MimickerAlert = {
+  detected: boolean;
+  condition: "tinea_corporis" | "bacterial_abscess_mrsa" | "contact_dermatitis" | "none";
+  confidence: "low" | "moderate" | "high";
+  explanation: string;
+};
+
 export type EngineResponse = {
   results: EngineResultItem[];
   guidance: string;
@@ -59,6 +76,8 @@ export type EngineResponse = {
   culpritDetectedFromPhoto?: boolean;
   lesionReading?: string;
   hasErythemaMigrans?: boolean;
+  dermatologicalFindings?: DermatologicalFindings;
+  mimickerAlert?: MimickerAlert | null;
 };
 
 const DISCLAIMER =
@@ -97,10 +116,18 @@ export function unavailableResponse(): EngineResponse {
 type VisionReading = {
   bugTaxonomy: string | null;
   bugCommonName: string | null;
+  fitzpatrickTone: "type_i_ii" | "type_iii_iv" | "type_v_vi" | "indeterminate";
   pattern: DermatologicalMorphology["pattern"];
+  primaryLesion: string;
   centralFeatures: DermatologicalMorphology["centralFeatures"];
   primaryReaction: DermatologicalMorphology["primaryReaction"];
   primarySensation: string;
+  estimatedDiameter: "under_1cm" | "1_to_5cm" | "over_5cm" | "diffuse";
+  mimickerSuspicion: {
+    condition: "tinea_corporis" | "bacterial_abscess_mrsa" | "contact_dermatitis" | "none";
+    confidence: "low" | "moderate" | "high";
+    explanation: string;
+  };
   lesionDescription: string;
 };
 
@@ -124,15 +151,42 @@ const PATTERNS = [
   "linear_grouped",
   "scattered_papules",
   "indurated_plaque",
+  "vesiculobullous_cluster",
 ];
-const CENTRAL = ["punctum_bite_mark", "clear_halo", "vesicle_blister", "necrotic_ulcer", "none"];
+const PRIMARY_LESIONS = [
+  "urticarial_wheal",
+  "papule",
+  "vesicle_bulla",
+  "sterile_pustule",
+  "plaque",
+  "eschar_necrosis",
+  "macule",
+];
+const CENTRAL = [
+  "punctum_bite_mark",
+  "twin_punctures",
+  "vesicle_pustule",
+  "clear_halo",
+  "necrotic_ulcer",
+  "none",
+];
 const REACTIONS = [
   "urticarial_hive",
   "expanding_erythema",
   "excoriated_papule",
   "ischemic_purpura",
+  "vesiculobullous",
 ];
 const SENSATIONS = ["intense_itch", "mild_itch", "painless", "moderate_pain", "severe_pain"];
+const DIAMETERS = ["under_1cm", "1_to_5cm", "over_5cm", "diffuse"];
+const FITZPATRICK_TONES = ["type_i_ii", "type_iii_iv", "type_v_vi", "indeterminate"];
+const MIMICKER_CONDITIONS = [
+  "tinea_corporis",
+  "bacterial_abscess_mrsa",
+  "contact_dermatitis",
+  "none",
+];
+const MIMICKER_CONFIDENCES = ["low", "moderate", "high"];
 
 function pick<T extends string>(value: unknown, allowed: readonly string[], fallback: T): T {
   return typeof value === "string" && allowed.includes(value) ? (value as T) : fallback;
@@ -149,24 +203,44 @@ function parseJsonBlock(text: string): Record<string, unknown> | null {
   }
 }
 
-/** Vision pass: entomology (bug photo) + dermatology (lesion morphology). */
+/** Vision pass: entomology (bug photo) + dermatology (lesion morphology & mimicker screening). */
 async function readPhotos(
   intake: EngineIntake,
   provider: VisionProvider,
 ): Promise<VisionReading | null> {
-  const instructions = `You are a two-part visual analysis node in an arthropod bite triage pipeline.
+  const instructions = `You are an expert dermatological and entomological visual analysis node in an arthropod bite triage pipeline.
+Methodically evaluate the images:
+
 - Part 1 (entomology): If ANY image contains a captured arthropod, insect, spider, tick, mite, or bug, identify it as precisely as possible (genus/species if visible, plus common name). Set "bugTaxonomy" and "bugCommonName". If no arthropod is shown in any image, set both to null.
-- Part 2 (dermatology): If ANY image shows a skin lesion, bite, sting, or cutaneous reaction, describe ONLY the observable morphology. Do not diagnose a disease and do not name a treatment.
+
+- Part 2 (dermatology & tone calibration):
+  If ANY image shows a skin lesion, bite, sting, or rash, describe ONLY observable clinical morphology without diagnosing a disease.
+  * Tone calibration: Identify approximate Fitzpatrick phototype (type_i_ii, type_iii_iv, type_v_vi). Account for the fact that erythema on deeply pigmented skin appears violaceous, dusky plum, or post-inflammatory hyperpigmentation rather than bright pink.
+  * Primary lesion & configuration: Categorize pattern, primary lesion type, central characteristics, and reaction type.
+  * Estimated diameter: Categorize diameter based on visual perspective (under_1cm, 1_to_5cm, over_5cm, or diffuse).
+
+- Part 3 (differential mimicker screening):
+  Non-arthropod conditions frequently mimic bites. Inspect for hallmark signs:
+  * "tinea_corporis" (ringworm): active raised erythematous scaly border with central clearing.
+  * "bacterial_abscess_mrsa": fluctuant, indurated tender furuncle/boil with central purulence or yellow cap.
+  * "contact_dermatitis": linear or streaked pruritic vesicles/bullae typical of poison ivy/oak or allergen contact.
+  If observable morphological features strongly suggest one of these over an arthropod bite, set mimickerCondition and provide a concise rationale. Otherwise set mimickerCondition to "none".
 
 Return a single JSON object, no prose, no markdown fences:
 {
-  "bugTaxonomy": string|null,          // scientific name if an arthropod is provided in any image, else null
-  "bugCommonName": string|null,        // common name if identified, else null
+  "bugTaxonomy": string|null,
+  "bugCommonName": string|null,
+  "fitzpatrickTone": one of ${FITZPATRICK_TONES.join(" | ")},
   "pattern": one of ${PATTERNS.join(" | ")},
+  "primaryLesion": one of ${PRIMARY_LESIONS.join(" | ")},
   "centralFeatures": one of ${CENTRAL.join(" | ")},
   "primaryReaction": one of ${REACTIONS.join(" | ")},
-  "primarySensation": one of ${SENSATIONS.join(" | ")},   // most likely sensation given the morphology
-  "lesionDescription": string          // 1-2 sentences, purely descriptive
+  "primarySensation": one of ${SENSATIONS.join(" | ")},
+  "estimatedDiameter": one of ${DIAMETERS.join(" | ")},
+  "mimickerCondition": one of ${MIMICKER_CONDITIONS.join(" | ")},
+  "mimickerConfidence": one of ${MIMICKER_CONFIDENCES.join(" | ")},
+  "mimickerExplanation": string,
+  "lesionDescription": string
 }`;
 
   const content: Array<{ type: "text"; text: string } | { type: "image"; image: string }> = [
@@ -211,10 +285,19 @@ Return a single JSON object, no prose, no markdown fences:
   return {
     bugTaxonomy: typeof parsed["bugTaxonomy"] === "string" ? parsed["bugTaxonomy"] : null,
     bugCommonName: typeof parsed["bugCommonName"] === "string" ? parsed["bugCommonName"] : null,
+    fitzpatrickTone: pick(parsed["fitzpatrickTone"], FITZPATRICK_TONES, "indeterminate"),
     pattern: pick(parsed["pattern"], PATTERNS, "solitary_wheal"),
+    primaryLesion: pick(parsed["primaryLesion"], PRIMARY_LESIONS, "urticarial_wheal"),
     centralFeatures: pick(parsed["centralFeatures"], CENTRAL, "punctum_bite_mark"),
     primaryReaction: pick(parsed["primaryReaction"], REACTIONS, "urticarial_hive"),
     primarySensation: pick(parsed["primarySensation"], SENSATIONS, "intense_itch"),
+    estimatedDiameter: pick(parsed["estimatedDiameter"], DIAMETERS, "under_1cm"),
+    mimickerSuspicion: {
+      condition: pick(parsed["mimickerCondition"], MIMICKER_CONDITIONS, "none"),
+      confidence: pick(parsed["mimickerConfidence"], MIMICKER_CONFIDENCES, "low"),
+      explanation:
+        typeof parsed["mimickerExplanation"] === "string" ? parsed["mimickerExplanation"] : "",
+    },
     lesionDescription:
       typeof parsed["lesionDescription"] === "string" ? parsed["lesionDescription"] : "",
   };
@@ -236,10 +319,18 @@ export async function analyseIntake(intake: EngineIntake): Promise<EngineRespons
   const effectiveReading: VisionReading = reading ?? {
     bugTaxonomy: null,
     bugCommonName: null,
+    fitzpatrickTone: "indeterminate",
     pattern: "solitary_wheal",
+    primaryLesion: "urticarial_wheal",
     centralFeatures: "punctum_bite_mark",
     primaryReaction: "urticarial_hive",
     primarySensation: "mild_itch",
+    estimatedDiameter: "under_1cm",
+    mimickerSuspicion: {
+      condition: "none",
+      confidence: "low",
+      explanation: "",
+    },
     lesionDescription: provider
       ? "Visual analysis was inconclusive; assessment derived from regional epidemiological prevalence, seasonal activity, and habitat context."
       : "Visual AI key not configured; assessment derived from regional epidemiological prevalence, seasonal activity, and habitat context.",
@@ -247,8 +338,11 @@ export async function analyseIntake(intake: EngineIntake): Promise<EngineRespons
 
   const morphology: DermatologicalMorphology = {
     pattern: effectiveReading.pattern,
+    primaryLesion: effectiveReading.primaryLesion as DermatologicalMorphology["primaryLesion"],
     centralFeatures: effectiveReading.centralFeatures,
     primaryReaction: effectiveReading.primaryReaction,
+    estimatedDiameter: effectiveReading.estimatedDiameter,
+    fitzpatrickTone: effectiveReading.fitzpatrickTone,
   };
 
   const context = {
@@ -363,6 +457,27 @@ export async function analyseIntake(intake: EngineIntake): Promise<EngineRespons
     );
   }
 
+  const mimickerAlert: MimickerAlert | null =
+    effectiveReading.mimickerSuspicion.condition !== "none" &&
+    effectiveReading.mimickerSuspicion.confidence !== "low"
+      ? {
+          detected: true,
+          condition: effectiveReading.mimickerSuspicion.condition,
+          confidence: effectiveReading.mimickerSuspicion.confidence,
+          explanation: effectiveReading.mimickerSuspicion.explanation,
+        }
+      : null;
+
+  const dermatologicalFindings: DermatologicalFindings = {
+    pattern: effectiveReading.pattern,
+    primaryLesion: effectiveReading.primaryLesion,
+    centralFeatures: effectiveReading.centralFeatures,
+    primaryReaction: effectiveReading.primaryReaction,
+    estimatedDiameter: effectiveReading.estimatedDiameter,
+    fitzpatrickTone: effectiveReading.fitzpatrickTone,
+    lesionDescription: effectiveReading.lesionDescription,
+  };
+
   return {
     results,
     guidance: guidanceLines.filter(Boolean).join("\n\n"),
@@ -370,5 +485,7 @@ export async function analyseIntake(intake: EngineIntake): Promise<EngineRespons
     culpritDetectedFromPhoto: Boolean(reading?.bugTaxonomy),
     lesionReading: effectiveReading.lesionDescription,
     hasErythemaMigrans: isErythemaMigrans,
+    dermatologicalFindings,
+    mimickerAlert,
   };
 }
