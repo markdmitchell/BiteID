@@ -31,6 +31,9 @@ import mosquitoVvi from "@/assets/bite-patterns/mosquito-v-vi.jpg";
 import waspIii from "@/assets/bite-patterns/wasp-i-ii.jpg";
 import waspIiiIv from "@/assets/bite-patterns/wasp-iii-iv.jpg";
 import waspVvi from "@/assets/bite-patterns/wasp-v-vi.jpg";
+import erythemaMigransIii from "@/assets/bite-patterns/erythema-migrans-i-ii.jpg";
+import erythemaMigransIiiIv from "@/assets/bite-patterns/erythema-migrans-iii-iv.jpg";
+import erythemaMigransVvi from "@/assets/bite-patterns/erythema-migrans-v-vi.jpg";
 
 export type BitePatternSet = {
   label: string;
@@ -99,8 +102,20 @@ const BITE_PATTERNS: Record<string, BitePatternSet> = {
     pattern: "a single raised wheal with localized swelling",
     images: { "i-ii": waspIii, "iii-iv": waspIiiIv, "v-vi": waspVvi },
   },
+  erythema_migrans: {
+    label: "Erythema Migrans (Lyme Disease Rash)",
+    pattern: "an expanding circular or bullseye targetoid rash",
+    images: {
+      "i-ii": erythemaMigransIii,
+      "iii-iv": erythemaMigransIiiIv,
+      "v-vi": erythemaMigransVvi,
+    },
+  },
 };
 
-export function bitePatternOf(id?: string): BitePatternSet {
+export function bitePatternOf(id?: string, isErythemaMigrans?: boolean): BitePatternSet {
+  if (isErythemaMigrans || id === "erythema_migrans") {
+    return BITE_PATTERNS["erythema_migrans"];
+  }
   return (id && BITE_PATTERNS[id]) || GENERAL_BITE_PATTERN;
 }

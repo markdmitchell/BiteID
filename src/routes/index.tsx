@@ -558,7 +558,11 @@ function ResultsDashboard({
             </div>
           )}
 
-          <FitzpatrickTabs resultId={topResult.id} resultName={topResult.name} />
+          <FitzpatrickTabs
+            resultId={topResult.id}
+            resultName={topResult.name}
+            isErythemaMigrans={isErythemaMigrans}
+          />
 
           {secondaryResults.length > 0 && (
             <div className="space-y-3 pt-2">
