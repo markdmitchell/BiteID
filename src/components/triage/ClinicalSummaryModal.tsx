@@ -19,6 +19,7 @@ import {
   DURATION_OPTIONS,
 } from "@/lib/triage";
 import { stateLabel } from "@/lib/us-states";
+import { getLookalikeDifferentials } from "@/lib/lookalikes";
 
 type ClinicalSummaryModalProps = {
   open: boolean;
@@ -38,6 +39,12 @@ export function ClinicalSummaryModal({
   const [lesionUrl, setLesionUrl] = useState<string | null>(null);
   const [bugUrl, setBugUrl] = useState<string | null>(null);
   const [nowDate, setNowDate] = useState<string>("");
+  const [rashJournal, setRashJournal] = useState<{
+    baselineDiameterMm: number;
+    baselineDate: string;
+    followUpDiameterMm?: number;
+    followUpDate?: string;
+  } | null>(null);
   const uniqueId = useId().replace(/:/g, "").slice(0, 8).toUpperCase();
 
   useEffect(() => {
@@ -68,6 +75,16 @@ export function ClinicalSummaryModal({
           timeStyle: "short",
         }),
       );
+      try {
+        const stored = localStorage.getItem("biteid_rash_journal_record");
+        if (stored) {
+          setRashJournal(JSON.parse(stored));
+        } else {
+          setRashJournal(null);
+        }
+      } catch {
+        setRashJournal(null);
+      }
     }
   }, [open]);
 
@@ -393,6 +410,58 @@ export function ClinicalSummaryModal({
               </div>
             )}
           </div>
+
+          {/* Non-Vector Lookalikes Evaluated */}
+          {lookalikes.length > 0 && (
+            <div className="space-y-1.5 border-b border-border/70 pb-3">
+              <span className="text-[11px] font-bold uppercase text-muted-foreground block">
+                Non-Arthropod Lookalikes to Clinically Rule Out:
+              </span>
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 text-xs">
+                {lookalikes.map((lk) => (
+                  <div
+                    key={lk.id}
+                    className="rounded border border-border/70 bg-card p-2 space-y-1"
+                  >
+                    <p className="font-semibold text-[11px] text-foreground">{lk.name}</p>
+                    <p className="text-[10px] text-muted-foreground leading-tight">
+                      <strong>Differentiating Sign:</strong>{" "}
+                      {lk.differentiatingFeatures[0]?.lookalikeSign ?? lk.summary}
+                    </p>
+                    <p className="text-[10px] text-primary font-medium leading-tight">
+                      <strong>Workup:</strong> {lk.clinicalEvaluationTips[0]}
+                    </p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Rash Journal 24-48h Progression Record (if present) */}
+          {rashJournal && (
+            <div className="rounded border border-border/80 bg-muted/20 p-2.5 text-xs space-y-1 border-b border-border/70 pb-3">
+              <span className="text-[10px] font-bold uppercase text-primary block">
+                Patient 24–48h Centrifugal Rash Expansion Log:
+              </span>
+              <div className="flex flex-wrap gap-4 text-xs font-mono">
+                <div>
+                  Day 1 Baseline: <strong>{rashJournal.baselineDiameterMm} mm</strong>
+                </div>
+                {rashJournal.followUpDiameterMm && (
+                  <div>
+                    Follow-Up Size: <strong>{rashJournal.followUpDiameterMm} mm</strong> (Delta:{" "}
+                    <strong>
+                      {rashJournal.followUpDiameterMm - rashJournal.baselineDiameterMm >= 0
+                        ? `+${rashJournal.followUpDiameterMm - rashJournal.baselineDiameterMm}`
+                        : rashJournal.followUpDiameterMm - rashJournal.baselineDiameterMm}{" "}
+                      mm
+                    </strong>
+                    )
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
 
           {/* First Aid & Signs Under Observation */}
           {topResult &&

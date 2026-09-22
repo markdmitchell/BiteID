@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useReducer, useState } from "react";
 import {
+  Activity,
   AlertTriangle,
   ArrowLeft,
   ArrowRight,
@@ -29,6 +30,8 @@ import { ProbabilityCard } from "@/components/triage/ProbabilityCard";
 import { FitzpatrickTabs } from "@/components/triage/FitzpatrickTabs";
 import { ClinicalSummaryModal } from "@/components/triage/ClinicalSummaryModal";
 import { UrgentCareLocator } from "@/components/triage/UrgentCareLocator";
+import { NonVectorLookalikes } from "@/components/triage/NonVectorLookalikes";
+import { RashExpansionTracker } from "@/components/triage/RashExpansionTracker";
 import {
   BODY_LOCATION_OPTIONS,
   DURATION_OPTIONS,
@@ -435,6 +438,7 @@ function ResultsDashboard({
 }) {
   const [summaryOpen, setSummaryOpen] = useState(false);
   const [locatorOpen, setLocatorOpen] = useState(false);
+  const [trackerOpen, setTrackerOpen] = useState(false);
 
   const results = normalizeResults(response);
   const rawGuidance = response.guidance ?? response.advice;
@@ -498,6 +502,15 @@ function ResultsDashboard({
             <MapPin className="size-4 mr-1.5 text-primary" />
             Find Urgent Care
           </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => setTrackerOpen(true)}
+            className="font-medium"
+          >
+            <Activity className="size-4 mr-1.5 text-primary" />
+            Track Rash (24–48h)
+          </Button>
           <Button variant="ghost" size="sm" onClick={onReset} className="text-muted-foreground">
             <RotateCcw className="size-4" />
             <span className="sr-only sm:not-sr-only sm:ml-1">Start over</span>
@@ -555,8 +568,17 @@ function ResultsDashboard({
                     <Button
                       size="sm"
                       variant="default"
-                      onClick={() => setLocatorOpen(true)}
+                      onClick={() => setTrackerOpen(true)}
                       className="font-semibold shadow-xs"
+                    >
+                      <Activity className="size-3.5 mr-1.5" />
+                      Track Rash Expansion (24–48h)
+                    </Button>
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={() => setLocatorOpen(true)}
+                      className="font-medium bg-card"
                     >
                       <MapPin className="size-3.5 mr-1.5" />
                       Find In-Person Urgent Care
@@ -691,6 +713,15 @@ function ResultsDashboard({
                       <MapPin className="size-3.5 mr-1.5 text-primary" />
                       Find Nearby Urgent Care
                     </Button>
+                    <Button
+                      type="button"
+                      size="sm"
+                      variant="outline"
+                      onClick={() => setTrackerOpen(true)}
+                    >
+                      <Activity className="size-3.5 mr-1.5 text-primary" />
+                      Track Rash (24–48h)
+                    </Button>
                   </div>
                 </div>
               </div>
@@ -702,6 +733,8 @@ function ResultsDashboard({
             resultName={topResult.name}
             isErythemaMigrans={isErythemaMigrans}
           />
+
+          <NonVectorLookalikes topResultId={topResult.id} isErythemaMigrans={isErythemaMigrans} />
 
           {secondaryResults.length > 0 && (
             <div className="space-y-3 pt-2">
@@ -780,6 +813,13 @@ function ResultsDashboard({
         onOpenChange={setLocatorOpen}
         usState={form.usState}
         hasEmergencySymptoms={hasEmergency}
+      />
+
+      <RashExpansionTracker
+        open={trackerOpen}
+        onOpenChange={setTrackerOpen}
+        initialLesionFile={form.lesionImage}
+        isErythemaMigrans={isErythemaMigrans}
       />
     </section>
   );
