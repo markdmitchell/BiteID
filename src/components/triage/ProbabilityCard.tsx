@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { ChevronDown, ChevronUp } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { creatureReferenceOf } from "@/lib/creature-images";
 import { confidenceOf, nameOf, type TriageResultItem } from "@/lib/triage";
@@ -6,6 +7,7 @@ import { confidenceOf, nameOf, type TriageResultItem } from "@/lib/triage";
 type ProbabilityCardProps = {
   item: TriageResultItem;
   rank: number;
+  defaultExpanded?: boolean;
 };
 
 function DetailList({ title, items }: { title: string; items?: string[] | undefined }) {
@@ -25,9 +27,14 @@ function DetailList({ title, items }: { title: string; items?: string[] | undefi
   );
 }
 
-export function ProbabilityCard({ item, rank }: ProbabilityCardProps) {
+export function ProbabilityCard({
+  item,
+  rank,
+  defaultExpanded = rank === 0,
+}: ProbabilityCardProps) {
   const value = Math.max(0, Math.min(100, confidenceOf(item)));
   const [width, setWidth] = useState(0);
+  const [isExpanded, setIsExpanded] = useState(defaultExpanded);
 
   useEffect(() => {
     const t = window.setTimeout(() => setWidth(value), 80 + rank * 90);
@@ -38,7 +45,7 @@ export function ProbabilityCard({ item, rank }: ProbabilityCardProps) {
   const creatureReference = creatureReferenceOf(item.id);
 
   return (
-    <div className="rounded-2xl border border-border bg-card p-5">
+    <div className="rounded-2xl border border-border bg-card p-5 transition-shadow">
       <div className="flex items-start justify-between gap-4">
         <div className="flex items-start gap-3">
           <span className="mt-0.5 flex size-6 shrink-0 items-center justify-center rounded-full bg-muted text-xs font-semibold text-muted-foreground">
@@ -65,9 +72,20 @@ export function ProbabilityCard({ item, rank }: ProbabilityCardProps) {
             )}
           </div>
         </div>
-        <span className="font-display text-2xl font-bold tabular-nums text-foreground">
-          {Math.round(value)}%
-        </span>
+        <div className="flex flex-col items-end gap-1">
+          <span className="font-display text-2xl font-bold tabular-nums text-foreground">
+            {Math.round(value)}%
+          </span>
+          <button
+            type="button"
+            onClick={() => setIsExpanded((prev) => !prev)}
+            className="inline-flex items-center gap-1 rounded-md px-2 py-1 text-xs font-medium text-primary hover:bg-primary/10 transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+            aria-expanded={isExpanded}
+          >
+            <span>{isExpanded ? "Hide details" : "View details"}</span>
+            {isExpanded ? <ChevronUp className="size-3.5" /> : <ChevronDown className="size-3.5" />}
+          </button>
+        </div>
       </div>
 
       <div className="mt-4 h-2.5 overflow-hidden rounded-full bg-muted">
@@ -77,33 +95,37 @@ export function ProbabilityCard({ item, rank }: ProbabilityCardProps) {
         />
       </div>
 
-      {creatureReference && (
-        <figure className="mt-4 overflow-hidden rounded-xl border border-border bg-muted/30">
-          <img
-            src={creatureReference.src}
-            alt={creatureReference.alt}
-            width={1008}
-            height={704}
-            loading="lazy"
-            className="aspect-[3/2] w-full object-cover"
-          />
-          <figcaption className="border-t border-border px-3 py-2 text-xs text-muted-foreground">
-            AI-generated visual reference — not confirmation
-          </figcaption>
-        </figure>
-      )}
+      {isExpanded && (
+        <div className="mt-4 pt-1 animate-in fade-in-50 duration-200">
+          {creatureReference && (
+            <figure className="overflow-hidden rounded-xl border border-border bg-muted/30">
+              <img
+                src={creatureReference.src}
+                alt={creatureReference.alt}
+                width={1008}
+                height={704}
+                loading="lazy"
+                className="aspect-[3/2] w-full object-cover"
+              />
+              <figcaption className="border-t border-border px-3 py-2 text-xs text-muted-foreground">
+                AI-generated visual reference — not confirmation
+              </figcaption>
+            </figure>
+          )}
 
-      {(item.description ?? item.summary) && rank === 0 && (
-        <p className="mt-4 text-sm leading-relaxed text-muted-foreground">
-          {item.description ?? item.summary}
-        </p>
-      )}
+          {(item.description ?? item.summary) && (
+            <p className="mt-4 text-sm leading-relaxed text-muted-foreground">
+              {item.description ?? item.summary}
+            </p>
+          )}
 
-      <DetailList title="Why it matched" items={item.matchedFactors} />
-      <DetailList title="Can carry" items={item.associatedPathogens} />
-      <DetailList title="Delayed risks" items={item.delayedRisks} />
-      <DetailList title="First aid" items={item.firstAidAdvice} />
-      <DetailList title="Warning signs to watch" items={item.warningSignsToWatch} />
+          <DetailList title="Why it matched" items={item.matchedFactors} />
+          <DetailList title="Can carry" items={item.associatedPathogens} />
+          <DetailList title="Delayed risks" items={item.delayedRisks} />
+          <DetailList title="First aid" items={item.firstAidAdvice} />
+          <DetailList title="Warning signs to watch" items={item.warningSignsToWatch} />
+        </div>
+      )}
     </div>
   );
 }

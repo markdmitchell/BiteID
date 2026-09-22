@@ -4,6 +4,7 @@ import {
   AlertTriangle,
   ArrowLeft,
   ArrowRight,
+  HeartPulse,
   Loader2,
   RotateCcw,
   ShieldCheck,
@@ -333,9 +334,11 @@ function ResultsDashboard({
 }) {
   const results = normalizeResults(response);
   const guidance = response.guidance ?? response.advice;
+  const topResult = results[0];
+  const secondaryResults = results.slice(1);
 
   return (
-    <section className="mt-6 space-y-5">
+    <section className="mt-6 space-y-6">
       <div className="flex items-start justify-between gap-4">
         <div>
           <h1 className="font-display text-2xl font-bold tracking-tight text-foreground">
@@ -351,28 +354,71 @@ function ResultsDashboard({
         </Button>
       </div>
 
-      {results.length > 0 ? (
-        <div className="space-y-3">
-          {results.map((item, i) => (
-            <ProbabilityCard key={`${i}-${item.name ?? item.condition}`} item={item} rank={i} />
-          ))}
+      {topResult ? (
+        <div className="space-y-6">
+          <div className="space-y-2">
+            <span className="text-xs font-semibold uppercase tracking-wider text-primary">
+              Primary Match
+            </span>
+            <ProbabilityCard
+              key={`top-${topResult.name ?? topResult.condition}`}
+              item={topResult}
+              rank={0}
+              defaultExpanded={true}
+            />
+          </div>
+
+          {guidance && (
+            <div className="rounded-2xl border-2 border-primary/25 bg-primary/5 p-5 sm:p-6 shadow-sm">
+              <div className="flex items-center gap-2.5 text-primary">
+                <HeartPulse className="size-5 shrink-0" />
+                <h2 className="font-display text-lg font-bold tracking-tight text-foreground">
+                  What to do next
+                </h2>
+                <span className="ml-auto inline-flex items-center rounded-full bg-primary/10 px-2.5 py-0.5 text-xs font-semibold text-primary">
+                  Recommended Action
+                </span>
+              </div>
+              <div className="mt-3.5 rounded-xl border border-primary/15 bg-card/80 p-4 backdrop-blur-xs">
+                <p className="whitespace-pre-line text-sm font-medium leading-relaxed text-foreground">
+                  {guidance}
+                </p>
+              </div>
+            </div>
+          )}
+
+          <FitzpatrickTabs resultId={topResult.id} resultName={topResult.name} />
+
+          {secondaryResults.length > 0 && (
+            <div className="space-y-3 pt-2">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h2 className="font-display text-base font-semibold text-foreground">
+                    Other possibilities considered ({secondaryResults.length})
+                  </h2>
+                  <p className="text-xs text-muted-foreground">
+                    Alternative matches with lower probability scores.
+                  </p>
+                </div>
+              </div>
+              <div className="space-y-3">
+                {secondaryResults.map((item, idx) => (
+                  <ProbabilityCard
+                    key={`${idx + 1}-${item.name ?? item.condition}`}
+                    item={item}
+                    rank={idx + 1}
+                    defaultExpanded={false}
+                  />
+                ))}
+              </div>
+            </div>
+          )}
         </div>
       ) : (
         <div className="rounded-2xl border border-border bg-card p-5 text-sm text-muted-foreground">
           The service did not return any ranked findings for this intake.
         </div>
       )}
-
-      {guidance && (
-        <div className="rounded-2xl border border-border bg-card p-5">
-          <h2 className="font-display text-lg font-semibold text-foreground">What to do next</h2>
-          <p className="mt-2 whitespace-pre-line text-sm leading-relaxed text-muted-foreground">
-            {guidance}
-          </p>
-        </div>
-      )}
-
-      <FitzpatrickTabs resultId={results[0]?.id} resultName={results[0]?.name} />
 
       {response.disclaimer && (
         <p className="rounded-2xl bg-muted px-5 py-4 text-xs leading-relaxed text-muted-foreground">
