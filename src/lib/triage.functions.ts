@@ -6,6 +6,8 @@ export type AnalyseIntakeInput = {
   environment: string;
   duration: string;
   usState: string;
+  bodyLocation?: string | null;
+  sensation?: string | null;
   monthIndex: number;
   symptoms: string[];
 };
@@ -22,6 +24,8 @@ function validate(input: unknown): AnalyseIntakeInput {
     environment: typeof data.environment === "string" ? data.environment : "unsure",
     duration: typeof data.duration === "string" ? data.duration : "",
     usState: typeof data.usState === "string" && data.usState ? data.usState : "US-VA",
+    bodyLocation: typeof data.bodyLocation === "string" ? data.bodyLocation : "any_unspecified",
+    sensation: typeof data.sensation === "string" ? data.sensation : "unsure",
     monthIndex:
       typeof data.monthIndex === "number" && data.monthIndex >= 0 && data.monthIndex <= 11
         ? data.monthIndex

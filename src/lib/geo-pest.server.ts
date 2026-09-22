@@ -40,6 +40,16 @@ export interface VectorInfo {
 export const VECTOR_DATABASE: Record<string, VectorInfo> = {
   mosquito: {
     id: "mosquito",
+    bodyLocationScores: {
+      lower_leg_ankle: 1.2,
+      arms_hands: 1.4,
+      face_head: 1.3,
+      trunk_chest_back: 0.6,
+      waist_groin_axilla: 0.3,
+      feet: 1,
+      any_unspecified: 1,
+    },
+
     name: "Mosquito",
     scientificName: "Culicidae",
     endemicStates: "ALL",
@@ -68,6 +78,16 @@ export const VECTOR_DATABASE: Record<string, VectorInfo> = {
   },
   blacklegged_tick: {
     id: "blacklegged_tick",
+    bodyLocationScores: {
+      waist_groin_axilla: 1.6,
+      lower_leg_ankle: 1.3,
+      face_head: 1.2,
+      trunk_chest_back: 1,
+      arms_hands: 0.7,
+      feet: 0.5,
+      any_unspecified: 1,
+    },
+
     name: "Blacklegged (Deer) Tick",
     scientificName: "Ixodes scapularis",
     endemicStates: [
@@ -117,6 +137,16 @@ export const VECTOR_DATABASE: Record<string, VectorInfo> = {
   },
   lone_star_tick: {
     id: "lone_star_tick",
+    bodyLocationScores: {
+      lower_leg_ankle: 1.5,
+      waist_groin_axilla: 1.5,
+      trunk_chest_back: 1,
+      arms_hands: 0.7,
+      face_head: 0.8,
+      feet: 0.6,
+      any_unspecified: 1,
+    },
+
     name: "Lone Star Tick",
     scientificName: "Amblyomma americanum",
     endemicStates: [
@@ -170,6 +200,16 @@ export const VECTOR_DATABASE: Record<string, VectorInfo> = {
   },
   dog_tick: {
     id: "dog_tick",
+    bodyLocationScores: {
+      face_head: 1.6,
+      waist_groin_axilla: 1.3,
+      lower_leg_ankle: 1.2,
+      trunk_chest_back: 1,
+      arms_hands: 0.8,
+      feet: 0.5,
+      any_unspecified: 1,
+    },
+
     name: "American Dog Tick",
     scientificName: "Dermacentor variabilis",
     endemicStates: [
@@ -225,6 +265,16 @@ export const VECTOR_DATABASE: Record<string, VectorInfo> = {
   },
   bed_bug: {
     id: "bed_bug",
+    bodyLocationScores: {
+      trunk_chest_back: 1.5,
+      arms_hands: 1.4,
+      face_head: 1.3,
+      lower_leg_ankle: 0.8,
+      feet: 0.7,
+      waist_groin_axilla: 0.6,
+      any_unspecified: 1,
+    },
+
     name: "Bed Bug",
     scientificName: "Cimex lectularius",
     endemicStates: "ALL",
@@ -253,6 +303,16 @@ export const VECTOR_DATABASE: Record<string, VectorInfo> = {
   },
   flea: {
     id: "flea",
+    bodyLocationScores: {
+      lower_leg_ankle: 1.8,
+      feet: 1.4,
+      waist_groin_axilla: 0.4,
+      arms_hands: 0.4,
+      trunk_chest_back: 0.4,
+      face_head: 0.2,
+      any_unspecified: 1,
+    },
+
     name: "Flea",
     scientificName: "Ctenocephalides felis",
     endemicStates: "ALL",
@@ -281,6 +341,16 @@ export const VECTOR_DATABASE: Record<string, VectorInfo> = {
   },
   brown_recluse: {
     id: "brown_recluse",
+    bodyLocationScores: {
+      trunk_chest_back: 1.5,
+      arms_hands: 1.4,
+      waist_groin_axilla: 1.3,
+      lower_leg_ankle: 0.9,
+      face_head: 0.5,
+      feet: 1,
+      any_unspecified: 1,
+    },
+
     name: "Brown Recluse Spider",
     scientificName: "Loxosceles reclusa",
     endemicStates: [
@@ -351,6 +421,16 @@ export const VECTOR_DATABASE: Record<string, VectorInfo> = {
   },
   black_widow: {
     id: "black_widow",
+    bodyLocationScores: {
+      arms_hands: 1.7,
+      feet: 1.5,
+      lower_leg_ankle: 1.1,
+      trunk_chest_back: 0.5,
+      waist_groin_axilla: 0.4,
+      face_head: 0.3,
+      any_unspecified: 1,
+    },
+
     name: "Black Widow Spider",
     scientificName: "Latrodectus mactans",
     endemicStates: "ALL",
@@ -379,6 +459,16 @@ export const VECTOR_DATABASE: Record<string, VectorInfo> = {
   },
   fire_ant: {
     id: "fire_ant",
+    bodyLocationScores: {
+      feet: 1.8,
+      lower_leg_ankle: 1.7,
+      arms_hands: 1.4,
+      trunk_chest_back: 0.4,
+      waist_groin_axilla: 0.4,
+      face_head: 0.2,
+      any_unspecified: 1,
+    },
+
     name: "Fire Ant",
     scientificName: "Solenopsis invicta",
     endemicStates: [
@@ -431,6 +521,16 @@ export const VECTOR_DATABASE: Record<string, VectorInfo> = {
   },
   chigger: {
     id: "chigger",
+    bodyLocationScores: {
+      waist_groin_axilla: 1.9,
+      lower_leg_ankle: 1.7,
+      arms_hands: 0.5,
+      trunk_chest_back: 0.6,
+      face_head: 0.2,
+      feet: 0.6,
+      any_unspecified: 1,
+    },
+
     name: "Chigger (Harvest Mite)",
     scientificName: "Trombiculidae",
     endemicStates: "ALL",
@@ -459,6 +559,16 @@ export const VECTOR_DATABASE: Record<string, VectorInfo> = {
   },
   kissing_bug: {
     id: "kissing_bug",
+    bodyLocationScores: {
+      face_head: 2,
+      trunk_chest_back: 0.9,
+      arms_hands: 0.9,
+      lower_leg_ankle: 0.3,
+      feet: 0.3,
+      waist_groin_axilla: 0.3,
+      any_unspecified: 1,
+    },
+
     name: "Kissing Bug (Triatomine)",
     scientificName: "Triatoma spp.",
     endemicStates: ["US-TX", "US-AZ", "US-NM", "US-CA", "US-FL", "US-GA", "US-AL", "US-LA"],
@@ -487,6 +597,16 @@ export const VECTOR_DATABASE: Record<string, VectorInfo> = {
   },
   honey_bee: {
     id: "honey_bee",
+    bodyLocationScores: {
+      feet: 1.7,
+      arms_hands: 1.6,
+      face_head: 1.3,
+      lower_leg_ankle: 0.8,
+      trunk_chest_back: 0.5,
+      waist_groin_axilla: 0.2,
+      any_unspecified: 1,
+    },
+
     name: "Honey Bee",
     scientificName: "Apis mellifera",
     endemicStates: "ALL",
@@ -517,6 +637,16 @@ export const VECTOR_DATABASE: Record<string, VectorInfo> = {
   },
   wasp: {
     id: "wasp",
+    bodyLocationScores: {
+      arms_hands: 1.7,
+      face_head: 1.5,
+      feet: 1.3,
+      lower_leg_ankle: 1,
+      trunk_chest_back: 0.7,
+      waist_groin_axilla: 0.3,
+      any_unspecified: 1,
+    },
+
     name: "Wasp / Yellow Jacket",
     scientificName: "Vespula / Polistes spp.",
     endemicStates: "ALL",
@@ -545,6 +675,16 @@ export const VECTOR_DATABASE: Record<string, VectorInfo> = {
   },
   scorpion: {
     id: "scorpion",
+    bodyLocationScores: {
+      feet: 1.9,
+      arms_hands: 1.5,
+      lower_leg_ankle: 1.1,
+      trunk_chest_back: 0.4,
+      waist_groin_axilla: 0.3,
+      face_head: 0.1,
+      any_unspecified: 1,
+    },
+
     name: "Bark Scorpion",
     scientificName: "Centruroides sculpturatus",
     endemicStates: ["US-AZ", "US-NM", "US-NV", "US-CA", "US-TX", "US-UT"],
@@ -573,6 +713,16 @@ export const VECTOR_DATABASE: Record<string, VectorInfo> = {
   },
   horse_fly: {
     id: "horse_fly",
+    bodyLocationScores: {
+      face_head: 1.7,
+      arms_hands: 1.4,
+      trunk_chest_back: 1.3,
+      lower_leg_ankle: 1.1,
+      feet: 0.6,
+      waist_groin_axilla: 0.4,
+      any_unspecified: 1,
+    },
+
     name: "Horse Fly / Deer Fly",
     scientificName: "Tabanidae",
     endemicStates: "ALL",
@@ -601,6 +751,16 @@ export const VECTOR_DATABASE: Record<string, VectorInfo> = {
   },
   lice: {
     id: "lice",
+    bodyLocationScores: {
+      face_head: 2,
+      trunk_chest_back: 1.3,
+      waist_groin_axilla: 0.8,
+      arms_hands: 0.2,
+      lower_leg_ankle: 0.1,
+      feet: 0.1,
+      any_unspecified: 1,
+    },
+
     name: "Head / Body Lice",
     scientificName: "Pediculus humanus",
     endemicStates: "ALL",
@@ -657,6 +817,16 @@ export const VECTOR_DATABASE: Record<string, VectorInfo> = {
   },
   black_fly: {
     id: "black_fly",
+    bodyLocationScores: {
+      face_head: 1.9,
+      arms_hands: 1.3,
+      lower_leg_ankle: 1,
+      trunk_chest_back: 0.7,
+      waist_groin_axilla: 0.3,
+      feet: 0.5,
+      any_unspecified: 1,
+    },
+
     name: "Black Fly / Buffalo Gnat",
     scientificName: "Simuliidae",
     endemicStates: "ALL",
@@ -685,6 +855,16 @@ export const VECTOR_DATABASE: Record<string, VectorInfo> = {
   },
   blister_beetle: {
     id: "blister_beetle",
+    bodyLocationScores: {
+      face_head: 1.7,
+      arms_hands: 1.5,
+      trunk_chest_back: 1.1,
+      lower_leg_ankle: 1.1,
+      feet: 0.8,
+      waist_groin_axilla: 0.4,
+      any_unspecified: 1,
+    },
+
     name: "Blister Beetle",
     scientificName: "Meloidae",
     endemicStates: "ALL",

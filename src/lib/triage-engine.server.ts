@@ -32,6 +32,8 @@ export type EngineIntake = {
   environment: string;
   duration: string;
   usState: string;
+  bodyLocation?: string | null;
+  sensation?: string | null;
   monthIndex: number;
   symptoms: string[];
 };
@@ -254,6 +256,8 @@ export async function analyseIntake(intake: EngineIntake): Promise<EngineRespons
     monthIndex: intake.monthIndex,
     incidentLocation: LOCATION_MAP[intake.environment] ?? "outdoor_other",
     primarySensation: effectiveReading.primarySensation,
+    bodyLocation: intake.bodyLocation ?? "any_unspecified",
+    sensation: intake.sensation ?? "unsure",
   };
 
   const probabilities = evaluateRegionalLikelihood(
@@ -297,6 +301,24 @@ export async function analyseIntake(intake: EngineIntake): Promise<EngineRespons
         matchedFactors.push(
           `Photographed arthropod read as ${effectiveReading.bugCommonName ?? effectiveReading.bugTaxonomy}`,
         );
+      }
+      if (intake.bodyLocation && intake.bodyLocation !== "any_unspecified") {
+        const locScore = vector.bodyLocationScores?.[intake.bodyLocation] ?? 1.0;
+        if (locScore >= 1.4) {
+          const locName = intake.bodyLocation.replace(/_/g, " ");
+          matchedFactors.push(
+            `Anatomical site (${locName}) typical for ${vector.name.toLowerCase()}`,
+          );
+        }
+      }
+      if (intake.sensation && intake.sensation !== "unsure") {
+        const sensScore = vector.sensationScores[intake.sensation] ?? 1.0;
+        if (sensScore >= 0.9) {
+          const sensName = intake.sensation.replace(/_/g, " ");
+          matchedFactors.push(
+            `Reported sensation (${sensName}) aligns with ${vector.name.toLowerCase()}`,
+          );
+        }
       }
     }
 

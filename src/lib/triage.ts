@@ -22,6 +22,25 @@ export const DURATION_OPTIONS: EnvironmentOption[] = [
   { value: "over-2w", label: "More than 2 weeks" },
 ];
 
+export const BODY_LOCATION_OPTIONS: EnvironmentOption[] = [
+  { value: "any_unspecified", label: "Multiple areas / Not sure" },
+  { value: "lower_leg_ankle", label: "Ankles or lower legs" },
+  { value: "waist_groin_axilla", label: "Waistband, groin, or armpits" },
+  { value: "arms_hands", label: "Arms or hands" },
+  { value: "face_head", label: "Face, scalp, or neck" },
+  { value: "trunk_chest_back", label: "Chest, back, or torso" },
+  { value: "feet", label: "Feet or toes" },
+];
+
+export const SENSATION_OPTIONS: EnvironmentOption[] = [
+  { value: "unsure", label: "Not sure / Changes" },
+  { value: "intense_itch", label: "Intensely itchy" },
+  { value: "mild_itch", label: "Mildly itchy" },
+  { value: "moderate_pain", label: "Painful or stinging" },
+  { value: "severe_pain", label: "Severe sharp or burning pain" },
+  { value: "painless", label: "Painless (didn't feel it / doesn't hurt)" },
+];
+
 export const EMERGENCY_SYMPTOMS: EnvironmentOption[] = [
   { value: "breathing", label: "Trouble breathing or throat tightness" },
   { value: "swelling", label: "Swelling of the face, lips or tongue" },
@@ -37,6 +56,8 @@ export type TriageFormState = {
   environment: string;
   duration: string;
   usState: string;
+  bodyLocation: string;
+  sensation: string;
   symptoms: string[];
   noneOfThese: boolean;
 };
@@ -47,6 +68,8 @@ export const initialFormState: TriageFormState = {
   environment: "",
   duration: "",
   usState: "",
+  bodyLocation: "any_unspecified",
+  sensation: "unsure",
   symptoms: [],
   noneOfThese: false,
 };
@@ -57,6 +80,8 @@ export type TriageAction =
   | { type: "setEnvironment"; value: string }
   | { type: "setDuration"; value: string }
   | { type: "setUsState"; value: string }
+  | { type: "setBodyLocation"; value: string }
+  | { type: "setSensation"; value: string }
   | { type: "toggleSymptom"; value: string }
   | { type: "setNoneOfThese"; value: boolean }
   | { type: "reset" };
@@ -73,6 +98,10 @@ export function triageReducer(state: TriageFormState, action: TriageAction): Tri
       return { ...state, duration: action.value };
     case "setUsState":
       return { ...state, usState: action.value };
+    case "setBodyLocation":
+      return { ...state, bodyLocation: action.value };
+    case "setSensation":
+      return { ...state, sensation: action.value };
     case "toggleSymptom": {
       const has = state.symptoms.includes(action.value);
       const symptoms = has
@@ -154,6 +183,8 @@ export async function submitTriage(state: TriageFormState): Promise<TriageRespon
         environment: state.environment,
         duration: state.duration,
         usState: state.usState,
+        bodyLocation: state.bodyLocation,
+        sensation: state.sensation,
         monthIndex: new Date().getMonth(),
         symptoms: state.symptoms,
       },

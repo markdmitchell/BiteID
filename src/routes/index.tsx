@@ -25,10 +25,12 @@ import { EmergencyModal } from "@/components/triage/EmergencyModal";
 import { ProbabilityCard } from "@/components/triage/ProbabilityCard";
 import { FitzpatrickTabs } from "@/components/triage/FitzpatrickTabs";
 import {
+  BODY_LOCATION_OPTIONS,
   DURATION_OPTIONS,
   FALLBACK_RESPONSE,
   EMERGENCY_SYMPTOMS,
   ENVIRONMENT_OPTIONS,
+  SENSATION_OPTIONS,
   initialFormState,
   normalizeResults,
   submitTriage,
@@ -204,6 +206,54 @@ function TriagePage() {
                       </Select>
                       <p className="mt-2 text-xs text-muted-foreground">
                         Which insects are active depends on where and when you were bitten.
+                      </p>
+                    </div>
+                    <div>
+                      <label className="text-sm font-medium text-foreground">
+                        Where on your body is the bite?
+                      </label>
+                      <Select
+                        value={form.bodyLocation}
+                        onValueChange={(value) => dispatch({ type: "setBodyLocation", value })}
+                      >
+                        <SelectTrigger className="mt-2 w-full">
+                          <SelectValue placeholder="Choose a body location" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {BODY_LOCATION_OPTIONS.map((o) => (
+                            <SelectItem key={o.value} value={o.value}>
+                              {o.label}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      <p className="mt-2 text-xs text-muted-foreground">
+                        Different insects target specific areas like ankles, waistbands, or exposed
+                        skin.
+                      </p>
+                    </div>
+                    <div>
+                      <label className="text-sm font-medium text-foreground">
+                        How does it feel?
+                      </label>
+                      <Select
+                        value={form.sensation}
+                        onValueChange={(value) => dispatch({ type: "setSensation", value })}
+                      >
+                        <SelectTrigger className="mt-2 w-full">
+                          <SelectValue placeholder="Choose a sensation" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {SENSATION_OPTIONS.map((o) => (
+                            <SelectItem key={o.value} value={o.value}>
+                              {o.label}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      <p className="mt-2 text-xs text-muted-foreground">
+                        Tick bites are often painless, while bees and wasps cause immediate sharp
+                        pain.
                       </p>
                     </div>
                     <div>
