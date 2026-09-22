@@ -118,35 +118,6 @@ function TriagePage() {
 
   return (
     <main className="min-h-screen bg-background pb-20 font-sans">
-      {/* Instant 1-Tap Snakebite Survival Banner */}
-      <aside
-        aria-label="Snakebite Emergency"
-        className="border-b border-destructive/30 bg-destructive/10 px-4 py-2.5 text-xs text-destructive dark:bg-destructive/20 dark:text-destructive-foreground"
-      >
-        <div className="mx-auto flex max-w-3xl items-center justify-between gap-3">
-          <div className="flex items-center gap-2">
-            <span className="flex size-5 shrink-0 items-center justify-center rounded-full bg-destructive text-destructive-foreground">
-              <ShieldAlert className="size-3" />
-            </span>
-            <span className="font-semibold text-foreground">
-              Bitten by a snake?{" "}
-              <span className="hidden font-normal text-muted-foreground sm:inline">
-                Do not wait for AI analysis.
-              </span>
-            </span>
-          </div>
-          <Button
-            type="button"
-            size="sm"
-            variant="destructive"
-            onClick={() => setSnakebiteOpen(true)}
-            className="h-7 gap-1.5 rounded-lg px-3 text-xs font-bold shadow-xs"
-          >
-            <span>Snakebite Survival Protocol</span>
-          </Button>
-        </div>
-      </aside>
-
       <header className="border-b border-border bg-card/70 backdrop-blur">
         <div className="mx-auto flex max-w-3xl items-center justify-between gap-3 px-5 py-4">
           <div className="flex items-center gap-3">

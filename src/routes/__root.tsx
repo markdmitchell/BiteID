@@ -11,6 +11,7 @@ import { useEffect, useState, type ReactNode } from "react";
 import { CheckCircle2, Compass, WifiOff, X } from "lucide-react";
 import { useOfflineStatus } from "../lib/offline-manager";
 import { OfflineFieldKitModal } from "../components/triage/OfflineFieldKitModal";
+import { SiteFooter } from "../components/navigation/SiteFooter";
 
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
@@ -196,6 +197,8 @@ function RootComponent() {
 
       {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
       <Outlet />
+
+      <SiteFooter />
 
       <OfflineFieldKitModal
         open={fieldKitOpen}
