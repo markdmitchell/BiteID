@@ -18,6 +18,7 @@ import {
   ShieldCheck,
   Stethoscope,
   WifiOff,
+  Zap,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -39,6 +40,7 @@ import { NonVectorLookalikes } from "@/components/triage/NonVectorLookalikes";
 import { RashExpansionTracker } from "@/components/triage/RashExpansionTracker";
 import { OfflineFieldKitModal } from "@/components/triage/OfflineFieldKitModal";
 import { SnakebiteSurvivalModal } from "@/components/triage/SnakebiteSurvivalModal";
+import { KnownCulpritModal } from "@/components/triage/KnownCulpritModal";
 import {
   BODY_LOCATION_OPTIONS,
   DURATION_OPTIONS,
@@ -83,6 +85,8 @@ function TriagePage() {
   const [modalOpen, setModalOpen] = useState(false);
   const [fieldKitOpen, setFieldKitOpen] = useState(false);
   const [snakebiteOpen, setSnakebiteOpen] = useState(false);
+  const [knownCulpritOpen, setKnownCulpritOpen] = useState(false);
+  const [selectedCulpritId, setSelectedCulpritId] = useState<string | null>(null);
   const [status, setStatus] = useState<"idle" | "sending" | "done">("idle");
   const [response, setResponse] = useState<TriageResponse | null>(null);
 
@@ -164,6 +168,19 @@ function TriagePage() {
               type="button"
               variant="outline"
               size="sm"
+              onClick={() => {
+                setSelectedCulpritId(null);
+                setKnownCulpritOpen(true);
+              }}
+              className="flex items-center gap-1.5 border-primary/30 text-xs font-semibold text-primary hover:bg-primary/10"
+            >
+              <Zap className="size-3.5 text-primary" />
+              <span className="hidden sm:inline">Known Bug</span>
+            </Button>
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
               onClick={() => setSnakebiteOpen(true)}
               className="flex items-center gap-1.5 border-destructive/40 text-xs font-semibold text-destructive hover:bg-destructive/10"
             >
@@ -203,6 +220,10 @@ function TriagePage() {
             onReset={reset}
             onOpenFieldKit={() => setFieldKitOpen(true)}
             onOpenSnakebite={() => setSnakebiteOpen(true)}
+            onOpenKnownCulprit={() => {
+              setSelectedCulpritId(null);
+              setKnownCulpritOpen(true);
+            }}
           />
         ) : (
           <section className="mt-6">
@@ -211,6 +232,37 @@ function TriagePage() {
             <div className="mt-7">
               {step === 0 && (
                 <div>
+                  {/* "I Know What Bit Me" Fast-Track Card */}
+                  <div className="mb-6 rounded-2xl border-2 border-primary/25 bg-gradient-to-br from-primary/5 via-card to-card p-4 sm:p-5 shadow-xs">
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                      <div className="space-y-1">
+                        <span className="inline-flex items-center gap-1.5 rounded-full bg-primary/10 px-2.5 py-0.5 text-[11px] font-bold text-primary uppercase tracking-wider">
+                          <Zap className="size-3" />
+                          Skip The Photo Quiz
+                        </span>
+                        <h2 className="font-display text-base sm:text-lg font-bold text-foreground">
+                          Already know what bit or stung you?
+                        </h2>
+                        <p className="text-xs text-muted-foreground max-w-md leading-relaxed">
+                          Saw the tick, scorpion, bee, spider, or ant? Get instant clinical
+                          first-aid steps, dangerous folklore myths to avoid, and hospital red flags
+                          without an AI scan.
+                        </p>
+                      </div>
+                      <Button
+                        type="button"
+                        onClick={() => {
+                          setSelectedCulpritId(null);
+                          setKnownCulpritOpen(true);
+                        }}
+                        className="shrink-0 gap-2 font-semibold shadow-xs text-xs"
+                      >
+                        <span>I Know What Bit Me</span>
+                        <ArrowRight className="size-4" />
+                      </Button>
+                    </div>
+                  </div>
+
                   <h1 className="font-display text-2xl font-bold tracking-tight text-foreground">
                     Show us the area
                   </h1>
@@ -457,6 +509,12 @@ function TriagePage() {
         onOpenSnakebiteSurvival={() => setSnakebiteOpen(true)}
       />
       <SnakebiteSurvivalModal open={snakebiteOpen} onOpenChange={setSnakebiteOpen} />
+      <KnownCulpritModal
+        open={knownCulpritOpen}
+        onOpenChange={setKnownCulpritOpen}
+        initialVectorId={selectedCulpritId}
+        onOpenSnakebiteSurvival={() => setSnakebiteOpen(true)}
+      />
     </main>
   );
 }
@@ -504,6 +562,7 @@ function ResultsDashboard({
   onReset,
   onOpenFieldKit,
   onOpenSnakebite,
+  onOpenKnownCulprit,
 }: {
   response: TriageResponse;
   form: TriageFormState;
@@ -511,6 +570,7 @@ function ResultsDashboard({
   onReset: () => void;
   onOpenFieldKit?: () => void;
   onOpenSnakebite?: () => void;
+  onOpenKnownCulprit?: () => void;
 }) {
   const [summaryOpen, setSummaryOpen] = useState(false);
   const [locatorOpen, setLocatorOpen] = useState(false);
@@ -626,6 +686,17 @@ function ResultsDashboard({
           </p>
         </div>
         <div className="flex items-center gap-2 flex-wrap sm:flex-nowrap">
+          {onOpenKnownCulprit && (
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={onOpenKnownCulprit}
+              className="font-medium"
+            >
+              <Zap className="mr-1.5 size-4 text-primary" />
+              Known Bug
+            </Button>
+          )}
           {onOpenFieldKit && (
             <Button variant="outline" size="sm" onClick={onOpenFieldKit} className="font-medium">
               <Compass className="size-4 mr-1.5 text-primary" />
