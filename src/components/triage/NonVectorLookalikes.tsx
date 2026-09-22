@@ -4,8 +4,8 @@ import { AlertCircle, Eye, ShieldCheck, Stethoscope, ChevronRight } from "lucide
 import { cn } from "@/lib/utils";
 
 type NonVectorLookalikesProps = {
-  topResultId?: string;
-  isErythemaMigrans?: boolean;
+  topResultId?: string | undefined;
+  isErythemaMigrans?: boolean | undefined;
 };
 
 export function NonVectorLookalikes({

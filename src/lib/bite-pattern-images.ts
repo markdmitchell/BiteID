@@ -195,7 +195,7 @@ const BITE_PATTERNS: Record<string, BitePatternSet> = {
 
 export function bitePatternOf(id?: string, isErythemaMigrans?: boolean): BitePatternSet {
   if (isErythemaMigrans || id === "erythema_migrans") {
-    return BITE_PATTERNS["erythema_migrans"];
+    return BITE_PATTERNS["erythema_migrans"] ?? GENERAL_BITE_PATTERN;
   }
   return (id && BITE_PATTERNS[id]) || GENERAL_BITE_PATTERN;
 }

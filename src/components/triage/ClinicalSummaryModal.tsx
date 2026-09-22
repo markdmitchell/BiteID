@@ -52,9 +52,9 @@ export function ClinicalSummaryModal({
       const url = URL.createObjectURL(form.lesionImage);
       setLesionUrl(url);
       return () => URL.revokeObjectURL(url);
-    } else {
-      setLesionUrl(null);
     }
+    setLesionUrl(null);
+    return undefined;
   }, [form.lesionImage]);
 
   useEffect(() => {
@@ -62,9 +62,9 @@ export function ClinicalSummaryModal({
       const url = URL.createObjectURL(form.bugImage);
       setBugUrl(url);
       return () => URL.revokeObjectURL(url);
-    } else {
-      setBugUrl(null);
     }
+    setBugUrl(null);
+    return undefined;
   }, [form.bugImage]);
 
   useEffect(() => {
@@ -106,7 +106,9 @@ export function ClinicalSummaryModal({
   const sensationLabel =
     SENSATION_OPTIONS.find((s) => s.value === form.sensation)?.label ?? form.sensation;
 
-  const reportedEmergencies = EMERGENCY_SYMPTOMS.filter((sym) => form.symptoms.includes(sym.id));
+  const lookalikes = getLookalikeDifferentials(topResult?.id, Boolean(isErythemaMigrans));
+
+  const reportedEmergencies = EMERGENCY_SYMPTOMS.filter((sym) => form.symptoms.includes(sym.value));
 
   const handlePrint = () => {
     window.print();

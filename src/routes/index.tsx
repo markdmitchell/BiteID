@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useReducer, useState } from "react";
 import {
   Activity,
@@ -632,7 +632,7 @@ function ResultsDashboard({
     Boolean(response.hasErythemaMigrans) ||
     /erythema migrans|bull'?s?[- ]?eye|annular target/i.test(topResult?.description ?? "") ||
     /erythema migrans|bull'?s?[- ]?eye|annular target/i.test(
-      String(response.lesionReading ?? ""),
+      String(response['lesionReading'] ?? ""),
     ) ||
     Boolean(
       topResult?.matchedFactors?.some((f) => /annular|target rash|erythema migrans/i.test(f)),
