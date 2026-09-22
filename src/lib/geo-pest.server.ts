@@ -16,7 +16,8 @@ export type DermatologicalMorphology = {
     | "sterile_pustule"
     | "plaque"
     | "eschar_necrosis"
-    | "macule";
+    | "macule"
+    | undefined;
   centralFeatures:
     | "punctum_bite_mark"
     | "twin_punctures"
