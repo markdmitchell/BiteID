@@ -23,14 +23,12 @@ export function PageHeader({ activePage }: PageHeaderProps) {
           </Link>
 
           <Link to="/" className="flex items-center gap-2.5">
-            <span className="flex size-8 items-center justify-center overflow-hidden rounded-xl shadow-xs">
-              <img src={biteIdIcon} alt="BiteID Icon" className="size-full object-cover" />
-            </span>
+            <img src={biteIdIcon} alt="BiteID" className="size-8 shrink-0 object-contain" />
             <div className="flex items-baseline gap-2">
               <span className="font-display text-base font-bold tracking-tight text-foreground">
                 BiteID
               </span>
-              <span className="rounded-full bg-caution/20 px-2 py-0.2 text-[9px] font-semibold uppercase tracking-wider text-caution-foreground">
+              <span className="rounded-full bg-caution/20 px-2 py-0.5 text-[9px] font-semibold uppercase tracking-wider text-caution-foreground">
                 Alpha
               </span>
             </div>

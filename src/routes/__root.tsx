@@ -81,13 +81,13 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "BiteID" },
+      { title: "BiteID - Identify Bites, Stings, and Skin Reactions" },
       {
         name: "description",
         content:
           "BiteID is an alpha prototype for testing only: guided intake for bites, stings and skin reactions with ranked assessments.",
       },
-      { property: "og:title", content: "BiteID" },
+      { property: "og:title", content: "BiteID - Identify Bites, Stings, and Skin Reactions" },
       {
         property: "og:description",
         content:

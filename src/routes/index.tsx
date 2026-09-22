@@ -61,13 +61,13 @@ import { US_STATE_OPTIONS } from "@/lib/us-states";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "BiteID — Bite & Rash Intake (Alpha)" },
+      { title: "BiteID - Identify Bites, Stings, and Skin Reactions" },
       {
         name: "description",
         content:
           "Alpha testing only: upload a photo of a bite or rash, answer a few questions, and see a ranked assessment with a skin-tone reference guide.",
       },
-      { property: "og:title", content: "BiteID — Bite & Rash Intake (Alpha)" },
+      { property: "og:title", content: "BiteID - Identify Bites, Stings, and Skin Reactions" },
       {
         property: "og:description",
         content:
@@ -122,9 +122,7 @@ function TriagePage() {
       <header className="border-b border-border bg-card/70 backdrop-blur">
         <div className="mx-auto flex max-w-3xl items-center justify-between gap-3 px-5 py-4">
           <div className="flex items-center gap-3">
-            <span className="flex size-9 items-center justify-center overflow-hidden rounded-xl shadow-xs">
-              <img src={biteIdIcon} alt="BiteID Icon" className="size-full object-cover" />
-            </span>
+            <img src={biteIdIcon} alt="BiteID" className="size-9 shrink-0 object-contain" />
             <div className="flex flex-wrap items-baseline gap-2">
               <p className="font-display text-base font-semibold text-foreground">BiteID</p>
               <span className="rounded-full bg-caution/20 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-caution-foreground">
