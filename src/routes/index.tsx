@@ -14,6 +14,7 @@ import {
   MapPin,
   Printer,
   RotateCcw,
+  ShieldAlert,
   ShieldCheck,
   Stethoscope,
   WifiOff,
@@ -37,6 +38,7 @@ import { UrgentCareLocator } from "@/components/triage/UrgentCareLocator";
 import { NonVectorLookalikes } from "@/components/triage/NonVectorLookalikes";
 import { RashExpansionTracker } from "@/components/triage/RashExpansionTracker";
 import { OfflineFieldKitModal } from "@/components/triage/OfflineFieldKitModal";
+import { SnakebiteSurvivalModal } from "@/components/triage/SnakebiteSurvivalModal";
 import {
   BODY_LOCATION_OPTIONS,
   DURATION_OPTIONS,
@@ -80,6 +82,7 @@ function TriagePage() {
   const [step, setStep] = useState(0);
   const [modalOpen, setModalOpen] = useState(false);
   const [fieldKitOpen, setFieldKitOpen] = useState(false);
+  const [snakebiteOpen, setSnakebiteOpen] = useState(false);
   const [status, setStatus] = useState<"idle" | "sending" | "done">("idle");
   const [response, setResponse] = useState<TriageResponse | null>(null);
 
@@ -111,6 +114,35 @@ function TriagePage() {
 
   return (
     <main className="min-h-screen bg-background pb-20 font-sans">
+      {/* Instant 1-Tap Snakebite Survival Banner */}
+      <aside
+        aria-label="Snakebite Emergency"
+        className="border-b border-destructive/30 bg-destructive/10 px-4 py-2.5 text-xs text-destructive dark:bg-destructive/20 dark:text-destructive-foreground"
+      >
+        <div className="mx-auto flex max-w-3xl items-center justify-between gap-3">
+          <div className="flex items-center gap-2">
+            <span className="flex size-5 shrink-0 items-center justify-center rounded-full bg-destructive text-destructive-foreground">
+              <ShieldAlert className="size-3" />
+            </span>
+            <span className="font-semibold text-foreground">
+              Bitten by a snake?{" "}
+              <span className="hidden font-normal text-muted-foreground sm:inline">
+                Do not wait for AI analysis.
+              </span>
+            </span>
+          </div>
+          <Button
+            type="button"
+            size="sm"
+            variant="destructive"
+            onClick={() => setSnakebiteOpen(true)}
+            className="h-7 gap-1.5 rounded-lg px-3 text-xs font-bold shadow-xs"
+          >
+            <span>Snakebite Survival Protocol</span>
+          </Button>
+        </div>
+      </aside>
+
       <header className="border-b border-border bg-card/70 backdrop-blur">
         <div className="mx-auto flex max-w-3xl items-center justify-between gap-3 px-5 py-4">
           <div className="flex items-center gap-3">
@@ -127,16 +159,28 @@ function TriagePage() {
               Bites, stings and skin reactions
             </p>
           </div>
-          <Button
-            type="button"
-            variant="outline"
-            size="sm"
-            onClick={() => setFieldKitOpen(true)}
-            className="flex items-center gap-1.5 border-primary/30 text-xs font-semibold text-primary hover:bg-primary/10"
-          >
-            <Compass className="size-3.5 text-primary" />
-            <span>Field Kit</span>
-          </Button>
+          <div className="flex items-center gap-2">
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={() => setSnakebiteOpen(true)}
+              className="flex items-center gap-1.5 border-destructive/40 text-xs font-semibold text-destructive hover:bg-destructive/10"
+            >
+              <ShieldAlert className="size-3.5 text-destructive" />
+              <span className="hidden sm:inline">Snakebite SOS</span>
+            </Button>
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={() => setFieldKitOpen(true)}
+              className="flex items-center gap-1.5 border-primary/30 text-xs font-semibold text-primary hover:bg-primary/10"
+            >
+              <Compass className="size-3.5 text-primary" />
+              <span>Field Kit</span>
+            </Button>
+          </div>
         </div>
       </header>
 
@@ -158,6 +202,7 @@ function TriagePage() {
             hasEmergency={hasEmergency}
             onReset={reset}
             onOpenFieldKit={() => setFieldKitOpen(true)}
+            onOpenSnakebite={() => setSnakebiteOpen(true)}
           />
         ) : (
           <section className="mt-6">
@@ -406,7 +451,12 @@ function TriagePage() {
       </div>
 
       <EmergencyModal open={modalOpen} onDismiss={() => setModalOpen(false)} />
-      <OfflineFieldKitModal open={fieldKitOpen} onOpenChange={setFieldKitOpen} />
+      <OfflineFieldKitModal
+        open={fieldKitOpen}
+        onOpenChange={setFieldKitOpen}
+        onOpenSnakebiteSurvival={() => setSnakebiteOpen(true)}
+      />
+      <SnakebiteSurvivalModal open={snakebiteOpen} onOpenChange={setSnakebiteOpen} />
     </main>
   );
 }
@@ -453,12 +503,14 @@ function ResultsDashboard({
   hasEmergency = false,
   onReset,
   onOpenFieldKit,
+  onOpenSnakebite,
 }: {
   response: TriageResponse;
   form: TriageFormState;
   hasEmergency?: boolean;
   onReset: () => void;
   onOpenFieldKit?: () => void;
+  onOpenSnakebite?: () => void;
 }) {
   const [summaryOpen, setSummaryOpen] = useState(false);
   const [locatorOpen, setLocatorOpen] = useState(false);
@@ -616,6 +668,32 @@ function ResultsDashboard({
 
       {topResult ? (
         <div className="space-y-6">
+          {topResult.id === "pit_viper" && onOpenSnakebite && (
+            <div className="rounded-2xl border-2 border-destructive bg-destructive/10 p-4 sm:p-5">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                <div className="space-y-1">
+                  <p className="flex items-center gap-1.5 text-sm font-bold text-destructive">
+                    <ShieldAlert className="size-4 shrink-0" />
+                    High-Hazard Pit Viper Envenomation Suspected
+                  </p>
+                  <p className="text-xs text-muted-foreground">
+                    Do not delay medical evacuation. Launch the live 15-minute edema progression
+                    tracker and first-aid protocol now.
+                  </p>
+                </div>
+                <Button
+                  size="sm"
+                  variant="destructive"
+                  onClick={onOpenSnakebite}
+                  className="shrink-0 text-xs font-bold shadow-xs"
+                >
+                  <ShieldAlert className="mr-1 size-3.5" />
+                  Snakebite Survival Protocol
+                </Button>
+              </div>
+            </div>
+          )}
+
           <div className="space-y-2">
             <span className="text-xs font-semibold uppercase tracking-wider text-primary">
               Primary Match

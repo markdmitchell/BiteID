@@ -26,12 +26,14 @@ type OfflineFieldKitModalProps = {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   isOffline?: boolean;
+  onOpenSnakebiteSurvival?: () => void;
 };
 
 export function OfflineFieldKitModal({
   open,
   onOpenChange,
   isOffline = false,
+  onOpenSnakebiteSurvival,
 }: OfflineFieldKitModalProps) {
   const [activeTab, setActiveTab] = useState<
     "snakes_scorpions" | "atlas" | "tick_firstaid" | "queue"
@@ -205,6 +207,23 @@ export function OfflineFieldKitModal({
                   </p>
                 </div>
               </div>
+
+              {onOpenSnakebiteSurvival && (
+                <div className="pt-2">
+                  <Button
+                    size="sm"
+                    variant="destructive"
+                    onClick={() => {
+                      onOpenChange(false);
+                      onOpenSnakebiteSurvival();
+                    }}
+                    className="w-full gap-2 text-xs font-bold shadow-sm"
+                  >
+                    <ShieldAlert className="size-4" />
+                    Launch Live 15-Minute Snakebite Survival Mode & Timer
+                  </Button>
+                </div>
+              )}
 
               {/* Action Grid */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs pt-2">
