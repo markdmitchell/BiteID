@@ -632,7 +632,7 @@ function ResultsDashboard({
     Boolean(response.hasErythemaMigrans) ||
     /erythema migrans|bull'?s?[- ]?eye|annular target/i.test(topResult?.description ?? "") ||
     /erythema migrans|bull'?s?[- ]?eye|annular target/i.test(
-      String(response.lesionReading ?? ""),
+      String(response['lesionReading'] ?? ""),
     ) ||
     Boolean(
       topResult?.matchedFactors?.some((f) => /annular|target rash|erythema migrans/i.test(f)),

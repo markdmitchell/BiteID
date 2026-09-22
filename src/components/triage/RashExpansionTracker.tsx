@@ -26,7 +26,7 @@ import { cn } from "@/lib/utils";
 type RashJournalEntry = {
   baselineDate: string;
   baselineDiameterMm: number;
-  baselinePhotoUrl?: string;
+  baselinePhotoUrl?: string | undefined;
   followUpDate?: string;
   followUpDiameterMm?: number;
   followUpPhotoUrl?: string;

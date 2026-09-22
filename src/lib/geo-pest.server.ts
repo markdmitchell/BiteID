@@ -31,8 +31,8 @@ export type DermatologicalMorphology = {
     | "excoriated_papule"
     | "ischemic_purpura"
     | "vesiculobullous";
-  estimatedDiameter?: "under_1cm" | "1_to_5cm" | "over_5cm" | "diffuse";
-  fitzpatrickTone?: "type_i_ii" | "type_iii_iv" | "type_v_vi" | "indeterminate";
+  estimatedDiameter?: "under_1cm" | "1_to_5cm" | "over_5cm" | "diffuse" | undefined;
+  fitzpatrickTone?: "type_i_ii" | "type_iii_iv" | "type_v_vi" | "indeterminate" | undefined;
 };
 
 export type TriageContext = {
@@ -50,6 +50,7 @@ export interface VectorInfo {
   nonEndemicStates: string[];
   seasonalMultiplier: number[]; // 12 elements for months 0-11
   habitatScores: Record<string, number>;
+  bodyLocationScores?: Record<string, number> | undefined;
   sensationScores: Record<string, number>;
   baseWeight: number;
   associatedPathogens: string[];

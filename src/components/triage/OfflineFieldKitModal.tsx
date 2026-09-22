@@ -56,9 +56,9 @@ export function OfflineFieldKitModal({
 
     if (!matchesSearch) return false;
     if (habitatFilter === "all") return true;
-    if (habitatFilter === "woods") return (v.habitatScores?.tall_grass_woods ?? 0) >= 0.7;
-    if (habitatFilter === "yard") return (v.habitatScores?.yard_garden ?? 0) >= 0.7;
-    if (habitatFilter === "water") return (v.habitatScores?.outdoor_other ?? 0) >= 0.8;
+    if (habitatFilter === "woods") return (v.habitatScores?.["tall_grass_woods"] ?? 0) >= 0.7;
+    if (habitatFilter === "yard") return (v.habitatScores?.["yard_garden"] ?? 0) >= 0.7;
+    if (habitatFilter === "water") return (v.habitatScores?.["outdoor_other"] ?? 0) >= 0.8;
     return true;
   });
 

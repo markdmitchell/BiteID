@@ -3,8 +3,8 @@ import { useEffect, useState, useCallback } from "react";
 export type StashedIntake = {
   id: string;
   timestamp: string;
-  lesionPreviewUrl?: string;
-  bugPreviewUrl?: string;
+  lesionPreviewUrl?: string | undefined;
+  bugPreviewUrl?: string | undefined;
   environment: string;
   duration: string;
   usState: string;
