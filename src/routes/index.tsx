@@ -325,6 +325,38 @@ function TriagePage() {
   );
 }
 
+function getAdditionalGuidance(
+  rawGuidance: string | undefined,
+  lesionText: string | undefined,
+  firstAid: string[] | undefined,
+  warningSigns: string[] | undefined,
+): string | null {
+  if (!rawGuidance) return null;
+
+  const paragraphs = rawGuidance
+    .split(/\n+/)
+    .map((p) => p.trim())
+    .filter(Boolean);
+
+  const filtered = paragraphs.filter((p) => {
+    if (lesionText && (p.includes(lesionText) || lesionText.includes(p))) {
+      return false;
+    }
+    if (firstAid?.some((fa) => p.includes(fa) || fa.includes(p))) {
+      return false;
+    }
+    if (warningSigns?.some((ws) => p.includes(ws) || ws.includes(p))) {
+      return false;
+    }
+    if (/^watch for:\s*/i.test(p)) {
+      return false;
+    }
+    return true;
+  });
+
+  return filtered.length > 0 ? filtered.join("\n\n") : null;
+}
+
 function ResultsDashboard({
   response,
   onReset,
@@ -333,9 +365,22 @@ function ResultsDashboard({
   onReset: () => void;
 }) {
   const results = normalizeResults(response);
-  const guidance = response.guidance ?? response.advice;
+  const rawGuidance = response.guidance ?? response.advice;
   const topResult = results[0];
   const secondaryResults = results.slice(1);
+
+  const additionalGuidance = getAdditionalGuidance(
+    rawGuidance,
+    topResult?.description,
+    topResult?.firstAidAdvice,
+    topResult?.warningSignsToWatch,
+  );
+
+  const hasActionContent =
+    (topResult?.firstAidAdvice && topResult.firstAidAdvice.length > 0) ||
+    (topResult?.warningSignsToWatch && topResult.warningSignsToWatch.length > 0) ||
+    (topResult?.delayedRisks && topResult.delayedRisks.length > 0) ||
+    additionalGuidance;
 
   return (
     <section className="mt-6 space-y-6">
@@ -368,7 +413,7 @@ function ResultsDashboard({
             />
           </div>
 
-          {guidance && (
+          {hasActionContent && (
             <div className="rounded-2xl border-2 border-primary/25 bg-primary/5 p-5 sm:p-6 shadow-sm">
               <div className="flex items-center gap-2.5 text-primary">
                 <HeartPulse className="size-5 shrink-0" />
@@ -379,10 +424,81 @@ function ResultsDashboard({
                   Recommended Action
                 </span>
               </div>
-              <div className="mt-3.5 rounded-xl border border-primary/15 bg-card/80 p-4 backdrop-blur-xs">
-                <p className="whitespace-pre-line text-sm font-medium leading-relaxed text-foreground">
-                  {guidance}
-                </p>
+
+              <div className="mt-4 space-y-4 rounded-xl border border-primary/15 bg-card/80 p-4 sm:p-5 backdrop-blur-xs">
+                {topResult.firstAidAdvice && topResult.firstAidAdvice.length > 0 && (
+                  <div>
+                    <h3 className="text-xs font-bold uppercase tracking-wider text-primary">
+                      First aid
+                    </h3>
+                    <ul className="mt-2 space-y-1.5">
+                      {topResult.firstAidAdvice.map((advice, i) => (
+                        <li key={i} className="flex gap-2 text-sm leading-relaxed text-foreground">
+                          <span className="mt-1.5 size-1.5 shrink-0 rounded-full bg-primary" />
+                          <span>{advice}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+
+                {topResult.warningSignsToWatch && topResult.warningSignsToWatch.length > 0 && (
+                  <div
+                    className={
+                      topResult.firstAidAdvice?.length ? "border-t border-border/50 pt-3.5" : ""
+                    }
+                  >
+                    <h3 className="text-xs font-bold uppercase tracking-wider text-caution-foreground">
+                      Warning signs to watch
+                    </h3>
+                    <ul className="mt-2 space-y-1.5">
+                      {topResult.warningSignsToWatch.map((sign, i) => (
+                        <li key={i} className="flex gap-2 text-sm leading-relaxed text-foreground">
+                          <span className="mt-1.5 size-1.5 shrink-0 rounded-full bg-caution" />
+                          <span>{sign}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+
+                {topResult.delayedRisks && topResult.delayedRisks.length > 0 && (
+                  <div
+                    className={
+                      topResult.firstAidAdvice?.length || topResult.warningSignsToWatch?.length
+                        ? "border-t border-border/50 pt-3.5"
+                        : ""
+                    }
+                  >
+                    <h3 className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
+                      Delayed risks
+                    </h3>
+                    <ul className="mt-2 space-y-1.5">
+                      {topResult.delayedRisks.map((risk, i) => (
+                        <li key={i} className="flex gap-2 text-sm leading-relaxed text-foreground">
+                          <span className="mt-1.5 size-1.5 shrink-0 rounded-full bg-muted-foreground" />
+                          <span>{risk}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+
+                {additionalGuidance && (
+                  <div
+                    className={
+                      topResult.firstAidAdvice?.length ||
+                      topResult.warningSignsToWatch?.length ||
+                      topResult.delayedRisks?.length
+                        ? "border-t border-border/50 pt-3.5"
+                        : ""
+                    }
+                  >
+                    <p className="whitespace-pre-line text-sm leading-relaxed text-muted-foreground">
+                      {additionalGuidance}
+                    </p>
+                  </div>
+                )}
               </div>
             </div>
           )}
@@ -415,8 +531,20 @@ function ResultsDashboard({
           )}
         </div>
       ) : (
-        <div className="rounded-2xl border border-border bg-card p-5 text-sm text-muted-foreground">
-          The service did not return any ranked findings for this intake.
+        <div className="space-y-4">
+          <div className="rounded-2xl border border-border bg-card p-5 text-sm text-muted-foreground">
+            The service did not return any ranked findings for this intake.
+          </div>
+          {rawGuidance && (
+            <div className="rounded-2xl border border-border bg-card p-5">
+              <h2 className="font-display text-lg font-semibold text-foreground">
+                What to do next
+              </h2>
+              <p className="mt-2 whitespace-pre-line text-sm leading-relaxed text-muted-foreground">
+                {rawGuidance}
+              </p>
+            </div>
+          )}
         </div>
       )}
 

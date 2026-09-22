@@ -121,9 +121,6 @@ export function ProbabilityCard({
 
           <DetailList title="Why it matched" items={item.matchedFactors} />
           <DetailList title="Can carry" items={item.associatedPathogens} />
-          <DetailList title="Delayed risks" items={item.delayedRisks} />
-          <DetailList title="First aid" items={item.firstAidAdvice} />
-          <DetailList title="Warning signs to watch" items={item.warningSignsToWatch} />
         </div>
       )}
     </div>

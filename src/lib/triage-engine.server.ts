@@ -315,7 +315,6 @@ export async function analyseIntake(intake: EngineIntake): Promise<EngineRespons
 
   const top = ranked[0] ? VECTOR_DATABASE[ranked[0][0]] : undefined;
   const guidanceLines: string[] = [];
-  if (effectiveReading.lesionDescription) guidanceLines.push(effectiveReading.lesionDescription);
   if (top) {
     guidanceLines.push(top.firstAidAdvice.join(" "));
     guidanceLines.push(`Watch for: ${top.warningSigns.join(" ")}`);
