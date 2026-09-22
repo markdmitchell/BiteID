@@ -46,13 +46,16 @@ export function SiteFooter() {
         <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 md:grid-cols-4">
           {/* Brand & Mission Column */}
           <div className="space-y-3 md:col-span-1">
-            <div className="flex items-center gap-2">
+            <Link
+              to="/"
+              className="inline-flex items-center gap-2 transition-opacity hover:opacity-90"
+            >
               <img src={biteIdIcon} alt="BiteID" className="size-7 shrink-0 object-contain" />
               <span className="font-display text-base font-bold tracking-tight">BiteID</span>
               <span className="rounded-full bg-caution/20 px-2 py-0.5 text-[9px] font-semibold uppercase tracking-wider text-caution-foreground">
                 Alpha
               </span>
-            </div>
+            </Link>
             <p className="text-xs leading-relaxed text-muted-foreground">
               Intelligent outdoor triage for bites, stings, and skin reactions with tone-calibrated
               reference imagery and zero-connectivity backcountry survival protocols.

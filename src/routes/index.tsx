@@ -122,13 +122,20 @@ function TriagePage() {
       <header className="border-b border-border bg-card/70 backdrop-blur">
         <div className="mx-auto flex max-w-3xl items-center justify-between gap-3 px-5 py-4">
           <div className="flex items-center gap-3">
-            <img src={biteIdIcon} alt="BiteID" className="size-9 shrink-0 object-contain" />
-            <div className="flex flex-wrap items-baseline gap-2">
-              <p className="font-display text-base font-semibold text-foreground">BiteID</p>
-              <span className="rounded-full bg-caution/20 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-caution-foreground">
-                Alpha — testing only
-              </span>
-            </div>
+            <Link
+              to="/"
+              onClick={reset}
+              className="flex items-center gap-3 transition-opacity hover:opacity-90"
+              title="Return to Triage Intake"
+            >
+              <img src={biteIdIcon} alt="BiteID" className="size-9 shrink-0 object-contain" />
+              <div className="flex flex-wrap items-baseline gap-2">
+                <p className="font-display text-base font-semibold text-foreground">BiteID</p>
+                <span className="rounded-full bg-caution/20 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-caution-foreground">
+                  Alpha — testing only
+                </span>
+              </div>
+            </Link>
             <p className="hidden text-xs text-muted-foreground sm:inline">
               Bites, stings and skin reactions
             </p>
@@ -229,18 +236,21 @@ function TriagePage() {
               </div>
             )}
 
-            <StepNav current={step} />
+            {step > 0 && <StepNav current={step} />}
 
-            <div className="mt-7">
+            <div className={step === 0 ? "" : "mt-7"}>
               {step === 0 && (
                 <div>
                   <h1 className="font-display text-2xl font-bold tracking-tight text-foreground">
-                    Show us the area
+                    Not sure? Upload a photo.
                   </h1>
                   <p className="mt-2 text-sm text-muted-foreground">
                     A close, well-lit photo works best. If you caught the insect, a second photo
                     helps a lot.
                   </p>
+                  <div className="mt-5">
+                    <StepNav current={step} />
+                  </div>
                   <div className="mt-5 grid gap-4 sm:grid-cols-2">
                     <UploadCard
                       title="Skin lesion"
