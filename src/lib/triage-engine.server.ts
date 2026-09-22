@@ -435,8 +435,7 @@ export async function analyseIntake(intake: EngineIntake): Promise<EngineRespons
   const isErythemaMigrans =
     effectiveReading.pattern === "annular_target" ||
     (top?.id === "blacklegged_tick" &&
-      (effectiveReading.pattern === "annular_target" ||
-        effectiveReading.primaryReaction === "expanding_erythema")) ||
+      effectiveReading.primaryReaction === "expanding_erythema") ||
     /erythema migrans|bull'?s?[- ]?eye|annular target/i.test(effectiveReading.lesionDescription);
 
   const guidanceLines: string[] = [];
