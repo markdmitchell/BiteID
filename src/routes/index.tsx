@@ -4,8 +4,11 @@ import {
   AlertTriangle,
   ArrowLeft,
   ArrowRight,
+  FileText,
   HeartPulse,
   Loader2,
+  MapPin,
+  Printer,
   RotateCcw,
   ShieldCheck,
   Stethoscope,
@@ -24,6 +27,8 @@ import { StepNav } from "@/components/triage/StepNav";
 import { EmergencyModal } from "@/components/triage/EmergencyModal";
 import { ProbabilityCard } from "@/components/triage/ProbabilityCard";
 import { FitzpatrickTabs } from "@/components/triage/FitzpatrickTabs";
+import { ClinicalSummaryModal } from "@/components/triage/ClinicalSummaryModal";
+import { UrgentCareLocator } from "@/components/triage/UrgentCareLocator";
 import {
   BODY_LOCATION_OPTIONS,
   DURATION_OPTIONS,
@@ -35,6 +40,7 @@ import {
   normalizeResults,
   submitTriage,
   triageReducer,
+  type TriageFormState,
   type TriageResponse,
 } from "@/lib/triage";
 import { US_STATE_OPTIONS } from "@/lib/us-states";
@@ -123,7 +129,12 @@ function TriagePage() {
         )}
 
         {status === "done" && response ? (
-          <ResultsDashboard response={response} onReset={reset} />
+          <ResultsDashboard
+            response={response}
+            form={form}
+            hasEmergency={hasEmergency}
+            onReset={reset}
+          />
         ) : (
           <section className="mt-6">
             <StepNav current={step} />
@@ -413,11 +424,18 @@ function getAdditionalGuidance(
 
 function ResultsDashboard({
   response,
+  form,
+  hasEmergency = false,
   onReset,
 }: {
   response: TriageResponse;
+  form: TriageFormState;
+  hasEmergency?: boolean;
   onReset: () => void;
 }) {
+  const [summaryOpen, setSummaryOpen] = useState(false);
+  const [locatorOpen, setLocatorOpen] = useState(false);
+
   const results = normalizeResults(response);
   const rawGuidance = response.guidance ?? response.advice;
   const topResult = results[0];
@@ -452,19 +470,39 @@ function ResultsDashboard({
 
   return (
     <section className="mt-6 space-y-6">
-      <div className="flex items-start justify-between gap-4">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-border/60 pb-4">
         <div>
           <h1 className="font-display text-2xl font-bold tracking-tight text-foreground">
             Your assessment
           </h1>
-          <p className="mt-2 text-sm text-muted-foreground">
+          <p className="mt-1 text-sm text-muted-foreground">
             Ranked from most to least likely, based on what you shared.
           </p>
         </div>
-        <Button variant="outline" onClick={onReset}>
-          <RotateCcw className="size-4" />
-          Start over
-        </Button>
+        <div className="flex items-center gap-2 flex-wrap sm:flex-nowrap">
+          <Button
+            variant="default"
+            size="sm"
+            onClick={() => setSummaryOpen(true)}
+            className="font-medium shadow-xs"
+          >
+            <Printer className="size-4 mr-1.5" />
+            Doctor Summary (PDF)
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => setLocatorOpen(true)}
+            className="font-medium"
+          >
+            <MapPin className="size-4 mr-1.5 text-primary" />
+            Find Urgent Care
+          </Button>
+          <Button variant="ghost" size="sm" onClick={onReset} className="text-muted-foreground">
+            <RotateCcw className="size-4" />
+            <span className="sr-only sm:not-sr-only sm:ml-1">Start over</span>
+          </Button>
+        </div>
       </div>
 
       {topResult ? (
@@ -512,6 +550,26 @@ function ResultsDashboard({
                     border of the rash and take a photo next to a coin or ruler. This helps your
                     healthcare provider verify whether the erythema is actively expanding over 24–48
                     hours.
+                  </div>
+                  <div className="flex flex-wrap gap-2 pt-2">
+                    <Button
+                      size="sm"
+                      variant="default"
+                      onClick={() => setLocatorOpen(true)}
+                      className="font-semibold shadow-xs"
+                    >
+                      <MapPin className="size-3.5 mr-1.5" />
+                      Find In-Person Urgent Care
+                    </Button>
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={() => setSummaryOpen(true)}
+                      className="font-medium bg-card"
+                    >
+                      <Printer className="size-3.5 mr-1.5" />
+                      Print Doctor Handout (PDF)
+                    </Button>
                   </div>
                 </div>
               </div>
@@ -604,6 +662,37 @@ function ResultsDashboard({
                     </p>
                   </div>
                 )}
+
+                <div className="border-t border-border/50 pt-3.5 space-y-2">
+                  <h3 className="text-xs font-bold uppercase tracking-wider text-primary">
+                    Clinical Evaluation & Provider Handoff
+                  </h3>
+                  <p className="text-xs text-muted-foreground leading-relaxed">
+                    If symptoms persist, worsen, or if you suspect an infection or tick-borne
+                    illness, have this evaluated by a clinician. Generate our structured clinical
+                    handoff memo or locate a walk-in center nearby:
+                  </p>
+                  <div className="flex flex-wrap gap-2 pt-1">
+                    <Button
+                      type="button"
+                      size="sm"
+                      variant="default"
+                      onClick={() => setSummaryOpen(true)}
+                    >
+                      <Printer className="size-3.5 mr-1.5" />
+                      Print Doctor Summary (PDF)
+                    </Button>
+                    <Button
+                      type="button"
+                      size="sm"
+                      variant="outline"
+                      onClick={() => setLocatorOpen(true)}
+                    >
+                      <MapPin className="size-3.5 mr-1.5 text-primary" />
+                      Find Nearby Urgent Care
+                    </Button>
+                  </div>
+                </div>
               </div>
             </div>
           )}
@@ -657,11 +746,41 @@ function ResultsDashboard({
         </div>
       )}
 
+      {/* Non-Physician Liability & Guidance Notice */}
+      <div className="rounded-2xl border border-border/80 bg-muted/30 p-4 text-xs text-muted-foreground leading-relaxed">
+        <div className="flex items-center gap-2 font-semibold text-foreground mb-1">
+          <ShieldCheck className="size-4 text-primary" />
+          <span>Non-Physician Disclaimer & Care Guidance</span>
+        </div>
+        <p>
+          BiteID is an algorithmic visual screening prototype, not a physician, medical practice, or
+          certified diagnostic device. This assessment is unconfirmed information and is not a
+          medical diagnosis. If you experience severe swelling, difficulty breathing, dizziness,
+          confusion, spreading dark discoloration, or high fever, seek emergency medical care
+          immediately (Call 911).
+        </p>
+      </div>
+
       {response.disclaimer && (
         <p className="rounded-2xl bg-muted px-5 py-4 text-xs leading-relaxed text-muted-foreground">
           {response.disclaimer}
         </p>
       )}
+
+      <ClinicalSummaryModal
+        open={summaryOpen}
+        onOpenChange={setSummaryOpen}
+        response={response}
+        form={form}
+        isErythemaMigrans={isErythemaMigrans}
+      />
+
+      <UrgentCareLocator
+        open={locatorOpen}
+        onOpenChange={setLocatorOpen}
+        usState={form.usState}
+        hasEmergencySymptoms={hasEmergency}
+      />
     </section>
   );
 }
