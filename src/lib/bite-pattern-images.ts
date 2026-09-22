@@ -61,6 +61,9 @@ import blackFlyVvi from "@/assets/bite-patterns/black-fly-v-vi.jpg";
 import blisterBeetleIii from "@/assets/bite-patterns/blister-beetle-i-ii.jpg";
 import blisterBeetleIiiIv from "@/assets/bite-patterns/blister-beetle-iii-iv.jpg";
 import blisterBeetleVvi from "@/assets/bite-patterns/blister-beetle-v-vi.jpg";
+import pitViperIii from "@/assets/bite-patterns/pit-viper-i-ii.jpg";
+import pitViperIiiIv from "@/assets/bite-patterns/pit-viper-iii-iv.jpg";
+import pitViperVvi from "@/assets/bite-patterns/pit-viper-v-vi.jpg";
 
 export type BitePatternSet = {
   label: string;
@@ -182,6 +185,11 @@ const BITE_PATTERNS: Record<string, BitePatternSet> = {
     label: "Blister beetle (Cantharidin)",
     pattern: "delayed-onset linear or localized tense, fluid-filled epidermal blisters",
     images: { "i-ii": blisterBeetleIii, "iii-iv": blisterBeetleIiiIv, "v-vi": blisterBeetleVvi },
+  },
+  pit_viper: {
+    label: "Pit viper (Copperhead / Rattlesnake)",
+    pattern: "two distinct deep puncture fang marks with progressive edema and ecchymosis",
+    images: { "i-ii": pitViperIii, "iii-iv": pitViperIiiIv, "v-vi": pitViperVvi },
   },
 };
 

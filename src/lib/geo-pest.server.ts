@@ -912,6 +912,50 @@ export const VECTOR_DATABASE: Record<string, VectorInfo> = {
     firstAidAdvice: ["Wash with cool soapy water to remove cantharidin. Do NOT pop blisters."],
     warningSigns: ["Tense translucent fluid-filled blister without central bite punctum mark."],
   },
+  pit_viper: {
+    id: "pit_viper",
+    bodyLocationScores: {
+      feet: 1.8,
+      lower_leg_ankle: 1.9,
+      arms_hands: 1.4,
+      trunk_chest_back: 0.2,
+      waist_groin_axilla: 0.1,
+      face_head: 0.1,
+      any_unspecified: 1,
+    },
+    name: "Pit Viper (Copperhead / Rattlesnake)",
+    scientificName: "Crotalinae",
+    endemicStates: "ALL",
+    nonEndemicStates: ["US-AK", "US-HI"],
+    seasonalMultiplier: [0.05, 0.1, 0.3, 0.7, 0.9, 1.0, 1.0, 1.0, 0.9, 0.6, 0.2, 0.05],
+    habitatScores: {
+      tall_grass_woods: 1.0,
+      outdoor_other: 0.9,
+      yard_garden: 0.7,
+      garage_shed: 0.5,
+      indoor_other: 0.1,
+      bed: 0.05,
+    },
+    sensationScores: {
+      severe_pain: 1.0,
+      moderate_pain: 0.7,
+      painless: 0.05,
+      intense_itch: 0.05,
+      mild_itch: 0.05,
+    },
+    baseWeight: 0.25,
+    associatedPathogens: ["Hemotoxic & Cytotoxic Envenomation"],
+    delayedRisks: ["Tissue necrosis, compartment syndrome, coagulopathy"],
+    firstAidAdvice: [
+      "Keep calm and immediately immobilize the bitten limb at heart level.",
+      "Remove rings, watches, and tight clothing before swelling expands.",
+      "DO NOT apply a tourniquet, DO NOT ice, DO NOT cut or attempt venom suction.",
+      "Call 911 or dispatch Emergency Satellite SOS for urgent antivenom transport.",
+    ],
+    warningSigns: [
+      "Two distinct deep puncture marks with rapid spreading swelling, severe burning pain, or ecchymosis.",
+    ],
+  },
 };
 
 export const DEFAULT_MCNAIR_VA_COORDINATES = {
@@ -1159,6 +1203,19 @@ export function evaluateRegionalLikelihood(
       ) {
         score *= 100.0;
       }
+      if (
+        (lower.includes("crotalus") ||
+          lower.includes("agkistrodon") ||
+          lower.includes("copperhead") ||
+          lower.includes("rattlesnake") ||
+          lower.includes("cottonmouth") ||
+          lower.includes("pit viper") ||
+          lower.includes("viper") ||
+          lower.includes("snake")) &&
+        key === "pit_viper"
+      ) {
+        score *= 100.0;
+      }
     }
 
     // 5. Morphological Overrides & Multipliers
@@ -1202,6 +1259,7 @@ export function evaluateRegionalLikelihood(
         if (key === "brown_recluse") score *= 8.0;
       }
       if (morphObj.centralFeatures === "twin_punctures") {
+        if (key === "pit_viper") score *= 35.0;
         if (key === "black_widow") score *= 12.0;
         if (key === "brown_recluse") score *= 10.0;
       }

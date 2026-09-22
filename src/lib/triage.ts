@@ -1,4 +1,5 @@
 import { analyseIntakeFn } from "./triage.functions";
+import { saveOfflineIntake } from "./offline-manager";
 
 export type EnvironmentOption = {
   value: string;
@@ -165,6 +166,7 @@ export type TriageResponse = {
   hasErythemaMigrans?: boolean;
   dermatologicalFindings?: DermatologicalFindings;
   mimickerAlert?: MimickerAlert | null;
+  isOfflineQueued?: boolean;
   [key: string]: unknown;
 };
 
@@ -195,6 +197,27 @@ export async function submitTriage(state: TriageFormState): Promise<TriageRespon
     if (!state.lesionImage) return FALLBACK_RESPONSE;
     const lesionImage = await fileToDataUrl(state.lesionImage);
     const bugImage = state.bugImage ? await fileToDataUrl(state.bugImage) : null;
+    if (typeof window !== "undefined" && !window.navigator.onLine) {
+      saveOfflineIntake({
+        lesionPreviewUrl: lesionImage,
+        bugPreviewUrl: bugImage ?? undefined,
+        environment: state.environment,
+        duration: state.duration,
+        usState: state.usState,
+        bodyLocation: state.bodyLocation,
+        sensation: state.sensation,
+        symptoms: state.symptoms,
+      });
+
+      return {
+        results: [],
+        isOfflineQueued: true,
+        guidance:
+          "You are currently in offline backcountry mode with zero cellular or Wi-Fi connectivity. Your intake, answers, and lesion photos have been securely preserved on your device.\n\nImmediate Field Action: Open the Backcountry Field Kit below for species-specific first aid, venomous snake/scorpion emergency protocols, and CDC tick extraction techniques. When your device reconnects to cell service, BiteID will notify you to submit for full AI analysis.",
+        disclaimer: "BiteID Offline Field Kit — Backcountry emergency guidance.",
+      };
+    }
+
     const result = await analyseIntakeFn({
       data: {
         lesionImage,

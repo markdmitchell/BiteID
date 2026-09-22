@@ -6,6 +6,7 @@ import {
   AlertTriangle,
   ArrowLeft,
   ArrowRight,
+  Compass,
   Eye,
   FileText,
   HeartPulse,
@@ -15,6 +16,7 @@ import {
   RotateCcw,
   ShieldCheck,
   Stethoscope,
+  WifiOff,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -34,6 +36,7 @@ import { ClinicalSummaryModal } from "@/components/triage/ClinicalSummaryModal";
 import { UrgentCareLocator } from "@/components/triage/UrgentCareLocator";
 import { NonVectorLookalikes } from "@/components/triage/NonVectorLookalikes";
 import { RashExpansionTracker } from "@/components/triage/RashExpansionTracker";
+import { OfflineFieldKitModal } from "@/components/triage/OfflineFieldKitModal";
 import {
   BODY_LOCATION_OPTIONS,
   DURATION_OPTIONS,
@@ -76,6 +79,7 @@ function TriagePage() {
   const [form, dispatch] = useReducer(triageReducer, initialFormState);
   const [step, setStep] = useState(0);
   const [modalOpen, setModalOpen] = useState(false);
+  const [fieldKitOpen, setFieldKitOpen] = useState(false);
   const [status, setStatus] = useState<"idle" | "sending" | "done">("idle");
   const [response, setResponse] = useState<TriageResponse | null>(null);
 
@@ -108,17 +112,31 @@ function TriagePage() {
   return (
     <main className="min-h-screen bg-background pb-20 font-sans">
       <header className="border-b border-border bg-card/70 backdrop-blur">
-        <div className="mx-auto flex max-w-3xl items-center gap-3 px-5 py-4">
-          <span className="flex size-9 items-center justify-center rounded-xl bg-primary text-primary-foreground">
-            <Stethoscope className="size-5" />
-          </span>
-          <div className="flex flex-wrap items-baseline gap-2">
-            <p className="font-display text-base font-semibold text-foreground">BiteID</p>
-            <span className="rounded-full bg-caution/20 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-caution-foreground">
-              Alpha — testing only
+        <div className="mx-auto flex max-w-3xl items-center justify-between gap-3 px-5 py-4">
+          <div className="flex items-center gap-3">
+            <span className="flex size-9 items-center justify-center rounded-xl bg-primary text-primary-foreground">
+              <Stethoscope className="size-5" />
             </span>
+            <div className="flex flex-wrap items-baseline gap-2">
+              <p className="font-display text-base font-semibold text-foreground">BiteID</p>
+              <span className="rounded-full bg-caution/20 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-caution-foreground">
+                Alpha — testing only
+              </span>
+            </div>
+            <p className="hidden text-xs text-muted-foreground sm:inline">
+              Bites, stings and skin reactions
+            </p>
           </div>
-          <p className="text-xs text-muted-foreground">Bites, stings and skin reactions</p>
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            onClick={() => setFieldKitOpen(true)}
+            className="flex items-center gap-1.5 border-primary/30 text-xs font-semibold text-primary hover:bg-primary/10"
+          >
+            <Compass className="size-3.5 text-primary" />
+            <span>Field Kit</span>
+          </Button>
         </div>
       </header>
 
@@ -139,6 +157,7 @@ function TriagePage() {
             form={form}
             hasEmergency={hasEmergency}
             onReset={reset}
+            onOpenFieldKit={() => setFieldKitOpen(true)}
           />
         ) : (
           <section className="mt-6">
@@ -387,6 +406,7 @@ function TriagePage() {
       </div>
 
       <EmergencyModal open={modalOpen} onDismiss={() => setModalOpen(false)} />
+      <OfflineFieldKitModal open={fieldKitOpen} onOpenChange={setFieldKitOpen} />
     </main>
   );
 }
@@ -432,15 +452,83 @@ function ResultsDashboard({
   form,
   hasEmergency = false,
   onReset,
+  onOpenFieldKit,
 }: {
   response: TriageResponse;
   form: TriageFormState;
   hasEmergency?: boolean;
   onReset: () => void;
+  onOpenFieldKit?: () => void;
 }) {
   const [summaryOpen, setSummaryOpen] = useState(false);
   const [locatorOpen, setLocatorOpen] = useState(false);
   const [trackerOpen, setTrackerOpen] = useState(false);
+
+  if (response.isOfflineQueued) {
+    return (
+      <section className="mt-6 space-y-6">
+        <div className="rounded-2xl border-2 border-primary/30 bg-card p-6 shadow-sm">
+          <div className="flex items-start gap-4">
+            <span className="flex size-12 shrink-0 items-center justify-center rounded-2xl bg-primary/10 text-primary">
+              <WifiOff className="size-6" />
+            </span>
+            <div className="space-y-3">
+              <div className="flex flex-wrap items-center gap-2">
+                <span className="rounded-full bg-primary/15 px-2.5 py-0.5 text-xs font-semibold text-primary">
+                  Cached in Device Storage
+                </span>
+                <span className="text-xs text-muted-foreground">
+                  0-Cell-Service / Backcountry Mode
+                </span>
+              </div>
+              <h1 className="font-display text-2xl font-bold tracking-tight text-foreground">
+                Intake Stashed Locally
+              </h1>
+              <p className="text-sm leading-relaxed text-muted-foreground">
+                You appear to be offline or in a wilderness area without cellular connectivity. Your
+                photos, symptoms, duration, and exposure location have been securely saved to this
+                device's local queue.
+              </p>
+              <div className="rounded-xl border border-border/80 bg-muted/30 p-4 text-xs space-y-2">
+                <p className="font-semibold text-foreground">
+                  Backcountry & Envenomation Protocol:
+                </p>
+                <ul className="list-inside list-disc space-y-1.5 text-muted-foreground">
+                  <li>
+                    <strong className="text-foreground">Urgent envenomations:</strong> If this is a
+                    suspected venomous snakebite (pit viper), bark scorpion sting, or tick
+                    attachment, immediately check the emergency guidelines in the Field Kit.
+                  </li>
+                  <li>
+                    <strong className="text-foreground">Visual atlas:</strong> Compare your lesion
+                    and captured specimen against the offline 20-species visual database.
+                  </li>
+                  <li>
+                    <strong className="text-foreground">Automatic sync:</strong> Once you return to
+                    cellular coverage or Wi-Fi, BiteID will alert you to submit this intake for full
+                    AI vision & vector analysis.
+                  </li>
+                </ul>
+              </div>
+
+              <div className="flex flex-wrap items-center gap-3 pt-2">
+                {onOpenFieldKit && (
+                  <Button onClick={onOpenFieldKit} className="flex items-center gap-2 shadow-xs">
+                    <Compass className="size-4" />
+                    Open Backcountry Field Kit
+                  </Button>
+                )}
+                <Button onClick={onReset} variant="outline" className="flex items-center gap-2">
+                  <RotateCcw className="size-4" />
+                  Start New Intake
+                </Button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    );
+  }
 
   const results = normalizeResults(response);
   const rawGuidance = response.guidance ?? response.advice;
@@ -486,6 +574,12 @@ function ResultsDashboard({
           </p>
         </div>
         <div className="flex items-center gap-2 flex-wrap sm:flex-nowrap">
+          {onOpenFieldKit && (
+            <Button variant="outline" size="sm" onClick={onOpenFieldKit} className="font-medium">
+              <Compass className="size-4 mr-1.5 text-primary" />
+              Field Kit
+            </Button>
+          )}
           <Button
             variant="default"
             size="sm"

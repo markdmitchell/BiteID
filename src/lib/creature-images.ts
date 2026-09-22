@@ -15,6 +15,7 @@ import lice from "@/assets/creatures/lice.jpg";
 import loneStarTick from "@/assets/creatures/lone-star-tick.jpg";
 import mosquito from "@/assets/creatures/mosquito.jpg";
 import noSeeUm from "@/assets/creatures/no-see-um.jpg";
+import pitViper from "@/assets/creatures/pit-viper.jpg";
 import scorpion from "@/assets/creatures/scorpion.jpg";
 import waspYellowJacket from "@/assets/creatures/wasp-yellow-jacket.jpg";
 
@@ -99,6 +100,10 @@ const CREATURE_REFERENCES: Record<string, CreatureReference> = {
   blister_beetle: {
     src: blisterBeetle,
     alt: "AI-generated field-guide reference of a striped blister beetle",
+  },
+  pit_viper: {
+    src: pitViper,
+    alt: "AI-generated field-guide reference of a venomous pit viper (copperhead)",
   },
 };
 
