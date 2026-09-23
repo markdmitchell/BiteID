@@ -26,6 +26,10 @@ import stingray from "@/assets/creatures/stingray.jpg";
 import velvetAnt from "@/assets/creatures/velvet-ant.jpg";
 import wheelBug from "@/assets/creatures/wheel-bug.jpg";
 import yellowSacSpider from "@/assets/creatures/yellow-sac-spider.jpg";
+import scabies from "@/assets/creatures/scabies.jpg";
+import brownDogTick from "@/assets/creatures/brown-dog-tick.jpg";
+import minutePirateBug from "@/assets/creatures/minute-pirate-bug.jpg";
+import softTick from "@/assets/creatures/soft-tick.jpg";
 
 type CreatureReference = {
   src: string;
@@ -144,6 +148,22 @@ const CREATURE_REFERENCES: Record<string, CreatureReference> = {
   yellow_sac_spider: {
     src: yellowSacSpider,
     alt: "AI-generated field-guide reference of a yellow sac spider (Cheiracanthium inclusum)",
+  },
+  scabies: {
+    src: scabies,
+    alt: "AI-generated field-guide reference of a microscopic scabies itch mite (Sarcoptes scabiei)",
+  },
+  brown_dog_tick: {
+    src: brownDogTick,
+    alt: "AI-generated field-guide reference of an adult brown dog tick (Rhipicephalus sanguineus)",
+  },
+  minute_pirate_bug: {
+    src: minutePirateBug,
+    alt: "AI-generated field-guide reference of an adult minute pirate bug (Orius insidiosus)",
+  },
+  soft_tick: {
+    src: softTick,
+    alt: "AI-generated field-guide reference of a soft relapsing fever tick (Ornithodoros hermsi)",
   },
 };
 

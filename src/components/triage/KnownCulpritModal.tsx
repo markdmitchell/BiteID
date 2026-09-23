@@ -66,7 +66,15 @@ const HAZARD_CATEGORIES: HazardCategory[] = [
     label: "Disease Vectors & Parasites",
     icon: "🦠",
     badgeClass: "bg-amber-500/15 text-amber-700 dark:text-amber-300 border-amber-500/30",
-    speciesIds: ["blacklegged_tick", "lone_star_tick", "dog_tick", "kissing_bug"],
+    speciesIds: [
+      "blacklegged_tick",
+      "lone_star_tick",
+      "dog_tick",
+      "brown_dog_tick",
+      "soft_tick",
+      "kissing_bug",
+      "scabies",
+    ],
   },
   {
     id: "stings_allergens",
@@ -81,6 +89,7 @@ const HAZARD_CATEGORIES: HazardCategory[] = [
     icon: "🦟",
     badgeClass: "bg-primary/10 text-primary border-primary/20",
     speciesIds: [
+      "minute_pirate_bug",
       "yellow_sac_spider",
       "wheel_bug",
       "blister_beetle",
@@ -266,6 +275,38 @@ const CREATURE_MYTH_BUSTERS: Record<string, { myth: string; fact: string }[]> = 
     {
       myth: "Yellow sac spiders cause severe rotting dermonecrotic ulcers like Brown Recluse spiders.",
       fact: "Arachnological clinical trials have debunked necrotic loxoscelism in Cheiracanthium. Bites produce minor localized stinging and a small pustular papule that heals within 7–10 days without tissue sloughing.",
+    },
+  ],
+  scabies: [
+    {
+      myth: "Scabies is caused by poor personal hygiene or living in an unclean home.",
+      fact: "Scabies mites burrow only in human keratin and thrive regardless of cleanliness, socioeconomic status, or bathing habits. Transmission occurs via direct prolonged skin-to-skin contact.",
+    },
+    {
+      myth: "You only need to treat the person who is actively itching.",
+      fact: "Symptoms take 2–6 weeks to appear during a first infestation. Asymptomatic household members still harbor mites and will cause cyclic re-infestation unless all cohabitants are treated simultaneously.",
+    },
+  ],
+  brown_dog_tick: [
+    {
+      myth: "Ticks only live outside in deep woods and tall grass; you cannot get a tick bite inside a clean home.",
+      fact: "The brown dog tick (Rhipicephalus sanguineus) is uniquely adapted to complete its entire lifecycle indoors, infesting kennels, carpet edges, furniture seams, and baseboard crevices.",
+    },
+    {
+      myth: "Brown dog ticks never bite humans or transmit human diseases.",
+      fact: "While preferring canines, they readily bite humans in heavy indoor infestations and are the primary vector of severe Rocky Mountain Spotted Fever (RMSF) in Southwestern states.",
+    },
+  ],
+  minute_pirate_bug: [
+    {
+      myth: "Minute pirate bugs bite to suck human blood and spread bloodborne parasites.",
+      fact: "Orius bugs are strictly predatory beneficial garden insects that eat aphids and spider mites. They do not feed on human blood; their bite is an accidental exploratory probe with sharp piercing-sucking mouthparts.",
+    },
+  ],
+  soft_tick: [
+    {
+      myth: "If I never found an attached tick on my body, I cannot have a tick-borne infection.",
+      fact: "Soft ticks (Ornithodoros) feed painlessly at night for only 15–30 minutes while you sleep in rustic mountain cabins and fall off before morning. Over 85% of patients diagnosed with Tick-Borne Relapsing Fever (TBRF) never saw a tick.",
     },
   ],
 };

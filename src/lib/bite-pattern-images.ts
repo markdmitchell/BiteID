@@ -88,6 +88,18 @@ import wheelBugVvi from "@/assets/bite-patterns/wheel-bug-v-vi.jpg";
 import yellowSacSpiderIii from "@/assets/bite-patterns/yellow-sac-spider-i-ii.jpg";
 import yellowSacSpiderIiiIv from "@/assets/bite-patterns/yellow-sac-spider-iii-iv.jpg";
 import yellowSacSpiderVvi from "@/assets/bite-patterns/yellow-sac-spider-v-vi.jpg";
+import scabiesIii from "@/assets/bite-patterns/scabies-i-ii.jpg";
+import scabiesIiiIv from "@/assets/bite-patterns/scabies-iii-iv.jpg";
+import scabiesVvi from "@/assets/bite-patterns/scabies-v-vi.jpg";
+import brownDogTickIii from "@/assets/bite-patterns/brown-dog-tick-i-ii.jpg";
+import brownDogTickIiiIv from "@/assets/bite-patterns/brown-dog-tick-iii-iv.jpg";
+import brownDogTickVvi from "@/assets/bite-patterns/brown-dog-tick-v-vi.jpg";
+import minutePirateBugIii from "@/assets/bite-patterns/minute-pirate-bug-i-ii.jpg";
+import minutePirateBugIiiIv from "@/assets/bite-patterns/minute-pirate-bug-iii-iv.jpg";
+import minutePirateBugVvi from "@/assets/bite-patterns/minute-pirate-bug-v-vi.jpg";
+import softTickIii from "@/assets/bite-patterns/soft-tick-i-ii.jpg";
+import softTickIiiIv from "@/assets/bite-patterns/soft-tick-iii-iv.jpg";
+import softTickVvi from "@/assets/bite-patterns/soft-tick-v-vi.jpg";
 
 // Temporal Evolution Progression Images
 import brownRecluseEarlyIii from "@/assets/bite-patterns/brown-recluse-early-i-ii.jpg";
@@ -457,6 +469,46 @@ const BITE_PATTERNS: Record<string, BitePatternSet> = {
       "i-ii": yellowSacSpiderIii,
       "iii-iv": yellowSacSpiderIiiIv,
       "v-vi": yellowSacSpiderVvi,
+    },
+  },
+  scabies: {
+    label: "Scabies mite",
+    pattern:
+      "short linear or serpentine thread-like burrows in web spaces and flexor creases with excoriated pruritic papules",
+    images: {
+      "i-ii": scabiesIii,
+      "iii-iv": scabiesIiiIv,
+      "v-vi": scabiesVvi,
+    },
+  },
+  brown_dog_tick: {
+    label: "Brown dog tick",
+    pattern:
+      "firm erythematous or violaceous papular nodule with central attachment crater and localized inflammatory induration",
+    images: {
+      "i-ii": brownDogTickIii,
+      "iii-iv": brownDogTickIiiIv,
+      "v-vi": brownDogTickVvi,
+    },
+  },
+  minute_pirate_bug: {
+    label: "Minute pirate bug & thrips",
+    pattern:
+      "acute localized erythematous wheal with a sharp central micro-puncture mark and sudden intense stinging",
+    images: {
+      "i-ii": minutePirateBugIii,
+      "iii-iv": minutePirateBugIiiIv,
+      "v-vi": minutePirateBugVvi,
+    },
+  },
+  soft_tick: {
+    label: "Soft tick (Relapsing fever)",
+    pattern:
+      "central hemorrhagic purpuric macule or micro-eschar crust surrounded by an edematous erythematous circular flare",
+    images: {
+      "i-ii": softTickIii,
+      "iii-iv": softTickIiiIv,
+      "v-vi": softTickVvi,
     },
   },
 };

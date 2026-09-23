@@ -1541,6 +1541,259 @@ export const VECTOR_DATABASE: Record<string, VectorInfo> = {
       "Sharp stinging sensation followed by a small, raised red papule with a tiny central pustular vesicle; heals cleanly in 7–10 days without progressive sinking necrosis.",
     ],
   },
+
+  scabies: {
+    id: "scabies",
+    name: "Scabies Mite (Itch Mite)",
+    scientificName: "Sarcoptes scabiei var. hominis",
+    endemicStates: "ALL",
+    nonEndemicStates: [],
+    seasonalMultiplier: [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0],
+    habitatScores: {
+      indoor_home: 1.6,
+      bed: 1.6,
+      other_indoor: 1.4,
+      yard_garden: 0.2,
+      woods_trail: 0.1,
+      beach_coastal: 0.1,
+      open_water_lake: 0.1,
+      other_outdoor: 0.1,
+    },
+    bodyLocationScores: {
+      arms_hands: 1.9,
+      waist_groin_axilla: 1.8,
+      trunk_chest_back: 1.2,
+      lower_leg_ankle: 0.9,
+      feet: 0.9,
+      face_head: 0.1,
+      any_unspecified: 1.0,
+    },
+    sensationScores: {
+      intense_itch: 2.0,
+      mild_itch: 1.2,
+      moderate_pain: 0.3,
+      severe_pain: 0.1,
+      burning: 0.4,
+      painless: 0.0,
+    },
+    baseWeight: 0.9,
+    associatedPathogens: [
+      "Microscopic burrowing mite (delayed Type IV hypersensitivity)",
+      "Secondary Staphylococcal / Streptococcal pyoderma",
+    ],
+    delayedRisks: [
+      "Severe impetiginization / cellulitis from intense excoriation",
+      "Crusted (Norwegian) scabies in immunocompromised patients",
+      "Post-streptococcal glomerulonephritis",
+    ],
+    firstAidAdvice: [
+      "Medical prescription required: Apply 5% permethrin topical cream to the ENTIRE body from the neck down to the soles of feet; leave on for 8–14 hours before washing off. Repeat in 7 days.",
+      "Treat ALL household members and intimate contacts simultaneously, even if currently asymptomatic.",
+      "Machine wash all bed linens, towels, and clothing worn in the past 4 days in HOT water (>= 130°F / 54°C) and dry on high heat.",
+      "Items that cannot be washed must be sealed in a plastic trash bag for at least 72 hours (mites dehydrate and die away from human skin within 48–72 hours).",
+      "Take oral antihistamines (cetirizine or hydroxyzine) and apply topical pramoxine or hydrocortisone to soothe post-scabetic itch, which may linger 2–4 weeks after successful mite eradication.",
+    ],
+    warningSigns: [
+      "Intolerable worsening nocturnal itch with thread-like wavy gray burrows between fingers, wrists, or waistband; household members developing similar pruritus.",
+    ],
+  },
+
+  brown_dog_tick: {
+    id: "brown_dog_tick",
+    name: "Brown Dog Tick",
+    scientificName: "Rhipicephalus sanguineus",
+    endemicStates: "ALL",
+    nonEndemicStates: [],
+    seasonalMultiplier: [0.8, 0.8, 0.9, 1.1, 1.2, 1.3, 1.4, 1.4, 1.3, 1.1, 0.9, 0.8],
+    habitatScores: {
+      indoor_home: 1.6,
+      other_indoor: 1.5,
+      yard_garden: 1.2,
+      other_outdoor: 1.0,
+      woods_trail: 0.7,
+      bed: 1.4,
+      beach_coastal: 0.3,
+      open_water_lake: 0.1,
+    },
+    bodyLocationScores: {
+      lower_leg_ankle: 1.5,
+      feet: 1.3,
+      waist_groin_axilla: 1.3,
+      arms_hands: 1.1,
+      trunk_chest_back: 1.0,
+      face_head: 0.9,
+      any_unspecified: 1.0,
+    },
+    sensationScores: {
+      painless: 1.5,
+      mild_itch: 1.2,
+      intense_itch: 0.7,
+      moderate_pain: 0.2,
+      severe_pain: 0.0,
+      burning: 0.1,
+    },
+    baseWeight: 0.7,
+    associatedPathogens: [
+      "Rickettsia rickettsii (Rocky Mountain Spotted Fever - especially AZ/NM)",
+      "Ehrlichia canis (Canine monocytic ehrlichiosis)",
+      "Babesia vogeli",
+    ],
+    delayedRisks: [
+      "Rocky Mountain Spotted Fever (fever, wrist/ankle petechial rash, headache, vasculitis)",
+      "Secondary tick bite granuloma",
+    ],
+    firstAidAdvice: [
+      "Remove tick immediately using fine-tipped tweezers: grasp mouthparts as close to the skin as possible and pull upward with steady, even pressure.",
+      "Do NOT crush, twist, or smother with petroleum jelly or heat.",
+      "Disinfect the attachment site thoroughly with rubbing alcohol or antiseptic soap.",
+      "Check domestic pets and treat animals with veterinarian-approved ectoparasiticides.",
+      "Seek emergency medical evaluation for prophylactic or prompt doxycycline if fever, severe headache, confusion, or a petechial rash spreading inward from wrists/ankles develops within 2–14 days.",
+    ],
+    warningSigns: [
+      "Sudden high fever, severe frontal headache, muscle aches, or petechial spotted rash on wrists/ankles 2–14 days following tick exposure in a home or kennel environment.",
+    ],
+  },
+
+  minute_pirate_bug: {
+    id: "minute_pirate_bug",
+    name: "Minute Pirate Bug & Thrips",
+    scientificName: "Orius insidiosus",
+    endemicStates: "ALL",
+    nonEndemicStates: ["US-AK", "US-HI"],
+    seasonalMultiplier: [0.0, 0.0, 0.1, 0.2, 0.5, 0.8, 1.4, 1.6, 1.5, 1.0, 0.2, 0.0],
+    habitatScores: {
+      yard_garden: 1.6,
+      other_outdoor: 1.4,
+      woods_trail: 1.2,
+      beach_coastal: 0.5,
+      indoor_home: 0.4,
+      other_indoor: 0.3,
+      bed: 0.1,
+      open_water_lake: 0.2,
+    },
+    bodyLocationScores: {
+      arms_hands: 1.7,
+      face_head: 1.4,
+      trunk_chest_back: 0.9,
+      lower_leg_ankle: 0.9,
+      feet: 0.6,
+      waist_groin_axilla: 0.3,
+      any_unspecified: 1.0,
+    },
+    sensationScores: {
+      moderate_pain: 1.6,
+      burning: 1.4,
+      mild_itch: 1.2,
+      intense_itch: 1.0,
+      severe_pain: 0.7,
+      painless: 0.0,
+    },
+    baseWeight: 0.6,
+    associatedPathogens: [
+      "Non-vector (mechanical piercing rostrum only; no human pathogens transmitted)",
+    ],
+    delayedRisks: [
+      "Secondary excoriation dermatitis",
+      "Exaggerated local histamine wheal in sensitive individuals",
+    ],
+    firstAidAdvice: [
+      "Reassurance: Minute pirate bugs are beneficial agricultural predators that eat garden pests (aphids and mites). They do NOT feed on human blood and do NOT transmit diseases.",
+      "Wash the puncture site with mild soap and clean water.",
+      "Apply a cold compress or ice pack for 10–15 minutes to reduce acute localized swelling and stinging.",
+      "Apply over-the-counter 1% hydrocortisone cream or calamine lotion to relieve itching.",
+      "Avoid scratching to protect the central micro-puncture from secondary bacterial contamination.",
+    ],
+    warningSigns: [
+      "Sharp sudden needle-like jab outdoors during sunny late-summer days, resolving within 2–5 days; seek care only if spreading redness indicates bacterial cellulitis.",
+    ],
+  },
+
+  soft_tick: {
+    id: "soft_tick",
+    name: "Soft Tick (Relapsing Fever Tick)",
+    scientificName: "Ornithodoros hermsi / turicata",
+    endemicStates: [
+      "US-CA",
+      "US-WA",
+      "US-OR",
+      "US-ID",
+      "US-MT",
+      "US-CO",
+      "US-NV",
+      "US-UT",
+      "US-AZ",
+      "US-NM",
+      "US-WY",
+      "US-TX",
+      "US-OK",
+      "US-KS",
+    ],
+    nonEndemicStates: [
+      "US-ME",
+      "US-VT",
+      "US-NH",
+      "US-MA",
+      "US-CT",
+      "US-RI",
+      "US-NY",
+      "US-NJ",
+      "US-PA",
+      "US-DE",
+      "US-MD",
+      "US-VA",
+      "US-NC",
+      "US-SC",
+      "US-GA",
+      "US-FL",
+    ],
+    seasonalMultiplier: [0.3, 0.4, 0.6, 0.9, 1.2, 1.4, 1.5, 1.4, 1.1, 0.7, 0.4, 0.3],
+    habitatScores: {
+      indoor_home: 1.4,
+      woods_trail: 1.5,
+      other_indoor: 1.3,
+      bed: 1.5,
+      other_outdoor: 1.1,
+      yard_garden: 0.6,
+      beach_coastal: 0.1,
+      open_water_lake: 0.2,
+    },
+    bodyLocationScores: {
+      trunk_chest_back: 1.5,
+      arms_hands: 1.3,
+      lower_leg_ankle: 1.2,
+      waist_groin_axilla: 1.2,
+      face_head: 1.1,
+      feet: 0.8,
+      any_unspecified: 1.0,
+    },
+    sensationScores: {
+      painless: 1.6,
+      mild_itch: 1.1,
+      intense_itch: 0.7,
+      moderate_pain: 0.3,
+      severe_pain: 0.0,
+      burning: 0.1,
+    },
+    baseWeight: 0.7,
+    associatedPathogens: [
+      "Borrelia hermsii (Tick-Borne Relapsing Fever - TBRF)",
+      "Borrelia turicatae",
+    ],
+    delayedRisks: [
+      "Tick-Borne Relapsing Fever (cyclical episodes of high fever, rigors, headache, and drenching sweats every 4–7 days)",
+      "Jarisch-Herxheimer reaction upon initial antibiotic treatment",
+    ],
+    firstAidAdvice: [
+      "Clean the bite area thoroughly with antiseptic wash or soap and water.",
+      "Monitor closely for Tick-Borne Relapsing Fever (TBRF): high spiking fever (up to 104°F–105°F), chills, severe headache, and myalgias developing 4–18 days after staying in a mountain cabin or rustic structure.",
+      "Soft ticks feed quickly (15–30 minutes) at night while you sleep and fall off immediately; the vast majority of patients NEVER find a tick on their body.",
+      "Seek medical consultation immediately if cyclical fever episodes occur; standard curative treatment is oral doxycycline 100 mg twice daily for 7–10 days.",
+      "Inspect and rodent-proof mountain cabins (soft ticks live in rodent nesting materials in attic and subfloor spaces).",
+    ],
+    warningSigns: [
+      "Unexplained purpuric or dark crusty bite mark after sleeping in a western mountain cabin, followed 1–2 weeks later by sudden shaking chills, high fever, and sweats.",
+    ],
+  },
 };
 
 export const DEFAULT_MCNAIR_VA_COORDINATES = {
@@ -1849,11 +2102,40 @@ export function evaluateRegionalLikelihood(
       ) {
         score *= 100.0;
       }
+      if (
+        (lower.includes("sarcoptes") || lower.includes("scabies") || lower.includes("itch mite")) &&
+        key === "scabies"
+      ) {
+        score *= 100.0;
+      }
+      if (
+        (lower.includes("rhipicephalus") ||
+          lower.includes("brown dog tick") ||
+          lower.includes("kennel tick")) &&
+        key === "brown_dog_tick"
+      ) {
+        score *= 100.0;
+      }
+      if (
+        (lower.includes("orius") || lower.includes("pirate bug") || lower.includes("thrips")) &&
+        key === "minute_pirate_bug"
+      ) {
+        score *= 100.0;
+      }
+      if (
+        (lower.includes("ornithodoros") ||
+          lower.includes("soft tick") ||
+          lower.includes("relapsing fever")) &&
+        key === "soft_tick"
+      ) {
+        score *= 100.0;
+      }
     }
 
     // 5. Morphological Overrides & Multipliers
     if (morphObj) {
       if (morphObj.pattern === "linear_grouped") {
+        if (key === "scabies") score *= 25.0;
         if (key === "jellyfish") score *= 25.0;
         if (key === "bed_bug") score *= 15.0;
         if (key === "flea") score *= 4.0;
@@ -1865,6 +2147,9 @@ export function evaluateRegionalLikelihood(
         morphObj.centralFeatures === "punctum_bite_mark"
       ) {
         if (key === "mosquito") score *= 4.0;
+        if (key === "minute_pirate_bug") score *= 8.0;
+        if (key === "brown_dog_tick") score *= 6.0;
+        if (key === "soft_tick") score *= 6.0;
         if (key === "fire_ant" && (sensation === "severe_pain" || sensation === "intense_itch"))
           score *= 9.0;
         if (key === "honey_bee" && (sensation === "severe_pain" || sensation === "moderate_pain"))
@@ -1891,6 +2176,7 @@ export function evaluateRegionalLikelihood(
           score *= 10.0;
       }
       if (morphObj.pattern === "linear_grouped") {
+        if (key === "scabies") score *= 25.0;
         if (key === "jellyfish") score *= 25.0;
         if (key === "asp_caterpillar") score *= 20.0;
         if (key === "bed_bug") score *= 6.0;
@@ -1902,6 +2188,7 @@ export function evaluateRegionalLikelihood(
         morphObj.pattern === "scattered_papules" ||
         morphObj.primaryReaction === "excoriated_papule"
       ) {
+        if (key === "scabies") score *= 10.0;
         if (key === "bed_bug") score *= 6.0;
         if (key === "flea") score *= 5.0;
         if (key === "chigger") score *= 5.0;
@@ -1914,6 +2201,7 @@ export function evaluateRegionalLikelihood(
         morphObj.primaryLesion === "eschar_necrosis"
       ) {
         if (key === "brown_recluse") score *= 8.0;
+        if (key === "soft_tick") score *= 7.0;
       }
       if (morphObj.centralFeatures === "twin_punctures") {
         if (key === "pit_viper") score *= 35.0;
