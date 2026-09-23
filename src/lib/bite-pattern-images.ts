@@ -130,6 +130,13 @@ import pitViperLateIii from "@/assets/bite-patterns/pit-viper-late-i-ii.jpg";
 import pitViperLateIiiIv from "@/assets/bite-patterns/pit-viper-late-iii-iv.jpg";
 import pitViperLateVvi from "@/assets/bite-patterns/pit-viper-late-v-vi.jpg";
 
+import jellyfishEarlyIii from "@/assets/bite-patterns/jellyfish-early-i-ii.jpg";
+import jellyfishEarlyIiiIv from "@/assets/bite-patterns/jellyfish-early-iii-iv.jpg";
+import jellyfishEarlyVvi from "@/assets/bite-patterns/jellyfish-early-v-vi.jpg";
+import jellyfishLateIii from "@/assets/bite-patterns/jellyfish-late-i-ii.jpg";
+import jellyfishLateIiiIv from "@/assets/bite-patterns/jellyfish-late-iii-iv.jpg";
+import jellyfishLateVvi from "@/assets/bite-patterns/jellyfish-late-v-vi.jpg";
+
 export type TemporalStageKey = "early" | "peak" | "late";
 
 export type TemporalStageInfo = {
@@ -442,6 +449,44 @@ const BITE_PATTERNS: Record<string, BitePatternSet> = {
     pattern:
       "linear whip-like erythematous tracks with vesiculation, intense burning urticarial wheals, and radiating agony",
     images: { "i-ii": jellyfishIii, "iii-iv": jellyfishIiiIv, "v-vi": jellyfishVvi },
+    temporalStages: {
+      early: {
+        key: "early",
+        label: "Acute Urticarial Whiplash",
+        timeframe: "< 2–4 Hours",
+        description:
+          "Immediate fiery-red raised linear urticarial wheals along tentacle contact lines with severe stinging burning pain and intense perilesional flare before blister formation.",
+        images: {
+          "i-ii": jellyfishEarlyIii,
+          "iii-iv": jellyfishEarlyIiiIv,
+          "v-vi": jellyfishEarlyVvi,
+        },
+      },
+      peak: {
+        key: "peak",
+        label: "Track Vesiculation & Blisters",
+        timeframe: "24–48 Hours",
+        description:
+          "Tense beaded micro-vesicles, erythematous induration, and marked localized edema following the linear tentacle tracks.",
+        images: {
+          "i-ii": jellyfishIii,
+          "iii-iv": jellyfishIiiIv,
+          "v-vi": jellyfishVvi,
+        },
+      },
+      late: {
+        key: "late",
+        label: "Post-Inflammatory Pigmentation",
+        timeframe: "Day 5–14+",
+        description:
+          "Resolving tracks drying into superficial desquamating crusts, leaving distinct brownish-plum striate post-inflammatory hyperpigmentation ribbon scars.",
+        images: {
+          "i-ii": jellyfishLateIii,
+          "iii-iv": jellyfishLateIiiIv,
+          "v-vi": jellyfishLateVvi,
+        },
+      },
+    },
   },
   stingray: {
     label: "Stingray envenomation",
