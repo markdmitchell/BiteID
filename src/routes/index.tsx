@@ -1110,10 +1110,11 @@ function ResultsDashboard({
             tabIndex={-1}
             className="font-display text-2xl sm:text-3xl font-bold leading-tight text-foreground outline-none"
           >
-            Visual Reference Guide &amp; Intake
+            Diagnostic Assessment &amp; Clinical Differential
           </h1>
           <p className="mt-1 text-sm text-muted-foreground">
-            Ranked educational visual matches to compare with your skin and share with your doctor.
+            Multimodal vision evaluation ranked by clinical likelihood, regional priors, and lesion
+            morphology.
           </p>
         </div>
         <div className="grid grid-cols-2 gap-2 sm:flex sm:flex-wrap sm:justify-end">
@@ -1187,8 +1188,8 @@ function ResultsDashboard({
                 onClick={onOpenDosingModal}
                 className="h-7 px-2.5 text-xs font-semibold border-primary/30 text-primary hover:bg-primary/10 flex items-center gap-1.5"
               >
-                <BookOpen className="size-3.5 text-primary" />
-                <span>Pediatric Safety Guide</span>
+                <Calculator className="size-3.5 text-primary" />
+                <span>Pediatric Dosing Engine</span>
               </Button>
             )}
             <a

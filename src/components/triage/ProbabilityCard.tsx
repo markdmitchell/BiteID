@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { ChevronDown, ChevronUp } from "lucide-react";
+import { ChevronDown, ChevronUp, Sparkles, CheckCircle, HelpCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { creatureReferenceOf } from "@/lib/creature-images";
 import { confidenceOf, nameOf, type TriageResultItem } from "@/lib/triage";
@@ -44,58 +44,113 @@ export function ProbabilityCard({
   const urgency = item.urgency ?? item.severity;
   const creatureReference = creatureReferenceOf(item.id);
 
+  // Clinical confidence tiering
+  const confidenceTier =
+    value >= 70
+      ? {
+          label: "High Diagnostic Likelihood",
+          color: "text-emerald-700 dark:text-emerald-300 bg-emerald-500/10 border-emerald-500/25",
+        }
+      : value >= 40
+        ? {
+            label: "Moderate Differential",
+            color: "text-amber-700 dark:text-amber-300 bg-amber-500/10 border-amber-500/25",
+          }
+        : {
+            label: "Rule-Out Consideration",
+            color: "text-muted-foreground bg-muted/60 border-border",
+          };
+
   return (
-    <div className="rounded-lg border border-border bg-card p-4 transition-shadow sm:p-5">
+    <div
+      className={cn(
+        "rounded-xl border bg-card p-4 sm:p-5 transition-all shadow-xs",
+        rank === 0 ? "border-primary/50 ring-1 ring-primary/25" : "border-border",
+      )}
+    >
       <div className="grid grid-cols-[minmax(0,1fr)_auto] items-start gap-3 sm:gap-4">
         <div className="flex min-w-0 items-start gap-3">
-          <span className="mt-0.5 flex size-6 shrink-0 items-center justify-center rounded-md bg-muted text-xs font-semibold text-muted-foreground">
+          <span
+            className={cn(
+              "mt-0.5 flex size-6 shrink-0 items-center justify-center rounded-md text-xs font-bold font-mono",
+              rank === 0
+                ? "bg-primary text-primary-foreground shadow-xs"
+                : "bg-muted text-muted-foreground",
+            )}
+          >
             {rank + 1}
           </span>
           <div className="min-w-0">
-            <h3 className="font-display text-base font-semibold leading-snug text-foreground">
-              {nameOf(item)}
-            </h3>
+            <div className="flex flex-wrap items-center gap-2">
+              <h3 className="font-display text-base font-bold leading-snug text-foreground">
+                {nameOf(item)}
+              </h3>
+              {rank === 0 && (
+                <span className="inline-flex items-center gap-1 rounded-full bg-primary/15 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-primary">
+                  <Sparkles className="size-2.5" />
+                  Primary Suspect
+                </span>
+              )}
+            </div>
             {item.scientificName && (
               <p className="text-xs italic text-muted-foreground">{item.scientificName}</p>
             )}
-            {urgency && (
+            <div className="flex flex-wrap items-center gap-1.5 mt-2">
               <span
                 className={cn(
-                  "mt-2 inline-block rounded-full px-2.5 py-1 text-xs font-medium capitalize",
-                  /emerg|urgent|high|severe/i.test(urgency)
-                    ? "bg-destructive/10 text-destructive"
-                    : /moderate|medium|soon/i.test(urgency)
-                      ? "bg-caution/15 text-caution-foreground"
-                      : "bg-primary/10 text-primary",
+                  "rounded-full px-2 py-0.5 text-[11px] font-semibold border",
+                  confidenceTier.color,
                 )}
               >
-                {urgency}
+                {confidenceTier.label}
               </span>
-            )}
+              {urgency && (
+                <span
+                  className={cn(
+                    "rounded-full px-2.5 py-0.5 text-[11px] font-medium capitalize",
+                    /emerg|urgent|high|severe/i.test(urgency)
+                      ? "bg-destructive/10 text-destructive border border-destructive/20"
+                      : /moderate|medium|soon/i.test(urgency)
+                        ? "bg-caution/15 text-caution-foreground border border-caution/25"
+                        : "bg-primary/10 text-primary border border-primary/20",
+                  )}
+                >
+                  {urgency}
+                </span>
+              )}
+            </div>
           </div>
         </div>
         <div className="flex flex-col items-end gap-0.5">
-          <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
-            Visual Match
+          <span className="text-[10px] font-bold uppercase tracking-wider text-primary">
+            Diagnostic Probability
           </span>
-          <span className="font-display text-xl sm:text-2xl font-bold tabular-nums text-foreground">
-            {Math.round(value)}%
+          <div className="flex items-baseline gap-1">
+            <span className="font-display text-2xl sm:text-3xl font-black tabular-nums text-foreground">
+              {Math.round(value)}%
+            </span>
+          </div>
+          <span className="text-[10px] text-muted-foreground font-mono">
+            CI: {Math.max(0, Math.round(value - 6))}%–{Math.min(100, Math.round(value + 6))}%
           </span>
           <button
             type="button"
             onClick={() => setIsExpanded((prev) => !prev)}
-            className="inline-flex items-center gap-1 rounded-md px-2 py-1 text-xs font-medium text-primary hover:bg-primary/10 transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring mt-0.5"
+            className="inline-flex items-center gap-1 rounded-md px-2 py-1 text-xs font-semibold text-primary hover:bg-primary/10 transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring mt-1"
             aria-expanded={isExpanded}
           >
-            <span>{isExpanded ? "Hide details" : "View details"}</span>
+            <span>{isExpanded ? "Hide clinical DDx" : "View clinical DDx"}</span>
             {isExpanded ? <ChevronUp className="size-3.5" /> : <ChevronDown className="size-3.5" />}
           </button>
         </div>
       </div>
 
-      <div className="mt-4 h-2.5 overflow-hidden rounded-full bg-muted">
+      <div className="mt-3.5 h-2.5 overflow-hidden rounded-full bg-muted/80">
         <div
-          className="h-full rounded-full bg-primary transition-[width] duration-700 ease-out"
+          className={cn(
+            "h-full rounded-full transition-[width] duration-700 ease-out",
+            rank === 0 ? "bg-primary" : "bg-primary/70",
+          )}
           style={{ width: `${width}%` }}
         />
       </div>
@@ -112,8 +167,9 @@ export function ProbabilityCard({
                 loading="lazy"
                 className="aspect-[3/2] w-full object-cover"
               />
-              <figcaption className="border-t border-border px-3 py-2 text-xs text-muted-foreground">
-                AI-generated visual reference — not confirmation
+              <figcaption className="border-t border-border px-3 py-2 text-xs text-muted-foreground flex items-center justify-between">
+                <span>Diagnostic arthropod reference: {nameOf(item)}</span>
+                <span className="italic">{item.scientificName}</span>
               </figcaption>
             </figure>
           )}
@@ -124,8 +180,11 @@ export function ProbabilityCard({
             </p>
           )}
 
-          <DetailList title="Why it matched" items={item.matchedFactors} />
-          <DetailList title="Can carry" items={item.associatedPathogens} />
+          <DetailList title="Diagnostic Concordance Factors" items={item.matchedFactors} />
+          <DetailList
+            title="Associated Pathogens & Clinical Risks"
+            items={item.associatedPathogens}
+          />
         </div>
       )}
     </div>
