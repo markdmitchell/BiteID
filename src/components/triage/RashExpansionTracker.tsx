@@ -24,6 +24,7 @@ import {
 } from "lucide-react";
 import { PhotoComparisonSlider } from "./PhotoComparisonSlider";
 import { analyseLesionProgressionFn } from "@/lib/triage.functions";
+import { compressImageFile } from "@/lib/image-compressor";
 import type { ProgressionEvaluation } from "@/lib/progression-engine.server";
 import type { PatientVulnerabilityProfile } from "@/lib/triage";
 
@@ -112,15 +113,16 @@ export function RashExpansionTracker({
     }
   }, [open]);
 
-  // Handle Initial Lesion photo preview & convert to data URL for persistent journal
+  // Handle Initial Lesion photo preview & convert to compact data URL for persistent journal
   useEffect(() => {
     if (initialLesionFile && entries.length === 0) {
-      const reader = new FileReader();
-      reader.onload = () => {
-        const dataUrl = String(reader.result);
-        setSelectedPhoto(dataUrl);
-      };
-      reader.readAsDataURL(initialLesionFile);
+      compressImageFile(initialLesionFile)
+        .then((dataUrl) => setSelectedPhoto(dataUrl))
+        .catch(() => {
+          const reader = new FileReader();
+          reader.onload = () => setSelectedPhoto(String(reader.result));
+          reader.readAsDataURL(initialLesionFile);
+        });
     }
   }, [initialLesionFile, entries.length]);
 
@@ -145,8 +147,8 @@ export function RashExpansionTracker({
     setEntries(updated);
     try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
-    } catch {
-      // ignore
+    } catch (err) {
+      console.warn("Storage quota warning while saving journal entry:", err);
     }
 
     setDiameterInput("");
@@ -154,12 +156,17 @@ export function RashExpansionTracker({
     setSelectedPhoto(null);
   };
 
-  const handlePhotoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handlePhotoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      const reader = new FileReader();
-      reader.onload = () => setSelectedPhoto(String(reader.result));
-      reader.readAsDataURL(file);
+      try {
+        const compressed = await compressImageFile(file);
+        setSelectedPhoto(compressed);
+      } catch {
+        const reader = new FileReader();
+        reader.onload = () => setSelectedPhoto(String(reader.result));
+        reader.readAsDataURL(file);
+      }
     }
   };
 

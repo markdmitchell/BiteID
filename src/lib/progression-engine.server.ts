@@ -324,6 +324,7 @@ Return a single JSON object (no markdown fences, no commentary outside JSON):
         model: google("gemini-3.6-flash"),
         system: instructions,
         messages: [{ role: "user", content }],
+        abortSignal: AbortSignal.timeout(18000),
       });
       for await (const chunk of result.textStream) {
         rawText += chunk;
@@ -334,6 +335,7 @@ Return a single JSON object (no markdown fences, no commentary outside JSON):
         model: lovable.responses(MODEL),
         system: instructions,
         messages: [{ role: "user", content }],
+        abortSignal: AbortSignal.timeout(18000),
       });
       for await (const chunk of result.textStream) {
         rawText += chunk;

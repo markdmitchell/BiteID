@@ -38,7 +38,25 @@ export function saveOfflineIntake(intake: Omit<StashedIntake, "id" | "timestamp"
   try {
     localStorage.setItem(QUEUE_KEY, JSON.stringify([newItem, ...current]));
   } catch (err) {
-    console.error("Failed to stash offline intake in localStorage", err);
+    console.warn(
+      "Failed to stash full offline intake in localStorage, attempting fallback without image URLs:",
+      err,
+    );
+    try {
+      const strippedNewItem: StashedIntake = {
+        ...newItem,
+        lesionPreviewUrl: undefined,
+        bugPreviewUrl: undefined,
+      };
+      const strippedCurrent = current.map((item) => ({
+        ...item,
+        lesionPreviewUrl: undefined,
+        bugPreviewUrl: undefined,
+      }));
+      localStorage.setItem(QUEUE_KEY, JSON.stringify([strippedNewItem, ...strippedCurrent]));
+    } catch (fallbackErr) {
+      console.error("Failed to store even stripped offline intakes in localStorage:", fallbackErr);
+    }
   }
   return newItem;
 }

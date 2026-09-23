@@ -243,21 +243,18 @@ export const FALLBACK_RESPONSE: TriageResponse = {
     "Alpha version — for testing only. BiteID is not a medical service and does not provide a diagnosis.",
 };
 
+import { compressImageFile } from "./image-compressor";
+
 function fileToDataUrl(file: File): Promise<string> {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.onload = () => resolve(String(reader.result));
-    reader.onerror = () => reject(reader.error);
-    reader.readAsDataURL(file);
-  });
+  return compressImageFile(file);
 }
 
 /** Sends the intake to the in-app analysis step. Never throws. */
 export async function submitTriage(state: TriageFormState): Promise<TriageResponse> {
   try {
     if (!state.lesionImage) return FALLBACK_RESPONSE;
-    const lesionImage = await fileToDataUrl(state.lesionImage);
-    const bugImage = state.bugImage ? await fileToDataUrl(state.bugImage) : null;
+    const lesionImage = await compressImageFile(state.lesionImage);
+    const bugImage = state.bugImage ? await compressImageFile(state.bugImage) : null;
     if (typeof window !== "undefined" && !window.navigator.onLine) {
       saveOfflineIntake({
         lesionPreviewUrl: lesionImage,

@@ -307,6 +307,7 @@ Return a single JSON object, no prose, no markdown fences:
       model: google("gemini-3.6-flash"),
       system: instructions,
       messages: [{ role: "user", content }],
+      abortSignal: AbortSignal.timeout(18000),
     });
   } else {
     const lovable = createLovableResponsesProvider(provider.apiKey);
@@ -314,6 +315,7 @@ Return a single JSON object, no prose, no markdown fences:
       model: lovable.responses(MODEL),
       system: instructions,
       messages: [{ role: "user", content }],
+      abortSignal: AbortSignal.timeout(18000),
       providerOptions: {
         openai: {
           forceReasoning: true,
