@@ -469,11 +469,16 @@ export function ClinicalSummaryModal({
           {/* Non-Vector Lookalikes Evaluated */}
           {lookalikes.length > 0 && (
             <div className="space-y-1.5 border-b border-border/70 pb-3">
-              <span className="text-[11px] font-bold uppercase text-muted-foreground block">
-                Non-Arthropod Lookalikes to Clinically Rule Out:
-              </span>
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 text-xs">
-                {lookalikes.map((lk) => (
+              <div className="flex items-center justify-between">
+                <span className="text-[11px] font-bold uppercase text-muted-foreground block">
+                  Non-Arthropod Lookalikes to Clinically Rule Out (Top Differentials):
+                </span>
+                <span className="text-[10px] text-muted-foreground">
+                  Prioritized by lesion pattern & presentation
+                </span>
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2 text-xs">
+                {lookalikes.slice(0, 4).map((lk) => (
                   <div
                     key={lk.id}
                     className="rounded border border-border/70 bg-card p-2 space-y-1"
