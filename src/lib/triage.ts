@@ -263,8 +263,35 @@ export async function submitTriage(state: TriageFormState): Promise<TriageRespon
         symptoms: state.symptoms,
       },
     });
-    return result as TriageResponse;
   } catch {
+    // If the network call failed (e.g. signal dropped out mid-request), auto-stash and route to offline field kit
+    try {
+      if (state.lesionImage) {
+        const lesionImage = await fileToDataUrl(state.lesionImage).catch(() => undefined);
+        const bugImage = state.bugImage
+          ? await fileToDataUrl(state.bugImage).catch(() => undefined)
+          : undefined;
+        saveOfflineIntake({
+          lesionPreviewUrl: lesionImage,
+          bugPreviewUrl: bugImage,
+          environment: state.environment,
+          duration: state.duration,
+          usState: state.usState,
+          bodyLocation: state.bodyLocation,
+          sensation: state.sensation,
+          symptoms: state.symptoms,
+        });
+        return {
+          results: [],
+          isOfflineQueued: true,
+          guidance:
+            "Cellular connectivity dropped during submission. Your intake, photos, and answers have been safely preserved in your device's backcountry queue.\n\nUse the Backcountry Field Kit below for immediate emergency first-aid protocols, envenomation guidelines, and species identification.",
+          disclaimer: "BiteID Offline Field Kit — Backcountry emergency guidance.",
+        };
+      }
+    } catch {
+      // Ignore
+    }
     return FALLBACK_RESPONSE;
   }
 }

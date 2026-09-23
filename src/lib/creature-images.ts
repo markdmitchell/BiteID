@@ -36,7 +36,7 @@ type CreatureReference = {
   alt: string;
 };
 
-const CREATURE_REFERENCES: Record<string, CreatureReference> = {
+export const CREATURE_REFERENCES: Record<string, CreatureReference> = {
   mosquito: {
     src: mosquito,
     alt: "AI-generated field-guide reference of a mosquito",

@@ -1,11 +1,5 @@
 import { useEffect, useState, useId } from "react";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogDescription,
-} from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import {
   Printer,
@@ -14,10 +8,12 @@ import {
   CheckCircle2,
   FileText,
   ShieldAlert,
-  Baby,
-  Heart,
-  Sparkles,
-  Pill,
+  Copy,
+  Check,
+  Smartphone,
+  Eye,
+  Activity,
+  Waves,
 } from "lucide-react";
 import {
   type TriageResponse,
@@ -54,6 +50,8 @@ export function ClinicalSummaryModal({
   const [lesionUrl, setLesionUrl] = useState<string | null>(null);
   const [bugUrl, setBugUrl] = useState<string | null>(null);
   const [nowDate, setNowDate] = useState<string>("");
+  const [isCopied, setIsCopied] = useState<boolean>(false);
+  const [viewMode, setViewMode] = useState<"document" | "er_triage">("document");
   const [rashJournal, setRashJournal] = useState<{
     baselineDiameterMm: number;
     baselineDate: string;
@@ -122,33 +120,116 @@ export function ClinicalSummaryModal({
     SENSATION_OPTIONS.find((s) => s.value === form.sensation)?.label ?? form.sensation;
 
   const lookalikes = getLookalikeDifferentials(topResult?.id, Boolean(isErythemaMigrans));
-
   const reportedEmergencies = EMERGENCY_SYMPTOMS.filter((sym) => form.symptoms.includes(sym.value));
+
+  const effectiveProfile = patientProfile ?? form.patientProfile ?? "standard_adult";
+  const personaDef =
+    PATIENT_PERSONAS.find((p) => p.key === effectiveProfile) ?? PATIENT_PERSONAS[0];
 
   const handlePrint = () => {
     window.print();
   };
 
+  const generateSbarText = (): string => {
+    return `=== BITEID CLINICAL TRIAGE MEMO (SBAR FORMAT) ===
+Ref ID: BID-${uniqueId}
+Date/Time: ${nowDate || new Date().toLocaleString()}
+
+[S] SITUATION
+- Chief Complaint: Bite / skin lesion / envenomation screening
+- Anatomical Location: ${locationLabel}
+- Sensation: ${sensationLabel}
+- Duration / Onset: ${durationName}
+- Emergency Symptoms Screen: ${reportedEmergencies.length > 0 ? `POSITIVE for: ${reportedEmergencies.map((e) => e.label).join(", ")}` : "NEGATIVE (no anaphylaxis, airway compromise, or acute confusion reported)"}
+
+[B] BACKGROUND & DEMOGRAPHICS
+- Geographic Exposure: ${stateName}
+- Environment: ${envName}
+- Patient Profile: ${personaDef.label} (${personaDef.ageRange})
+${effectiveProfile === "infant_toddler" || effectiveProfile === "child" ? "- Pediatric Safety: ASPIRIN/PEPTO-BISMOL STRICTLY CONTRAINDICATED (Reye's syndrome risk). Dose weight-based oral analgesics via oral syringe. Antivenom is not weight-reduced." : ""}${effectiveProfile === "pregnant_nursing" ? "- Pregnancy Safety: DOXYCYCLINE & IVERMECTIN CONTRAINDICATED. Safe Lyme alternative: Amoxicillin. Continuous fetal monitoring required if pit viper envenomation." : ""}${effectiveProfile === "geriatric_immune" ? "- Geriatric Safety: DIPHENHYDRAMINE CONTRAINDICATED per Beers criteria (delirium & fall fractures). High secondary infection/cellulitis vulnerability." : ""}
+
+[A] ASSESSMENT / ALGORITHMIC DIFFERENTIAL
+- Top Differential Hypothesis: ${topResult?.name ?? "Unknown"} (${topResult?.scientificName ?? ""}) — Likelihood: ${Math.round(topResult?.confidence ?? topResult?.probability ?? 0)}%
+${topResult?.associatedPathogens?.length ? `- Associated Pathogens: ${topResult.associatedPathogens.join(", ")}` : ""}
+${isErythemaMigrans ? "- CLINICAL ALERT: Strong visual & epidemiological concordance for ERYTHEMA MIGRANS (early Lyme disease). CDC guidelines advise clinical diagnosis & standard antibiotic evaluation without awaiting delayed serology." : ""}
+${response.dermatologicalFindings ? `- Morphology: Pattern: ${response.dermatologicalFindings.pattern}, Primary: ${response.dermatologicalFindings.primaryLesion ?? "n/a"}, Central: ${response.dermatologicalFindings.centralFeatures}, Size: ${response.dermatologicalFindings.estimatedDiameter ?? "n/a"}` : ""}
+${secondaryResults.length > 0 ? `- Secondary Differentials: ${secondaryResults.map((s) => `${s.name} (${Math.round(s.confidence ?? s.probability ?? 0)}%)`).join(", ")}` : ""}
+${
+  lookalikes.length > 0
+    ? `- Non-Vector Lookalikes to Rule Out: ${lookalikes
+        .slice(0, 3)
+        .map((l) => l.name)
+        .join(", ")}`
+    : ""
+}
+
+[R] RECOMMENDATION & CLINICAL PLAN
+- Formal physical exam by licensed clinician with vital signs.
+- Active margin tracing: mark erythema/edema borders with ink pen; note time stamps every 15-30m.
+- Evaluate need for antivenom (CroFab, Anascorp) if pit viper or scorpion envenomation with progressive swelling or neurotoxicity.
+- Non-diagnostic algorithm: Clinical judgment supersedes this intake report.
+==================================================`;
+  };
+
+  const handleCopySbar = async () => {
+    const text = generateSbarText();
+    try {
+      await navigator.clipboard.writeText(text);
+      setIsCopied(true);
+      setTimeout(() => setIsCopied(false), 2500);
+    } catch {
+      // Fallback
+    }
+  };
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-3xl sm:max-w-4xl max-h-[90vh] overflow-y-auto p-4 sm:p-6 print:p-0 print:border-none print:shadow-none print:max-w-none print:w-full">
+      <DialogContent className="max-w-3xl sm:max-w-4xl max-h-[92vh] overflow-y-auto p-4 sm:p-6 print:p-0 print:border-none print:shadow-none print:max-w-none print:w-full">
+        <DialogTitle className="sr-only">Clinical Handout & Doctor Summary</DialogTitle>
+
         {/* Action Header (Hidden on Print) */}
-        <div className="flex items-center justify-between border-b border-border pb-3 no-print">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-border pb-3 gap-3 no-print">
           <div className="flex items-center gap-2">
             <FileText className="size-5 text-primary" />
             <div>
-              <DialogTitle className="text-base font-bold text-foreground">
-                Clinical Handout & Doctor Summary
-              </DialogTitle>
-              <DialogDescription className="text-xs text-muted-foreground">
-                Print or save as PDF to present to your urgent care or primary care clinician.
-              </DialogDescription>
+              <h2 className="text-base font-bold text-foreground">Clinical Handout & ER Handoff</h2>
+              <p className="text-xs text-muted-foreground">
+                Format for clinician review, EHR copy-paste (SBAR), or emergency triage
+                presentation.
+              </p>
             </div>
           </div>
-          <div className="flex items-center gap-2">
-            <Button size="sm" onClick={handlePrint} className="font-medium">
-              <Printer className="size-4 mr-1.5" />
-              Print / Save PDF
+          <div className="flex flex-wrap items-center gap-2">
+            <Button
+              size="sm"
+              variant={viewMode === "er_triage" ? "default" : "outline"}
+              onClick={() => setViewMode(viewMode === "er_triage" ? "document" : "er_triage")}
+              className="text-xs font-semibold gap-1.5"
+            >
+              <Smartphone className="size-3.5" />
+              <span>{viewMode === "er_triage" ? "Document View" : "Show ER Nurse"}</span>
+            </Button>
+            <Button
+              size="sm"
+              variant="outline"
+              onClick={handleCopySbar}
+              className="text-xs font-semibold gap-1.5"
+            >
+              {isCopied ? (
+                <>
+                  <Check className="size-3.5 text-emerald-600 dark:text-emerald-400" />
+                  <span className="text-emerald-600 dark:text-emerald-400">Copied SBAR Note</span>
+                </>
+              ) : (
+                <>
+                  <Copy className="size-3.5" />
+                  <span>Copy EHR Note (SBAR)</span>
+                </>
+              )}
+            </Button>
+            <Button size="sm" onClick={handlePrint} className="text-xs font-medium gap-1.5">
+              <Printer className="size-3.5" />
+              <span>Print / PDF</span>
             </Button>
             <Button
               variant="ghost"
@@ -162,10 +243,202 @@ export function ClinicalSummaryModal({
           </div>
         </div>
 
-        {/* The Print-Optimized Document Container */}
+        {/* ER TRIAGE RAPID PRESENTATION MODE */}
+        {viewMode === "er_triage" && (
+          <div className="space-y-4 pt-3 text-foreground no-print">
+            <div className="rounded-2xl border-2 border-primary/40 bg-card p-5 space-y-4 shadow-md">
+              <div className="flex items-center justify-between border-b border-border/80 pb-3">
+                <div className="flex items-center gap-2">
+                  <span className="size-3 rounded-full bg-destructive animate-ping" />
+                  <span className="font-display text-base sm:text-lg font-bold uppercase tracking-wider text-foreground">
+                    ER Triage Presentation View
+                  </span>
+                </div>
+                <span className="text-xs font-mono font-bold text-muted-foreground">
+                  Ref: BID-{uniqueId}
+                </span>
+              </div>
+
+              {/* Primary Hazard Callout Banner */}
+              <div className="rounded-xl border-2 border-destructive/40 bg-destructive/10 p-4 space-y-1">
+                <div className="flex items-center justify-between">
+                  <span className="text-xs uppercase font-bold text-destructive flex items-center gap-1.5">
+                    <ShieldAlert className="size-4" />
+                    Top Suspected Hazard:
+                  </span>
+                  <span className="text-sm font-bold font-mono text-destructive">
+                    {Math.round(topResult?.confidence ?? topResult?.probability ?? 0)}% Probability
+                  </span>
+                </div>
+                <h3 className="font-display text-xl sm:text-2xl font-black text-foreground">
+                  {topResult?.name ?? "Suspected Vector Envenomation"}
+                </h3>
+                {topResult?.scientificName && (
+                  <p className="text-xs italic text-muted-foreground">{topResult.scientificName}</p>
+                )}
+                {topResult?.id === "pit_viper" && (
+                  <p className="text-xs font-bold text-destructive pt-1">
+                    HIGH EMERGENCY: Pit viper hemotoxic envenomation. Immediate CroFab/Anavip
+                    evaluation & 15-minute serial circumference measurement indicated.
+                  </p>
+                )}
+                {topResult?.id === "coral_snake" && (
+                  <p className="text-xs font-bold text-amber-700 dark:text-amber-400 pt-1">
+                    POTENT NEUROTOXIN: Coral snake bite. Delayed respiratory paralysis risk. ICU
+                    monitoring & coral snake antivenom indicated.
+                  </p>
+                )}
+                {isErythemaMigrans && (
+                  <p className="text-xs font-bold text-amber-700 dark:text-amber-400 pt-1">
+                    ERYTHEMA MIGRANS IDENTIFIED: Expanding annular lesion consistent with early Lyme
+                    disease. CDC guidelines advise clinical treatment without awaiting serology.
+                  </p>
+                )}
+              </div>
+
+              {/* Patient Exposure & Vitals Grid */}
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
+                <div className="rounded-xl border border-border/70 bg-muted/20 p-3 space-y-0.5">
+                  <span className="text-[10px] uppercase font-bold text-muted-foreground block">
+                    Anatomical Site
+                  </span>
+                  <span className="font-bold text-foreground text-sm">{locationLabel}</span>
+                </div>
+                <div className="rounded-xl border border-border/70 bg-muted/20 p-3 space-y-0.5">
+                  <span className="text-[10px] uppercase font-bold text-muted-foreground block">
+                    Sensation
+                  </span>
+                  <span className="font-bold text-foreground text-sm">{sensationLabel}</span>
+                </div>
+                <div className="rounded-xl border border-border/70 bg-muted/20 p-3 space-y-0.5">
+                  <span className="text-[10px] uppercase font-bold text-muted-foreground block">
+                    Duration
+                  </span>
+                  <span className="font-bold text-foreground text-sm">{durationName}</span>
+                </div>
+                <div className="rounded-xl border border-border/70 bg-muted/20 p-3 space-y-0.5">
+                  <span className="text-[10px] uppercase font-bold text-muted-foreground block">
+                    State / Environment
+                  </span>
+                  <span
+                    className="font-bold text-foreground text-sm truncate block"
+                    title={`${stateName}, ${envName}`}
+                  >
+                    {stateName}
+                  </span>
+                </div>
+              </div>
+
+              {/* Patient Profile Safeguards */}
+              <div className="rounded-xl border border-primary/30 bg-primary/5 p-3 text-xs space-y-1">
+                <div className="flex items-center justify-between">
+                  <span className="font-bold text-foreground flex items-center gap-1.5">
+                    <ShieldAlert className="size-3.5 text-primary" />
+                    Patient Population Profile:
+                  </span>
+                  <span className="font-bold text-primary font-mono text-[11px]">
+                    {personaDef.label} ({personaDef.ageRange})
+                  </span>
+                </div>
+                {effectiveProfile === "infant_toddler" || effectiveProfile === "child" ? (
+                  <p className="text-destructive font-medium text-[11px]">
+                    • PEDIATRIC ALERT: Aspirin & Pepto-Bismol are strictly prohibited (Reye&apos;s
+                    syndrome). Initial antivenom is NOT reduced by weight.
+                  </p>
+                ) : null}
+                {effectiveProfile === "pregnant_nursing" ? (
+                  <p className="text-purple-700 dark:text-purple-300 font-medium text-[11px]">
+                    • PREGNANCY ALERT: Doxycycline and Ivermectin are contraindicated. Amoxicillin
+                    is safe for Lyme. Continuous electronic fetal monitoring if snakebite.
+                  </p>
+                ) : null}
+                {effectiveProfile === "geriatric_immune" ? (
+                  <p className="text-blue-700 dark:text-blue-300 font-medium text-[11px]">
+                    • GERIATRIC ALERT: Diphenhydramine (Benadryl) is contraindicated per Beers
+                    criteria (delirium & fall fractures). High sepsis vulnerability.
+                  </p>
+                ) : null}
+              </div>
+
+              {/* Emergency Red Flags */}
+              <div className="rounded-xl border border-border/70 p-3 text-xs space-y-1">
+                <span className="text-[10px] uppercase font-bold text-muted-foreground block">
+                  Systemic Emergency Symptoms:
+                </span>
+                {reportedEmergencies.length > 0 ? (
+                  <div className="flex items-center gap-1.5 text-destructive font-bold">
+                    <AlertTriangle className="size-4 shrink-0" />
+                    <span>POSITIVE: {reportedEmergencies.map((e) => e.label).join(", ")}</span>
+                  </div>
+                ) : (
+                  <div className="flex items-center gap-1.5 text-emerald-700 dark:text-emerald-400 font-medium">
+                    <CheckCircle2 className="size-4 shrink-0" />
+                    <span>Patient denied acute systemic emergencies at initial intake.</span>
+                  </div>
+                )}
+              </div>
+
+              {/* Photos */}
+              <div className="flex gap-3">
+                {lesionUrl && (
+                  <div className="space-y-1">
+                    <img
+                      src={lesionUrl}
+                      alt="Bite lesion photo"
+                      className="size-24 rounded-lg object-cover border border-border"
+                    />
+                    <span className="text-[10px] text-muted-foreground block text-center">
+                      Lesion Photo
+                    </span>
+                  </div>
+                )}
+                {bugUrl && (
+                  <div className="space-y-1">
+                    <img
+                      src={bugUrl}
+                      alt="Captured bug photo"
+                      className="size-24 rounded-lg object-cover border border-border"
+                    />
+                    <span className="text-[10px] text-muted-foreground block text-center">
+                      Captured Specimen
+                    </span>
+                  </div>
+                )}
+              </div>
+
+              {/* Fast Action Buttons */}
+              <div className="flex flex-wrap gap-2 pt-2 border-t border-border/60">
+                <Button onClick={handleCopySbar} className="gap-1.5 text-xs font-semibold">
+                  {isCopied ? (
+                    <>
+                      <Check className="size-4 text-emerald-400" />
+                      <span>Copied EHR SBAR Note</span>
+                    </>
+                  ) : (
+                    <>
+                      <Copy className="size-4" />
+                      <span>Copy Full EHR Clinical Note (SBAR)</span>
+                    </>
+                  )}
+                </Button>
+                <Button
+                  variant="outline"
+                  onClick={() => setViewMode("document")}
+                  className="text-xs"
+                >
+                  Switch to Detailed Paper Report
+                </Button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* DETAILED DOCUMENT VIEW (Always printed, visible when viewMode === "document") */}
         <div
           id="clinical-summary-print-root"
-          className="clinical-document space-y-4 pt-3 print:pt-0 text-foreground bg-card print:bg-white text-[13px] leading-normal"
+          className={`clinical-document space-y-4 pt-3 print:pt-0 text-foreground bg-card print:bg-white text-[13px] leading-normal ${
+            viewMode === "er_triage" ? "hidden print:block" : "block"
+          }`}
         >
           {/* Document Header */}
           <div className="flex items-start justify-between border-b-2 border-foreground/80 pb-3">
@@ -340,112 +613,101 @@ export function ClinicalSummaryModal({
           )}
 
           {/* Special Populations & Vulnerability Profile */}
-          {(() => {
-            const effectiveProfile = patientProfile ?? form.patientProfile ?? "standard_adult";
-            const personaDef =
-              PATIENT_PERSONAS.find((p) => p.key === effectiveProfile) ?? PATIENT_PERSONAS[0];
+          <div className="rounded-lg border border-border/80 bg-muted/15 p-3.5 text-xs space-y-2 print:border-neutral-400">
+            <div className="flex items-center justify-between border-b border-border/60 pb-1.5">
+              <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-1.5">
+                <ShieldAlert className="size-3.5 text-primary" />
+                Special Populations & Vulnerability Considerations
+              </span>
+              <span className="rounded px-2 py-0.5 text-[10px] font-bold bg-primary/10 text-primary border border-primary/20">
+                Patient Profile: {personaDef.label} ({personaDef.ageRange})
+              </span>
+            </div>
 
-            return (
-              <div className="rounded-lg border border-border/80 bg-muted/15 p-3.5 text-xs space-y-2 print:border-neutral-400">
-                <div className="flex items-center justify-between border-b border-border/60 pb-1.5">
-                  <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-1.5">
-                    <ShieldAlert className="size-3.5 text-primary" />
-                    Special Populations & Vulnerability Considerations
-                  </span>
-                  <span className="rounded px-2 py-0.5 text-[10px] font-bold bg-primary/10 text-primary border border-primary/20">
-                    Patient Profile: {personaDef.label} ({personaDef.ageRange})
-                  </span>
+            <div className="space-y-1.5 leading-relaxed text-foreground text-[11px]">
+              {effectiveProfile === "infant_toddler" && (
+                <div className="space-y-1">
+                  <p className="font-semibold text-rose-700 dark:text-rose-400">
+                    • High Venom-to-Body-Mass Ratio: Rapid systemic progression. Initial antivenom
+                    (CroFab / Anascorp) is NOT weight-reduced (neutralizes fixed mass of circulating
+                    venom).
+                  </p>
+                  <p className="text-muted-foreground">
+                    • Pediatric Dosing Safety: Dose fever/analgesic medications strictly by body
+                    weight (kg) via calibrated oral syringe, never household spoons. Never
+                    administer Aspirin or Pepto-Bismol (fatal Reye&apos;s syndrome risk).
+                  </p>
+                  <p className="text-muted-foreground">
+                    • &quot;Do Not Miss&quot; Atypical Presentations: Watch for opsoclonus &
+                    excessive drooling in scorpion stings; board-like rigid abdomen (appendicitis
+                    mimic) in widow bites; scalp, face, and sole burrows in scabies.
+                  </p>
                 </div>
+              )}
 
-                <div className="space-y-1.5 leading-relaxed text-foreground text-[11px]">
-                  {effectiveProfile === "infant_toddler" && (
-                    <div className="space-y-1">
-                      <p className="font-semibold text-rose-700 dark:text-rose-400">
-                        • High Venom-to-Body-Mass Ratio: Rapid systemic progression. Initial
-                        antivenom (CroFab / Anascorp) is NOT weight-reduced (neutralizes fixed mass
-                        of circulating venom).
-                      </p>
-                      <p className="text-muted-foreground">
-                        • Pediatric Dosing Safety: Dose fever/analgesic medications strictly by body
-                        weight (kg) via calibrated oral syringe, never household spoons. Never
-                        administer Aspirin or Pepto-Bismol (fatal Reye&apos;s syndrome risk).
-                      </p>
-                      <p className="text-muted-foreground">
-                        • &quot;Do Not Miss&quot; Atypical Presentations: Watch for opsoclonus &
-                        excessive drooling in scorpion stings; board-like rigid abdomen
-                        (appendicitis mimic) in widow bites; scalp, face, and sole burrows in
-                        scabies.
-                      </p>
-                    </div>
-                  )}
-
-                  {effectiveProfile === "child" && (
-                    <div className="space-y-1">
-                      <p className="font-semibold text-amber-800 dark:text-amber-300">
-                        • Aspirin Prohibition: Strictly avoid acetylsalicylic acid and bismuth
-                        subsalicylate (Pepto-Bismol) due to Reye&apos;s syndrome.
-                      </p>
-                      <p className="text-muted-foreground">
-                        • Anaphylaxis Dosing: EpiPen Jr (0.15 mg) for 7.5–30 kg (16.5–66 lbs); adult
-                        auto-injector (0.30 mg) for &gt; 30 kg.
-                      </p>
-                      <p className="text-muted-foreground">
-                        • Tick-Borne Prophylaxis: Short-course Doxycycline (&lt; 21d) is AAP
-                        approved for confirmed Lyme/RMSF. RMSF requires immediate Doxycycline
-                        regardless of age.
-                      </p>
-                    </div>
-                  )}
-
-                  {effectiveProfile === "pregnant_nursing" && (
-                    <div className="space-y-1">
-                      <p className="font-semibold text-purple-700 dark:text-purple-300">
-                        • Pharmacotherapy Contraindications: Doxycycline is CONTRAINDICATED
-                        (Category D: permanent dental staining & bone suppression). Oral Ivermectin
-                        and Lindane are CONTRAINDICATED.
-                      </p>
-                      <p className="text-muted-foreground">
-                        • Safe First-Line Alternatives: Amoxicillin 500 mg PO TID for 14–21 days (or
-                        Cefuroxime axetil 500 mg PO BID) for Lyme disease. Permethrin 5% cream is
-                        Category B and safe for scabies.
-                      </p>
-                      <p className="text-muted-foreground">
-                        • Maternal-Fetal Envenomation: Snakebite/scorpion envenomation risks
-                        placental abruption; requires continuous electronic fetal monitoring and
-                        maternal ICU admission. Antivenom is safe.
-                      </p>
-                    </div>
-                  )}
-
-                  {effectiveProfile === "geriatric_immune" && (
-                    <div className="space-y-1">
-                      <p className="font-semibold text-blue-700 dark:text-blue-300">
-                        • Beers Criteria Warning: Strictly avoid sedating 1st-generation
-                        antihistamines (Diphenhydramine) due to high anticholinergic risk of acute
-                        delirium, urinary retention, and fall fractures. Use 2nd-gen Cetirizine or
-                        Loratadine.
-                      </p>
-                      <p className="text-muted-foreground">
-                        • Blunted Host Response: Atypical faint Erythema Migrans; Norwegian/crusted
-                        scabies presenting as painless hyperkeratosis; blunted fever spikes.
-                      </p>
-                      <p className="text-muted-foreground">
-                        • Sepsis & Secondary Infection Risk: Accelerated cellulitis and bacteremia
-                        in patients with venous stasis or diabetes; qSOFA screening recommended.
-                      </p>
-                    </div>
-                  )}
-
-                  {effectiveProfile === "standard_adult" && (
-                    <p className="text-muted-foreground">
-                      Standard adult toxicological first aid and antimicrobial treatment guidelines
-                      apply.
-                    </p>
-                  )}
+              {effectiveProfile === "child" && (
+                <div className="space-y-1">
+                  <p className="font-semibold text-amber-800 dark:text-amber-300">
+                    • Aspirin Prohibition: Strictly avoid acetylsalicylic acid and bismuth
+                    subsalicylate (Pepto-Bismol) due to Reye&apos;s syndrome.
+                  </p>
+                  <p className="text-muted-foreground">
+                    • Anaphylaxis Dosing: EpiPen Jr (0.15 mg) for 7.5–30 kg (16.5–66 lbs); adult
+                    auto-injector (0.30 mg) for &gt; 30 kg.
+                  </p>
+                  <p className="text-muted-foreground">
+                    • Tick-Borne Prophylaxis: Short-course Doxycycline (&lt; 21d) is AAP approved
+                    for confirmed Lyme/RMSF. RMSF requires immediate Doxycycline regardless of age.
+                  </p>
                 </div>
-              </div>
-            );
-          })()}
+              )}
+
+              {effectiveProfile === "pregnant_nursing" && (
+                <div className="space-y-1">
+                  <p className="font-semibold text-purple-700 dark:text-purple-300">
+                    • Pharmacotherapy Contraindications: Doxycycline is CONTRAINDICATED (Category D:
+                    permanent dental staining & bone suppression). Oral Ivermectin and Lindane are
+                    CONTRAINDICATED.
+                  </p>
+                  <p className="text-muted-foreground">
+                    • Safe First-Line Alternatives: Amoxicillin 500 mg PO TID for 14–21 days (or
+                    Cefuroxime axetil 500 mg PO BID) for Lyme disease. Permethrin 5% cream is
+                    Category B and safe for scabies.
+                  </p>
+                  <p className="text-muted-foreground">
+                    • Maternal-Fetal Envenomation: Snakebite/scorpion envenomation risks placental
+                    abruption; requires continuous electronic fetal monitoring and maternal ICU
+                    admission. Antivenom is safe.
+                  </p>
+                </div>
+              )}
+
+              {effectiveProfile === "geriatric_immune" && (
+                <div className="space-y-1">
+                  <p className="font-semibold text-blue-700 dark:text-blue-300">
+                    • Beers Criteria Warning: Strictly avoid sedating 1st-generation antihistamines
+                    (Diphenhydramine) due to high anticholinergic risk of acute delirium, urinary
+                    retention, and fall fractures. Use 2nd-gen Cetirizine or Loratadine.
+                  </p>
+                  <p className="text-muted-foreground">
+                    • Blunted Host Response: Atypical faint Erythema Migrans; Norwegian/crusted
+                    scabies presenting as painless hyperkeratosis; blunted fever spikes.
+                  </p>
+                  <p className="text-muted-foreground">
+                    • Sepsis & Secondary Infection Risk: Accelerated cellulitis and bacteremia in
+                    patients with venous stasis or diabetes; qSOFA screening recommended.
+                  </p>
+                </div>
+              )}
+
+              {effectiveProfile === "standard_adult" && (
+                <p className="text-muted-foreground">
+                  Standard adult toxicological first aid and antimicrobial treatment guidelines
+                  apply.
+                </p>
+              )}
+            </div>
+          </div>
 
           {/* Objective Visual Dermatology Findings */}
           {response.dermatologicalFindings && (
@@ -463,7 +725,7 @@ export function ClinicalSummaryModal({
                 <div>
                   <span className="text-muted-foreground text-[10px] block">Primary Lesion</span>
                   <span className="font-semibold text-foreground capitalize">
-                    {response.dermatologicalFindings.primaryLesion.replace(/_/g, " ")}
+                    {response.dermatologicalFindings.primaryLesion?.replace(/_/g, " ") ?? "None"}
                   </span>
                 </div>
                 <div>

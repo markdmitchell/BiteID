@@ -47,8 +47,10 @@ import { UrgentCareLocator } from "@/components/triage/UrgentCareLocator";
 import { NonVectorLookalikes } from "@/components/triage/NonVectorLookalikes";
 import { RashExpansionTracker } from "@/components/triage/RashExpansionTracker";
 import { OfflineFieldKitModal } from "@/components/triage/OfflineFieldKitModal";
+import { BackcountryPrintableGuideModal } from "@/components/triage/BackcountryPrintableGuideModal";
 import { SnakebiteSurvivalModal } from "@/components/triage/SnakebiteSurvivalModal";
 import { KnownCulpritModal } from "@/components/triage/KnownCulpritModal";
+import { startSilentCacheWarming } from "@/lib/offline-cache";
 import {
   PatientProfileSelector,
   PATIENT_PERSONAS,
@@ -98,12 +100,18 @@ function TriagePage() {
   const [step, setStep] = useState(0);
   const [modalOpen, setModalOpen] = useState(false);
   const [fieldKitOpen, setFieldKitOpen] = useState(false);
+  const [printableGuideOpen, setPrintableGuideOpen] = useState(false);
   const [snakebiteOpen, setSnakebiteOpen] = useState(false);
   const [knownCulpritOpen, setKnownCulpritOpen] = useState(false);
   const [selectedCulpritId, setSelectedCulpritId] = useState<string | null>(null);
   const [status, setStatus] = useState<"idle" | "sending" | "done">("idle");
   const [response, setResponse] = useState<TriageResponse | null>(null);
   const resultsHeadingRef = useRef<HTMLHeadingElement>(null);
+
+  // Silently warm offline cache on mount during idle time (all 32 species + UI)
+  useEffect(() => {
+    startSilentCacheWarming();
+  }, []);
 
   const hasEmergency = form.symptoms.length > 0;
 
@@ -194,6 +202,17 @@ function TriagePage() {
               <Compass className="size-3.5 text-primary" />
               <span className="hidden md:inline">Field Kit</span>
             </Button>
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              aria-label="Open printable backcountry pocket guide"
+              onClick={() => setPrintableGuideOpen(true)}
+              className="hidden sm:inline-flex items-center gap-1.5 border-primary/30 text-xs font-semibold text-primary hover:bg-primary/10"
+            >
+              <Printer className="size-3.5 text-primary" />
+              <span className="hidden md:inline">Pocket Guide</span>
+            </Button>
           </div>
         </div>
       </header>
@@ -220,6 +239,7 @@ function TriagePage() {
             hasEmergency={hasEmergency}
             onReset={reset}
             onOpenFieldKit={() => setFieldKitOpen(true)}
+            onOpenPrintableGuide={() => setPrintableGuideOpen(true)}
             onOpenSnakebite={() => setSnakebiteOpen(true)}
             onOpenKnownCulprit={() => {
               setSelectedCulpritId(null);
@@ -569,6 +589,10 @@ function TriagePage() {
         initialVectorId={selectedCulpritId}
         onOpenSnakebiteSurvival={() => setSnakebiteOpen(true)}
       />
+      <BackcountryPrintableGuideModal
+        open={printableGuideOpen}
+        onOpenChange={setPrintableGuideOpen}
+      />
     </main>
   );
 }
@@ -615,6 +639,7 @@ function ResultsDashboard({
   hasEmergency = false,
   onReset,
   onOpenFieldKit,
+  onOpenPrintableGuide,
   onOpenSnakebite,
   onOpenKnownCulprit,
   headingRef,
@@ -624,6 +649,7 @@ function ResultsDashboard({
   hasEmergency?: boolean;
   onReset: () => void;
   onOpenFieldKit?: () => void;
+  onOpenPrintableGuide?: () => void;
   onOpenSnakebite?: () => void;
   onOpenKnownCulprit?: () => void;
   headingRef: React.RefObject<HTMLHeadingElement | null>;
@@ -667,12 +693,12 @@ function ResultsDashboard({
                 <ul className="list-inside list-disc space-y-1.5 text-muted-foreground">
                   <li>
                     <strong className="text-foreground">Urgent envenomations:</strong> If this is a
-                    suspected venomous snakebite (pit viper), bark scorpion sting, or tick
-                    attachment, immediately check the emergency guidelines in the Field Kit.
+                    suspected venomous snakebite (pit viper), bark scorpion sting, marine hazard, or
+                    tick attachment, immediately check the emergency guidelines in the Field Kit.
                   </li>
                   <li>
                     <strong className="text-foreground">Visual atlas:</strong> Compare your lesion
-                    and captured specimen against the offline 20-species visual database.
+                    and captured specimen against the offline 32-species visual database.
                   </li>
                   <li>
                     <strong className="text-foreground">Automatic sync:</strong> Once you return to
@@ -689,7 +715,21 @@ function ResultsDashboard({
                     Open Backcountry Field Kit
                   </Button>
                 )}
-                <Button onClick={onReset} variant="outline" className="flex items-center gap-2">
+                {onOpenPrintableGuide && (
+                  <Button
+                    onClick={onOpenPrintableGuide}
+                    variant="outline"
+                    className="flex items-center gap-2"
+                  >
+                    <Printer className="size-4" />
+                    Printable Pocket Guide
+                  </Button>
+                )}
+                <Button
+                  onClick={onReset}
+                  variant="ghost"
+                  className="flex items-center gap-2 text-muted-foreground"
+                >
                   <RotateCcw className="size-4" />
                   Start New Intake
                 </Button>
@@ -766,13 +806,24 @@ function ResultsDashboard({
               Field Kit
             </Button>
           )}
+          {onOpenPrintableGuide && (
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={onOpenPrintableGuide}
+              className="font-medium"
+            >
+              <Printer className="size-4 mr-1.5 text-primary" />
+              Pocket Guide
+            </Button>
+          )}
           <Button
             variant="default"
             size="sm"
             onClick={() => setSummaryOpen(true)}
             className="font-medium shadow-xs"
           >
-            <Printer className="size-4 mr-1.5" />
+            <FileText className="size-4 mr-1.5" />
             Doctor Summary (PDF)
           </Button>
           <Button variant="ghost" size="sm" onClick={onReset} className="text-muted-foreground">
