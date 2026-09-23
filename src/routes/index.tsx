@@ -682,10 +682,11 @@ function TriagePage() {
                           Bat or Wild Mammal Direct Contact?
                         </h3>
                         <p className="text-xs text-muted-foreground leading-relaxed">
-                          Did you wake up with a bat in the room, touch a bat with bare skin, or
-                          suffer an unprovoked bite/scratch from a raccoon, skunk, fox, or stray
-                          dog? Bat teeth are microscopic and punctures can be painless and
-                          invisible.
+                          Did you wake up with a bat in your room, tent, or cabin, touch a bat with
+                          bare skin, or suffer an unprovoked bite/scratch from a raccoon, skunk,
+                          fox, or stray mammal? CDC guidance states bat teeth are microscopic and
+                          punctures can be completely painless and invisible, yet rabies is 100%
+                          fatal without prompt Post-Exposure Prophylaxis (PEP).
                         </p>
                         <label className="mt-3 flex cursor-pointer items-center gap-3 rounded-md border border-destructive/40 bg-background/80 p-3 transition-colors hover:bg-destructive/10">
                           <Checkbox

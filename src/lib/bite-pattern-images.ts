@@ -101,6 +101,26 @@ import softTickIii from "@/assets/bite-patterns/soft-tick-i-ii.jpg";
 import softTickIiiIv from "@/assets/bite-patterns/soft-tick-iii-iv.jpg";
 import softTickVvi from "@/assets/bite-patterns/soft-tick-v-vi.jpg";
 
+import wolfSpiderIii from "@/assets/bite-patterns/wolf-spider-i-ii.jpg";
+import wolfSpiderIiiIv from "@/assets/bite-patterns/wolf-spider-iii-iv.jpg";
+import wolfSpiderVvi from "@/assets/bite-patterns/wolf-spider-v-vi.jpg";
+
+import brownWidowIii from "@/assets/bite-patterns/brown-widow-i-ii.jpg";
+import brownWidowIiiIv from "@/assets/bite-patterns/brown-widow-iii-iv.jpg";
+import brownWidowVvi from "@/assets/bite-patterns/brown-widow-v-vi.jpg";
+
+import gulfCoastTickIii from "@/assets/bite-patterns/gulf-coast-tick-i-ii.jpg";
+import gulfCoastTickIiiIv from "@/assets/bite-patterns/gulf-coast-tick-iii-iv.jpg";
+import gulfCoastTickVvi from "@/assets/bite-patterns/gulf-coast-tick-v-vi.jpg";
+
+import woodTickIii from "@/assets/bite-patterns/wood-tick-i-ii.jpg";
+import woodTickIiiIv from "@/assets/bite-patterns/wood-tick-iii-iv.jpg";
+import woodTickVvi from "@/assets/bite-patterns/wood-tick-v-vi.jpg";
+
+import saddlebackCaterpillarIii from "@/assets/bite-patterns/saddleback-caterpillar-i-ii.jpg";
+import saddlebackCaterpillarIiiIv from "@/assets/bite-patterns/saddleback-caterpillar-iii-iv.jpg";
+import saddlebackCaterpillarVvi from "@/assets/bite-patterns/saddleback-caterpillar-v-vi.jpg";
+
 // Temporal Evolution Progression Images
 import brownRecluseEarlyIii from "@/assets/bite-patterns/brown-recluse-early-i-ii.jpg";
 import brownRecluseEarlyIiiIv from "@/assets/bite-patterns/brown-recluse-early-iii-iv.jpg";
@@ -554,6 +574,56 @@ const BITE_PATTERNS: Record<string, BitePatternSet> = {
       "i-ii": softTickIii,
       "iii-iv": softTickIiiIv,
       "v-vi": softTickVvi,
+    },
+  },
+  wolf_spider: {
+    label: "Wolf spider",
+    pattern:
+      "acute solitary erythematous wheal with dual puncture puncta and localized inflammatory edema without central necrosis",
+    images: {
+      "i-ii": wolfSpiderIii,
+      "iii-iv": wolfSpiderIiiIv,
+      "v-vi": wolfSpiderVvi,
+    },
+  },
+  brown_widow: {
+    label: "Brown widow spider",
+    pattern:
+      "erythematous plaque or wheal with localized diaphoresis (sweating) and localized piloerection (goosebumps)",
+    images: {
+      "i-ii": brownWidowIii,
+      "iii-iv": brownWidowIiiIv,
+      "v-vi": brownWidowVvi,
+    },
+  },
+  gulf_coast_tick: {
+    label: "Gulf Coast tick",
+    pattern:
+      "pathognomonic tache noire inoculation eschar (black crusted necrotic lesion with erythematous halo) and papular flare",
+    images: {
+      "i-ii": gulfCoastTickIii,
+      "iii-iv": gulfCoastTickIiiIv,
+      "v-vi": gulfCoastTickVvi,
+    },
+  },
+  wood_tick: {
+    label: "Rocky Mountain wood tick",
+    pattern:
+      "firm indurated papule at tick attachment site with surrounding erythema and regional lymphadenopathy",
+    images: {
+      "i-ii": woodTickIii,
+      "iii-iv": woodTickIiiIv,
+      "v-vi": woodTickVvi,
+    },
+  },
+  saddleback_caterpillar: {
+    label: "Saddleback caterpillar",
+    pattern:
+      "linear or grid-like rows of intensely erythematous urticarial tracks with vesicular eruption and burning edema",
+    images: {
+      "i-ii": saddlebackCaterpillarIii,
+      "iii-iv": saddlebackCaterpillarIiiIv,
+      "v-vi": saddlebackCaterpillarVvi,
     },
   },
 };

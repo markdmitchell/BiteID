@@ -33,6 +33,11 @@ export const VECTOR_URGENCY_MAP: Record<string, "critical" | "urgent" | "non_urg
   lice: "non_urgent",
   yellow_sac_spider: "non_urgent",
   minute_pirate_bug: "non_urgent",
+  wolf_spider: "non_urgent",
+  brown_widow: "urgent",
+  gulf_coast_tick: "urgent",
+  wood_tick: "urgent",
+  saddleback_caterpillar: "urgent",
 };
 
 export const VULNERABLE_GUIDANCE_MAP: Record<string, VulnerablePopulationGuidance> = {

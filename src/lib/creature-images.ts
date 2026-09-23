@@ -30,6 +30,11 @@ import scabies from "@/assets/creatures/scabies.jpg";
 import brownDogTick from "@/assets/creatures/brown-dog-tick.jpg";
 import minutePirateBug from "@/assets/creatures/minute-pirate-bug.jpg";
 import softTick from "@/assets/creatures/soft-tick.jpg";
+import wolfSpider from "@/assets/creatures/wolf-spider.jpg";
+import brownWidow from "@/assets/creatures/brown-widow.jpg";
+import gulfCoastTick from "@/assets/creatures/gulf-coast-tick.jpg";
+import woodTick from "@/assets/creatures/wood-tick.jpg";
+import saddlebackCaterpillar from "@/assets/creatures/saddleback-caterpillar.jpg";
 
 type CreatureReference = {
   src: string;
@@ -164,6 +169,26 @@ export const CREATURE_REFERENCES: Record<string, CreatureReference> = {
   soft_tick: {
     src: softTick,
     alt: "AI-generated field-guide reference of a soft relapsing fever tick (Ornithodoros hermsi)",
+  },
+  wolf_spider: {
+    src: wolfSpider,
+    alt: "AI-generated field-guide reference of a North American wolf spider (Lycosidae)",
+  },
+  brown_widow: {
+    src: brownWidow,
+    alt: "Field-guide reference of a female brown widow spider (Latrodectus geometricus)",
+  },
+  gulf_coast_tick: {
+    src: gulfCoastTick,
+    alt: "Field-guide reference of a Gulf Coast tick (Amblyomma maculatum)",
+  },
+  wood_tick: {
+    src: woodTick,
+    alt: "Field-guide reference of a Rocky Mountain wood tick (Dermacentor andersoni)",
+  },
+  saddleback_caterpillar: {
+    src: saddlebackCaterpillar,
+    alt: "Field-guide reference of a stinging saddleback caterpillar (Acharia stimulea)",
   },
 };
 

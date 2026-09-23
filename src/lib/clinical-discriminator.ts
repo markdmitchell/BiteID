@@ -137,6 +137,109 @@ const CLINICAL_PAIR_DISCRIMINATORS: Record<
       "Never apply freshwater to suspected jellyfish tentacles (triggers remaining nematocyst discharge).",
     ],
   },
+  "wolf_spider-brown_recluse": {
+    differentiator:
+      "Wolf spider bites cause instantaneous sharp mechanical pain, visible cheliceral puncture puncta, and localized edema that resolves within 24–48 hours WITHOUT necrotic tissue breakdown or sinking violaceous eschars.",
+    primaryFavoredReasons: [
+      "Immediate pinprick or bee-sting-like pain upon contact, with two visible puncture marks from large chelicerae.",
+      "Localized erythematous wheal and mild edema (1–3 cm) that peaks quickly and subsides within 48 hours.",
+      "Venom is strictly non-necrotic and non-cytotoxic to human dermal tissue.",
+    ],
+    secondaryDisadvantagedReasons: [
+      "Brown recluse bites are typically painless or mild initially; pain escalates 2–8 hours later as sphingomyelinase D causes microvascular thrombosis.",
+      "Recluse lesions develop central ischemia (blanching halo) followed by a sinking blue-gray violaceous bleb and necrotic ulceration.",
+      "Brown recluses are shy synanthropic spiders with a strictly limited geographic range centered in the South-Central US.",
+    ],
+    clinicalConfirmation: [
+      "Outline the erythematous border with a pen; wolf spider erythema regresses within 24–48 hours, while necrotic recluse lesions expand and ulcerate over days.",
+      "Check for a sinking center; absence of central cyanosis, induration, or necrosis rules out severe loxoscelism.",
+    ],
+  },
+  "brown_recluse-wolf_spider": {
+    differentiator:
+      "Delayed-onset intense pain, central ischemic blanching, and progressive violaceous sinking necrosis ('red, white, and blue') favor Brown Recluse over the benign, non-ulcerating mechanical bite of a Wolf Spider.",
+    primaryFavoredReasons: [
+      "Classic necrotic tri-color sign: central dusky blue-gray necrosis, intermediate blanched white ischemia, and peripheral erythematous flare.",
+      "Delayed severe pain onset (hours after exposure) typical of cytotoxic loxoscelism.",
+      "Absence of immediate sharp mechanical trauma.",
+    ],
+    secondaryDisadvantagedReasons: [
+      "Wolf spider bites cause immediate stinging pain with prominent dual punctures and resolve spontaneously without tissue necrosis.",
+      "Wolf spiders never cause dermonecrotic ulceration.",
+    ],
+    clinicalConfirmation: [
+      "Do NOT debride or excise the lesion in early stages; provide wound rest, ice, and elevation.",
+      "Monitor for systemic loxoscelism (fever, chills, dark urine from intravascular hemolysis).",
+    ],
+  },
+  "brown_widow-black_widow": {
+    differentiator:
+      "Brown widow envenomation typically produces localized burning pain with pathognomonic local diaphoresis (sweating) and goosebumps around the bite, whereas black widow venom delivers high alpha-latrotoxin loads causing severe ascending abdominal wall rigidity.",
+    primaryFavoredReasons: [
+      "Localized piloerection (goosebumps) and prominent diaphoresis confined to the immediate bite area.",
+      "Mild to moderate localized pain without board-like abdominal muscle guarding.",
+      "Presence of white geometric abdominal chevron patterns and spiked 'spiny' egg sacs in outdoor web habitats.",
+    ],
+    secondaryDisadvantagedReasons: [
+      "Black widow bites induce massive systemic acetylcholine release causing excruciating muscle cramps traveling to the abdomen, back, and thighs.",
+      "Black widow latrodectism often induces marked hypertension, tachycardia, and facial grimacing (facies latrodectismica).",
+    ],
+    clinicalConfirmation: [
+      "Palpate abdomen: a soft, non-tender abdomen rules out severe black widow latrodectism.",
+      "Monitor blood pressure and evaluate for localized sweating rings around the puncture site.",
+    ],
+  },
+  "saddleback_caterpillar-asp_caterpillar": {
+    differentiator:
+      "Saddleback caterpillars leave linear or grid-like rows of urticarial spine tracks and possess a distinct green-and-brown saddle pattern, whereas Asp caterpillars have dense woolly hairs that produce agonizing radiating bone-deep limb ache and grid-like hemorrhagic puncture grids.",
+    primaryFavoredReasons: [
+      "Linear or patchy erythematous wheals directly matching clusters of venomous hollow spines.",
+      "Immediate fiery electric burning pain upon brush contact.",
+      "Distinctive specimen appearance: slug-shaped green body with a purplish-brown central saddle and horn-like spine clusters.",
+    ],
+    secondaryDisadvantagedReasons: [
+      "Asp caterpillar (puss moth) envenomations typically cause significantly more severe radiating pain extending up entire limb to regional lymph nodes.",
+      "Asp caterpillars possess a teardrop hairy woolly 'toupee' appearance rather than a bare green saddle.",
+    ],
+    clinicalConfirmation: [
+      "Apply adhesive cellophane tape to the contact site to strip remaining venomous hollow spines.",
+      "Apply ice packs and topical corticosteroids to reduce burning urticarial inflammation.",
+    ],
+  },
+  "gulf_coast_tick-dog_tick": {
+    differentiator:
+      "Gulf Coast tick bites frequently develop a pathognomonic 'tache noire' (a dark, crusted black inoculation eschar with an erythematous halo) at the attachment site prior to Rickettsia parkeri spotted fever, whereas American dog tick bites typically present with an erythematous papule without a necrotic eschar.",
+    primaryFavoredReasons: [
+      "Development of a dark, non-painful black crusted eschar (*tache noire*) at the attachment site 4–10 days post-tick removal.",
+      "Endemic along the Gulf Coast and Mid-Atlantic coastal marshes, pine flatwoods, and prairie grass.",
+      "Associated with milder spotted fever rickettsiosis (fever, headache, eschar).",
+    ],
+    secondaryDisadvantagedReasons: [
+      "American dog ticks (transmitting Rocky Mountain Spotted Fever) rarely produce an inoculation eschar at the bite site.",
+      "RMSF rash begins peripherally on wrists and ankles and spreads centripetally, whereas R. parkeri is heralded by the local eschar.",
+    ],
+    clinicalConfirmation: [
+      "Examine tick attachment site for black crusted eschar; presence confirms R. parkeri rickettsiosis.",
+      "Initiate oral doxycycline 100 mg twice daily promptly if systemic fever or maculopapular rash develops.",
+    ],
+  },
+  "wood_tick-dog_tick": {
+    differentiator:
+      "Rocky Mountain wood ticks inhabit high-elevation montane brush and sagebrush (>4,000 ft) in the Intermountain West and can transmit Colorado Tick Fever or produce ascending reversible Tick Paralysis, whereas American dog ticks predominate in lower-elevation eastern grasslands and deciduous forests.",
+    primaryFavoredReasons: [
+      "Geographic exposure in high-elevation montane conifer forests or sagebrush of the Rocky Mountain states.",
+      "Risk of biphasic 'saddleback' fever, chills, and severe retro-orbital headache characteristic of Colorado Tick Fever (CTFV).",
+      "Risk of salivary neurotoxin-mediated ascending flaccid paralysis (Tick Paralysis).",
+    ],
+    secondaryDisadvantagedReasons: [
+      "American dog ticks predominate east of the Rocky Mountains in humid open fields and shrubland.",
+      "Dog ticks transmit RMSF and Tularemia, but do not transmit Colorado Tick Fever virus.",
+    ],
+    clinicalConfirmation: [
+      "If ataxia or progressive lower-extremity weakness appears, conduct an immediate exhaustive scalp check; removing the attached wood tick rapidly reverses paralysis.",
+      "Check complete blood count for leukopenia and thrombocytopenia typical of Colorado Tick Fever.",
+    ],
+  },
 };
 
 /**

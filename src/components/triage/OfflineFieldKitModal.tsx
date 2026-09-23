@@ -41,7 +41,7 @@ export function OfflineFieldKitModal({
   onOpenSnakebiteSurvival,
 }: OfflineFieldKitModalProps) {
   const [activeTab, setActiveTab] = useState<
-    "snakes_scorpions" | "marine" | "atlas" | "tick_firstaid" | "queue"
+    "snakes_scorpions" | "marine" | "atlas" | "tick_firstaid" | "rabies_mammal" | "queue"
   >("snakes_scorpions");
   const [searchQuery, setSearchQuery] = useState("");
   const [habitatFilter, setHabitatFilter] = useState<string>("all");
@@ -214,6 +214,18 @@ export function OfflineFieldKitModal({
             >
               <HeartPulse className="size-4" />
               <span>Tick Removal & Anaphylaxis</span>
+            </button>
+            <button
+              type="button"
+              onClick={() => setActiveTab("rabies_mammal")}
+              className={`flex items-center gap-1.5 px-3 py-2.5 border-b-2 transition-all whitespace-nowrap ${
+                activeTab === "rabies_mammal"
+                  ? "border-primary text-primary font-bold"
+                  : "border-transparent text-muted-foreground hover:text-foreground"
+              }`}
+            >
+              <AlertTriangle className="size-4 text-amber-500" />
+              <span>Rabies & Mammalian Bites</span>
             </button>
             <button
               type="button"
@@ -878,6 +890,178 @@ export function OfflineFieldKitModal({
                       </p>
                     </div>
                   </div>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Tab: Rabies & Mammalian Bites Backcountry Protocol */}
+          {activeTab === "rabies_mammal" && (
+            <div className="p-5 sm:p-6 space-y-6">
+              {/* Critical Alert Box */}
+              <div className="rounded-2xl border-2 border-red-500/40 bg-red-500/10 p-4 sm:p-5 text-xs sm:text-sm text-foreground space-y-2">
+                <div className="flex items-center gap-2 font-bold text-red-600 dark:text-red-400 uppercase tracking-wide">
+                  <AlertOctagon className="size-5" />
+                  <span>Time-Critical Rabies & Mammalian Bite Protocol</span>
+                </div>
+                <p className="leading-relaxed">
+                  Rabies is an acute viral encephalomyelitis with a{" "}
+                  <strong>~100% fatality rate</strong> once clinical symptoms appear. However, it is{" "}
+                  <strong>100% preventable</strong> with prompt post-exposure prophylaxis (PEP)
+                  administered before the virus enters peripheral nerves. In backcountry
+                  environments, initiate the 15-minute wound wash immediately and coordinate
+                  evacuation to an emergency medical facility.
+                </p>
+              </div>
+
+              {/* Step 1: Immediate Backcountry Wound Wash */}
+              <div className="rounded-2xl border border-border bg-card p-5 space-y-3 shadow-xs">
+                <div className="flex items-center gap-2 text-primary font-bold text-sm">
+                  <span className="flex size-6 items-center justify-center rounded-full bg-primary/15 text-xs">
+                    1
+                  </span>
+                  <span>Immediate First Aid: The 15-Minute Wash (Critical Life-Saving Step)</span>
+                </div>
+                <p className="text-xs text-muted-foreground leading-relaxed">
+                  According to the CDC and World Health Organization, vigorous mechanical cleansing
+                  of animal bite or scratch wounds with copious water and soap can reduce the viral
+                  inoculum by <strong>greater than 90%</strong>.
+                </p>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+                  <div className="rounded-xl border border-border bg-muted/30 p-3 space-y-1">
+                    <span className="font-bold text-foreground">Soap & Copious Running Water:</span>
+                    <p className="text-muted-foreground">
+                      Irrigate the wound vigorously for a minimum of{" "}
+                      <strong>15 continuous minutes</strong> using camp soap, iodophor solution
+                      (povidone-iodine), or potable water from a hydration bladder.
+                    </p>
+                  </div>
+                  <div className="rounded-xl border border-border bg-muted/30 p-3 space-y-1">
+                    <span className="font-bold text-foreground">
+                      Do NOT Suture / Bandage Tight:
+                    </span>
+                    <p className="text-muted-foreground">
+                      Leave animal bite wounds open to drain unless severe arterial bleeding demands
+                      direct pressure. Never seal or butterfly-bandage an animal puncture in the
+                      backcountry.
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Step 2: The Invisible Bat Bite Rule */}
+              <div className="rounded-2xl border border-amber-500/30 bg-amber-500/5 p-5 space-y-3">
+                <div className="flex items-center gap-2 text-amber-600 dark:text-amber-400 font-bold text-sm">
+                  <AlertTriangle className="size-4 shrink-0" />
+                  <span>The CDC "Bat in the Sleeping Area" Rule</span>
+                </div>
+                <p className="text-xs text-foreground/90 leading-relaxed">
+                  Bat teeth are razor-fine (often &lt;1 mm long). Punctures can be{" "}
+                  <strong>completely invisible, painless, and produce zero bleeding</strong>. Bats
+                  cause ~70% of human rabies cases in the United States.
+                </p>
+                <div className="rounded-xl bg-card border border-border p-3 text-xs text-muted-foreground space-y-1">
+                  <span className="font-semibold text-foreground">
+                    High-Risk Scenarios Requiring Immediate Rabies PEP:
+                  </span>
+                  <ul className="list-disc pl-4 space-y-1">
+                    <li>Waking up to find a bat in your tent, cabin, sleeping bag, or bedroom.</li>
+                    <li>
+                      A bat found in the same room as an unattended child, intoxicated adult, or
+                      sleeping person.
+                    </li>
+                    <li>Direct bare-skin contact with a bat, even if no bite mark is seen.</li>
+                  </ul>
+                </div>
+              </div>
+
+              {/* Step 3: High-Risk vs Low-Risk North American Species */}
+              <div className="rounded-2xl border border-border bg-card p-5 space-y-3 shadow-xs">
+                <h4 className="font-display text-sm font-bold text-foreground">
+                  North American Wildlife Rabies Reservoir Guide
+                </h4>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs">
+                  <div className="rounded-xl border border-red-500/30 bg-red-500/5 p-3 space-y-1.5">
+                    <div className="flex items-center gap-1.5 font-bold text-red-600 dark:text-red-400">
+                      <AlertOctagon className="size-4" />
+                      <span>HIGH-RISK CARRIERS (Assume Rabid Until Tested)</span>
+                    </div>
+                    <ul className="list-disc pl-4 space-y-1 text-muted-foreground">
+                      <li>
+                        <strong>Bats:</strong> All species nationwide.
+                      </li>
+                      <li>
+                        <strong>Raccoons:</strong> Eastern Seaboard from Maine to Florida.
+                      </li>
+                      <li>
+                        <strong>Skunks:</strong> Midwest, Central Plains, California, Texas.
+                      </li>
+                      <li>
+                        <strong>Foxes:</strong> Southwest, Eastern US, and Alaska.
+                      </li>
+                      <li>
+                        <strong>Coyotes &amp; Bobcat:</strong> Occasional regional spillover.
+                      </li>
+                      <li>
+                        <strong>Feral Dogs &amp; Cats:</strong> High risk if vaccination status is
+                        unknown.
+                      </li>
+                    </ul>
+                  </div>
+                  <div className="rounded-xl border border-emerald-500/30 bg-emerald-500/5 p-3 space-y-1.5">
+                    <div className="flex items-center gap-1.5 font-bold text-emerald-600 dark:text-emerald-400">
+                      <ShieldCheck className="size-4" />
+                      <span>ALMOST NEVER RABID (Low Rabies Risk)</span>
+                    </div>
+                    <ul className="list-disc pl-4 space-y-1 text-muted-foreground">
+                      <li>
+                        <strong>Small Rodents:</strong> Squirrels, chipmunks, mice, rats, voles.
+                      </li>
+                      <li>
+                        <strong>Lagomorphs:</strong> Rabbits, hares, pikas.
+                      </li>
+                      <li>
+                        <strong>Opossums:</strong> Body temperature is usually too low for rabies
+                        virus replication.
+                      </li>
+                      <li>
+                        <em>Note:</em> Small rodent bites still require wound disinfection and
+                        tetanus booster evaluation (Rat-Bite Fever risk).
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+
+              {/* Step 4: Backcountry Evacuation & Medical Action */}
+              <div className="rounded-2xl border border-border bg-card p-5 space-y-3 shadow-xs">
+                <div className="flex items-center gap-2 text-primary font-bold text-sm">
+                  <Compass className="size-4" />
+                  <span>Evacuation &amp; Clinical PEP Schedule</span>
+                </div>
+                <div className="space-y-2 text-xs text-muted-foreground">
+                  <p>
+                    <strong>Rabies Post-Exposure Prophylaxis (PEP)</strong> should be initiated as
+                    soon as possible, ideally within <strong>24 to 72 hours</strong>:
+                  </p>
+                  <ol className="list-decimal pl-5 space-y-1 text-foreground/90">
+                    <li>
+                      <strong>Human Rabies Immune Globulin (HRIG):</strong> 20 IU/kg infiltrated
+                      directly into and around the wound on Day 0 for immediate passive antibody
+                      coverage.
+                    </li>
+                    <li>
+                      <strong>Rabies Vaccine (4 doses):</strong> 1.0 mL intramuscularly in the
+                      deltoid muscle on <strong>Days 0, 3, 7, and 14</strong> (Day 28 added for
+                      immunocompromised patients).
+                    </li>
+                  </ol>
+                  <p className="mt-2 text-muted-foreground">
+                    <strong>Wildlife Quarantine:</strong> If safe, contain the animal without
+                    endangering yourself. <em>Never damage the head or brain</em>, as public health
+                    laboratories require intact neural tissue for the Direct Fluorescent Antibody
+                    (DFA) test.
+                  </p>
                 </div>
               </div>
             </div>
