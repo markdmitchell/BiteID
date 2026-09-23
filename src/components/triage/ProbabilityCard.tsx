@@ -52,7 +52,9 @@ export function ProbabilityCard({
             {rank + 1}
           </span>
           <div className="min-w-0">
-            <h3 className="font-display text-base font-semibold leading-snug text-foreground">{nameOf(item)}</h3>
+            <h3 className="font-display text-base font-semibold leading-snug text-foreground">
+              {nameOf(item)}
+            </h3>
             {item.scientificName && (
               <p className="text-xs italic text-muted-foreground">{item.scientificName}</p>
             )}

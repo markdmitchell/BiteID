@@ -64,6 +64,15 @@ import blisterBeetleVvi from "@/assets/bite-patterns/blister-beetle-v-vi.jpg";
 import pitViperIii from "@/assets/bite-patterns/pit-viper-i-ii.jpg";
 import pitViperIiiIv from "@/assets/bite-patterns/pit-viper-iii-iv.jpg";
 import pitViperVvi from "@/assets/bite-patterns/pit-viper-v-vi.jpg";
+import coralSnakeIii from "@/assets/bite-patterns/coral-snake-i-ii.jpg";
+import coralSnakeIiiIv from "@/assets/bite-patterns/coral-snake-iii-iv.jpg";
+import coralSnakeVvi from "@/assets/bite-patterns/coral-snake-v-vi.jpg";
+import giantCentipedeIii from "@/assets/bite-patterns/giant-centipede-i-ii.jpg";
+import giantCentipedeIiiIv from "@/assets/bite-patterns/giant-centipede-iii-iv.jpg";
+import giantCentipedeVvi from "@/assets/bite-patterns/giant-centipede-v-vi.jpg";
+import aspCaterpillarIii from "@/assets/bite-patterns/asp-caterpillar-i-ii.jpg";
+import aspCaterpillarIiiIv from "@/assets/bite-patterns/asp-caterpillar-iii-iv.jpg";
+import aspCaterpillarVvi from "@/assets/bite-patterns/asp-caterpillar-v-vi.jpg";
 
 export type BitePatternSet = {
   label: string;
@@ -190,6 +199,24 @@ const BITE_PATTERNS: Record<string, BitePatternSet> = {
     label: "Pit viper (Copperhead / Rattlesnake)",
     pattern: "two distinct deep puncture fang marks with progressive edema and ecchymosis",
     images: { "i-ii": pitViperIii, "iii-iv": pitViperIiiIv, "v-vi": pitViperVvi },
+  },
+  coral_snake: {
+    label: "Coral snake",
+    pattern:
+      "two small, subtle puncture marks with minimal localized swelling but severe delayed neurotoxicity",
+    images: { "i-ii": coralSnakeIii, "iii-iv": coralSnakeIiiIv, "v-vi": coralSnakeVvi },
+  },
+  giant_centipede: {
+    label: "Giant desert centipede",
+    pattern:
+      "two distinct claw puncture points with intense burning erythema, induration, and spreading edema",
+    images: { "i-ii": giantCentipedeIii, "iii-iv": giantCentipedeIiiIv, "v-vi": giantCentipedeVvi },
+  },
+  asp_caterpillar: {
+    label: "Puss caterpillar (Asp)",
+    pattern:
+      "characteristic linear or grid-like track of erythematous petechial papules and severe radiating pain",
+    images: { "i-ii": aspCaterpillarIii, "iii-iv": aspCaterpillarIiiIv, "v-vi": aspCaterpillarVvi },
   },
 };
 

@@ -12,7 +12,14 @@ type UploadCardProps = {
   compact?: boolean;
 };
 
-export function UploadCard({ title, hint, required, file, onChange, compact = false }: UploadCardProps) {
+export function UploadCard({
+  title,
+  hint,
+  required,
+  file,
+  onChange,
+  compact = false,
+}: UploadCardProps) {
   const inputRef = useRef<HTMLInputElement>(null);
   const [preview, setPreview] = useState<string | null>(null);
   const [dragging, setDragging] = useState(false);
@@ -77,7 +84,11 @@ export function UploadCard({ title, hint, required, file, onChange, compact = fa
       <div className="mt-4 flex-1">
         {preview ? (
           <div className="relative overflow-hidden rounded-md border border-border bg-muted">
-            <img src={preview} alt={`${title} preview`} className={cn("w-full object-cover", compact ? "h-28" : "h-48")} />
+            <img
+              src={preview}
+              alt={`${title} preview`}
+              className={cn("w-full object-cover", compact ? "h-28" : "h-48")}
+            />
             <Button
               type="button"
               variant="secondary"
@@ -106,7 +117,11 @@ export function UploadCard({ title, hint, required, file, onChange, compact = fa
         )}
       </div>
 
-      {error && <p role="alert" className="mt-3 text-xs font-medium text-destructive">{error}</p>}
+      {error && (
+        <p role="alert" className="mt-3 text-xs font-medium text-destructive">
+          {error}
+        </p>
+      )}
 
       {file && (
         <p className="mt-3 truncate text-xs text-muted-foreground">

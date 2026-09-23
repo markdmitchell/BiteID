@@ -958,6 +958,174 @@ export const VECTOR_DATABASE: Record<string, VectorInfo> = {
       "Two distinct deep puncture marks with rapid spreading swelling, severe burning pain, or ecchymosis.",
     ],
   },
+  coral_snake: {
+    id: "coral_snake",
+    bodyLocationScores: {
+      feet: 1.6,
+      lower_leg_ankle: 1.8,
+      arms_hands: 1.9,
+      trunk_chest_back: 0.1,
+      waist_groin_axilla: 0.1,
+      face_head: 0.1,
+      any_unspecified: 1,
+    },
+    name: "Coral Snake",
+    scientificName: "Micrurus fulvius / tener",
+    endemicStates: [
+      "US-FL",
+      "US-GA",
+      "US-SC",
+      "US-NC",
+      "US-AL",
+      "US-MS",
+      "US-LA",
+      "US-TX",
+      "US-AR",
+    ],
+    nonEndemicStates: [],
+    seasonalMultiplier: [0.05, 0.1, 0.4, 0.8, 1.0, 1.0, 0.9, 0.9, 0.9, 0.6, 0.2, 0.05],
+    habitatScores: {
+      yard_garden: 1.0,
+      tall_grass_woods: 1.0,
+      outdoor_other: 0.8,
+      garage_shed: 0.5,
+      indoor_other: 0.1,
+      bed: 0.05,
+    },
+    sensationScores: {
+      mild_pain: 0.9,
+      moderate_pain: 0.6,
+      painless: 0.8,
+      severe_pain: 0.2,
+      intense_itch: 0.05,
+      mild_itch: 0.1,
+    },
+    baseWeight: 0.2,
+    associatedPathogens: ["Neurotoxic Envenomation (Postsynaptic Neurotoxin)"],
+    delayedRisks: ["Respiratory paralysis, ptosis, bulbar palsy, respiratory arrest"],
+    firstAidAdvice: [
+      "CRITICAL: Keep victim completely calm and still; immobilize the bitten limb at heart level.",
+      "Do NOT wait for symptoms or pain — coral snake venom causes minimal local swelling but causes delayed respiratory collapse.",
+      "Call 911 / emergency services immediately for transport to an antivenin-capable facility (North American Coral Snake Antivenin).",
+      "DO NOT cut, apply ice, tourniquet, or use suction devices.",
+    ],
+    warningSigns: [
+      "Small subtle puncture marks followed hours later by drooping eyelids (ptosis), double vision, difficulty swallowing, or slurred speech.",
+    ],
+  },
+  giant_centipede: {
+    id: "giant_centipede",
+    bodyLocationScores: {
+      feet: 1.8,
+      lower_leg_ankle: 1.7,
+      arms_hands: 1.5,
+      trunk_chest_back: 0.5,
+      waist_groin_axilla: 0.3,
+      face_head: 0.2,
+      any_unspecified: 1,
+    },
+    name: "Giant Desert Centipede",
+    scientificName: "Scolopendra heros / polymorpha",
+    endemicStates: [
+      "US-TX",
+      "US-AZ",
+      "US-NM",
+      "US-UT",
+      "US-NV",
+      "US-CA",
+      "US-OK",
+      "US-AR",
+      "US-LA",
+      "US-MO",
+    ],
+    nonEndemicStates: [],
+    seasonalMultiplier: [0.1, 0.1, 0.4, 0.7, 0.9, 1.0, 1.0, 1.0, 0.9, 0.6, 0.2, 0.1],
+    habitatScores: {
+      outdoor_other: 1.0,
+      garage_shed: 0.8,
+      yard_garden: 0.8,
+      tall_grass_woods: 0.6,
+      indoor_other: 0.4,
+      bed: 0.2,
+    },
+    sensationScores: {
+      severe_pain: 1.0,
+      moderate_pain: 0.8,
+      mild_pain: 0.1,
+      intense_itch: 0.1,
+      painless: 0.01,
+    },
+    baseWeight: 0.2,
+    associatedPathogens: ["Secondary bacterial infection"],
+    delayedRisks: ["Local tissue necrosis, cellulitis, lymphangitis"],
+    firstAidAdvice: [
+      "Wash thoroughly with soap and water.",
+      "Immerse bite area in hot water (as hot as comfortably tolerable, 104°F–113°F / 40°C–45°C) or apply hot compresses to denature heat-sensitive toxins.",
+      "Apply ice packs afterwards if heat is unavailable or for residual throbbing edema.",
+      "Take oral analgesics (ibuprofen or acetaminophen) and ensure tetanus vaccination is up to date.",
+    ],
+    warningSigns: [
+      "Paired claw puncture marks with excruciating burning pain, spreading red streaking (lymphangitis), or expanding dark necrosis.",
+    ],
+  },
+  asp_caterpillar: {
+    id: "asp_caterpillar",
+    bodyLocationScores: {
+      arms_hands: 1.9,
+      face_head: 1.2,
+      trunk_chest_back: 0.9,
+      lower_leg_ankle: 0.8,
+      feet: 0.5,
+      waist_groin_axilla: 0.3,
+      any_unspecified: 1,
+    },
+    name: "Puss Caterpillar (Asp)",
+    scientificName: "Megalopyge opercularis",
+    endemicStates: [
+      "US-TX",
+      "US-FL",
+      "US-GA",
+      "US-SC",
+      "US-NC",
+      "US-VA",
+      "US-MD",
+      "US-AL",
+      "US-MS",
+      "US-LA",
+      "US-AR",
+      "US-OK",
+    ],
+    nonEndemicStates: [],
+    seasonalMultiplier: [0.05, 0.05, 0.2, 0.5, 0.8, 1.0, 0.9, 0.9, 1.0, 0.8, 0.3, 0.05],
+    habitatScores: {
+      yard_garden: 1.0,
+      tall_grass_woods: 1.0,
+      outdoor_other: 0.9,
+      garage_shed: 0.3,
+      indoor_other: 0.1,
+      bed: 0.05,
+    },
+    sensationScores: {
+      severe_pain: 1.0,
+      intense_itch: 0.9,
+      moderate_pain: 0.7,
+      mild_pain: 0.1,
+      painless: 0.01,
+    },
+    baseWeight: 0.25,
+    associatedPathogens: ["Urticating spine envenomation"],
+    delayedRisks: ["Radiating neuropathic limb pain, regional lymphadenopathy, systemic shock"],
+    firstAidAdvice: [
+      "DO NOT rub or brush with a cloth — this drives spines deeper and breaks off more venom sacs.",
+      "Apply adhesive tape (duct tape, cellophane tape) over the sting site and gently strip it off repeatedly to extract embedded spines.",
+      "Wash area gently with soap and cool water.",
+      "Apply an ice pack to suppress burning and pain; apply 1% hydrocortisone cream for itching.",
+      "Seek urgent care if pain radiates up the limb to the chest/axilla, or if nausea/vomiting occurs.",
+    ],
+    warningSigns: [
+      "Characteristic 'grid-like' or 'tire-tread' hemorrhagic track pattern accompanied by severe throbbing pain radiating up the limb, nausea, or breathing distress.",
+    ],
+  },
 };
 
 export const DEFAULT_MCNAIR_VA_COORDINATES = {
@@ -1242,6 +1410,23 @@ export function evaluateRegionalLikelihood(
         if (key === "scorpion" && sensation === "severe_pain") score *= 9.0;
         if (key === "horse_fly" && (sensation === "severe_pain" || sensation === "moderate_pain"))
           score *= 9.0;
+        if (
+          key === "giant_centipede" &&
+          (sensation === "severe_pain" || sensation === "moderate_pain")
+        )
+          score *= 10.0;
+        if (
+          key === "asp_caterpillar" &&
+          (sensation === "severe_pain" || sensation === "intense_itch")
+        )
+          score *= 10.0;
+      }
+      if (morphObj.pattern === "linear_grouped") {
+        if (key === "asp_caterpillar") score *= 20.0;
+        if (key === "bed_bug") score *= 6.0;
+        if (key === "flea") score *= 5.0;
+        if (key === "chigger") score *= 5.0;
+        if (key === "lice") score *= 4.0;
       }
       if (
         morphObj.pattern === "scattered_papules" ||
@@ -1262,6 +1447,8 @@ export function evaluateRegionalLikelihood(
       }
       if (morphObj.centralFeatures === "twin_punctures") {
         if (key === "pit_viper") score *= 35.0;
+        if (key === "coral_snake") score *= 30.0;
+        if (key === "giant_centipede") score *= 25.0;
         if (key === "black_widow") score *= 12.0;
         if (key === "brown_recluse") score *= 10.0;
       }

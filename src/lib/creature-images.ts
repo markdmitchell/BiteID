@@ -18,6 +18,9 @@ import noSeeUm from "@/assets/creatures/no-see-um.jpg";
 import pitViper from "@/assets/creatures/pit-viper.jpg";
 import scorpion from "@/assets/creatures/scorpion.jpg";
 import waspYellowJacket from "@/assets/creatures/wasp-yellow-jacket.jpg";
+import coralSnake from "@/assets/creatures/coral-snake.jpg";
+import giantCentipede from "@/assets/creatures/giant-centipede.jpg";
+import aspCaterpillar from "@/assets/creatures/asp-caterpillar.jpg";
 
 type CreatureReference = {
   src: string;
@@ -104,6 +107,18 @@ const CREATURE_REFERENCES: Record<string, CreatureReference> = {
   pit_viper: {
     src: pitViper,
     alt: "AI-generated field-guide reference of a venomous pit viper (copperhead)",
+  },
+  coral_snake: {
+    src: coralSnake,
+    alt: "AI-generated field-guide reference of an Eastern coral snake (Micrurus fulvius)",
+  },
+  giant_centipede: {
+    src: giantCentipede,
+    alt: "AI-generated field-guide reference of a giant desert centipede (Scolopendra heros)",
+  },
+  asp_caterpillar: {
+    src: aspCaterpillar,
+    alt: "AI-generated field-guide reference of a puss caterpillar / asp (Megalopyge opercularis)",
   },
 };
 

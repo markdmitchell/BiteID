@@ -45,7 +45,14 @@ const HAZARD_CATEGORIES: HazardCategory[] = [
     label: "High-Hazard Envenomations",
     icon: "🚨",
     badgeClass: "bg-destructive/15 text-destructive border-destructive/30",
-    speciesIds: ["pit_viper", "scorpion", "black_widow", "brown_recluse"],
+    speciesIds: [
+      "pit_viper",
+      "coral_snake",
+      "scorpion",
+      "black_widow",
+      "brown_recluse",
+      "giant_centipede",
+    ],
   },
   {
     id: "disease_vectors",
@@ -59,7 +66,7 @@ const HAZARD_CATEGORIES: HazardCategory[] = [
     label: "Stings & Severe Allergens",
     icon: "🐝",
     badgeClass: "bg-orange-500/15 text-orange-700 dark:text-orange-300 border-orange-500/30",
-    speciesIds: ["wasp_yellow_jacket", "honey_bee", "fire_ant"],
+    speciesIds: ["wasp", "honey_bee", "fire_ant", "asp_caterpillar"],
   },
   {
     id: "nuisance_blister",
@@ -182,6 +189,36 @@ const CREATURE_MYTH_BUSTERS: Record<string, { myth: string; fact: string }[]> = 
     {
       myth: "Smack or crush the beetle when you feel it crawling on your skin.",
       fact: "Crushing ruptures the beetle's hemolymph containing cantharidin, which causes linear blistering across the skin. Gently blow or flick it off alive.",
+    },
+  ],
+  coral_snake: [
+    {
+      myth: "If there is no immediate agony or massive swelling like a rattlesnake bite, it was a harmless dry bite.",
+      fact: "Coral snake venom is purely neurotoxic (postsynaptic bungarotoxin). It causes almost zero local tissue destruction or swelling, yet can trigger lethal respiratory paralysis hours later without warning.",
+    },
+    {
+      myth: "The rhyme 'Red on yellow kill a fellow, red on black friend of Jack' is 100% dependable.",
+      fact: "Color morphs (anerythristic, melanistic, or incomplete banding) occur in nature. Never handle or pick up any banded snake.",
+    },
+  ],
+  giant_centipede: [
+    {
+      myth: "Centipedes bite using jaws inside their mouth.",
+      fact: "They inject venom through modified front legs called forcipules (toxicognaths) that pinch like hypodermic venom claws.",
+    },
+    {
+      myth: "Ice packs are the only remedy for the intense burning pain.",
+      fact: "Many centipede venom proteins are heat-labile. Non-scalding hot water immersion (104°F–113°F / 40°C–45°C) is clinically demonstrated to relieve pain faster than cold.",
+    },
+  ],
+  asp_caterpillar: [
+    {
+      myth: "Vigorously scrub the skin with a washcloth to wipe off the hairs.",
+      fact: "Rubbing crushes the hollow urticating spines deeper into the dermis and breaks additional venom sacs. Use adhesive tape (cellophane or duct tape) to gently lift spines off.",
+    },
+    {
+      myth: "The sting is just an annoying minor fuzzy bug itch.",
+      fact: "Puss caterpillar envenomation is among the most painful stings in North America, frequently causing radiating neuropathic pain to the torso, nausea, and lymphadenopathy.",
     },
   ],
 };
@@ -324,31 +361,32 @@ export function KnownCulpritModal({
                 </div>
               </div>
 
-              {/* Special Fast-Track for Pit Viper */}
-              {selectedVector.id === "pit_viper" && onOpenSnakebiteSurvival && (
-                <div className="mt-4 rounded-xl border border-destructive/30 bg-destructive/10 p-3.5 text-xs text-destructive">
-                  <div className="flex items-center justify-between gap-3">
-                    <div className="flex items-center gap-2">
-                      <ShieldAlert className="size-4 shrink-0" />
-                      <span className="font-bold">Active snakebite emergency?</span>
-                      <span className="hidden sm:inline">
-                        Launch the live 15-minute edema timer and survival protocol.
-                      </span>
+              {/* Special Fast-Track for Venomous Snakes (Pit Viper / Coral Snake) */}
+              {(selectedVector.id === "pit_viper" || selectedVector.id === "coral_snake") &&
+                onOpenSnakebiteSurvival && (
+                  <div className="mt-4 rounded-xl border border-destructive/30 bg-destructive/10 p-3.5 text-xs text-destructive">
+                    <div className="flex items-center justify-between gap-3">
+                      <div className="flex items-center gap-2">
+                        <ShieldAlert className="size-4 shrink-0" />
+                        <span className="font-bold">Active snakebite emergency?</span>
+                        <span className="hidden sm:inline">
+                          Launch the live 15-minute edema timer and survival protocol.
+                        </span>
+                      </div>
+                      <Button
+                        size="sm"
+                        variant="destructive"
+                        onClick={() => {
+                          onOpenChange(false);
+                          onOpenSnakebiteSurvival();
+                        }}
+                        className="shrink-0 text-xs font-bold shadow-xs"
+                      >
+                        Open Snakebite SOS
+                      </Button>
                     </div>
-                    <Button
-                      size="sm"
-                      variant="destructive"
-                      onClick={() => {
-                        onOpenChange(false);
-                        onOpenSnakebiteSurvival();
-                      }}
-                      className="shrink-0 text-xs font-bold shadow-xs"
-                    >
-                      Open Snakebite SOS
-                    </Button>
                   </div>
-                </div>
-              )}
+                )}
             </div>
 
             {/* Content Tabs */}
