@@ -253,13 +253,22 @@ export function KnownCulpritModal({
   const creaturePhoto = selectedId ? creatureReferenceOf(selectedId) : undefined;
   const lesionSet = selectedId ? bitePatternOf(selectedId) : undefined;
   const lesionI_II = lesionSet
-    ? { src: lesionSet.images["i-ii"], alt: `${lesionSet.label}: ${lesionSet.pattern} on Fitzpatrick I–II skin` }
+    ? {
+        src: lesionSet.images["i-ii"],
+        alt: `${lesionSet.label}: ${lesionSet.pattern} on Fitzpatrick I–II skin`,
+      }
     : undefined;
   const lesionIII_IV = lesionSet
-    ? { src: lesionSet.images["iii-iv"], alt: `${lesionSet.label}: ${lesionSet.pattern} on Fitzpatrick III–IV skin` }
+    ? {
+        src: lesionSet.images["iii-iv"],
+        alt: `${lesionSet.label}: ${lesionSet.pattern} on Fitzpatrick III–IV skin`,
+      }
     : undefined;
   const lesionV_VI = lesionSet
-    ? { src: lesionSet.images["v-vi"], alt: `${lesionSet.label}: ${lesionSet.pattern} on Fitzpatrick V–VI skin` }
+    ? {
+        src: lesionSet.images["v-vi"],
+        alt: `${lesionSet.label}: ${lesionSet.pattern} on Fitzpatrick V–VI skin`,
+      }
     : undefined;
 
   return (
@@ -310,7 +319,7 @@ export function KnownCulpritModal({
                     onClick={() => setSelectedId(null)}
                     className="text-xs font-medium"
                   >
-                    ← Choose Different Bug
+                    ← Choose Different Critter
                   </Button>
                 </div>
               </div>

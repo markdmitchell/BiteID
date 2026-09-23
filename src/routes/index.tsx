@@ -187,7 +187,11 @@ function TriagePage() {
 
       <div className="mx-auto max-w-3xl px-5">
         {hasEmergency && (
-          <div role="alert" aria-live="assertive" className="mt-5 flex items-start gap-3 rounded-lg bg-destructive px-4 py-3 text-destructive-foreground">
+          <div
+            role="alert"
+            aria-live="assertive"
+            className="mt-5 flex items-start gap-3 rounded-lg bg-destructive px-4 py-3 text-destructive-foreground"
+          >
             <AlertTriangle className="mt-0.5 size-5 shrink-0" />
             <p className="text-sm font-medium">
               You reported an emergency symptom. Get urgent medical care now — do not rely on this
@@ -249,8 +253,8 @@ function TriagePage() {
             <div className={step === 0 ? "" : "mt-7"}>
               {step === 0 && (
                 <div>
-                   <h1 className="font-display text-3xl font-bold leading-tight text-foreground">
-                     Identify your bite
+                  <h1 className="font-display text-3xl font-bold leading-tight text-foreground">
+                    Not sure? Upload a photo.
                   </h1>
                   <p className="mt-2 text-sm text-muted-foreground">
                     A close, well-lit photo works best. If you caught the insect, a second photo
@@ -259,7 +263,7 @@ function TriagePage() {
                   <div className="mt-5">
                     <StepNav current={step} />
                   </div>
-                   <div className="mt-6 space-y-4">
+                  <div className="mt-6 space-y-4">
                     <UploadCard
                       title="Skin lesion"
                       hint="The bite, sting or rash itself."
@@ -272,7 +276,7 @@ function TriagePage() {
                       hint="The insect, if you have it."
                       file={form.bugImage}
                       onChange={(file) => dispatch({ type: "setBug", file })}
-                       compact
+                      compact
                     />
                   </div>
                 </div>
@@ -288,121 +292,131 @@ function TriagePage() {
                   </p>
                   <div className="mt-5 space-y-7 rounded-lg border border-border bg-card p-4 sm:p-6">
                     <fieldset className="space-y-5">
-                      <legend className="font-display text-base font-semibold text-foreground">Exposure</legend>
-                    <div>
-                      <label htmlFor="environment" className="text-sm font-medium text-foreground">
-                        Where were you exposed?
-                      </label>
-                      <Select
-                        value={form.environment}
-                        onValueChange={(value) => dispatch({ type: "setEnvironment", value })}
-                      >
-                        <SelectTrigger id="environment" className="mt-2 w-full">
-                          <SelectValue placeholder="Choose an environment" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {ENVIRONMENT_OPTIONS.map((o) => (
-                            <SelectItem key={o.value} value={o.value}>
-                              {o.label}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </div>
-                    <div>
-                      <label htmlFor="state" className="text-sm font-medium text-foreground">
-                        Which state were you in?
-                      </label>
-                      <Select
-                        value={form.usState}
-                        onValueChange={(value) => dispatch({ type: "setUsState", value })}
-                      >
-                        <SelectTrigger id="state" className="mt-2 w-full">
-                          <SelectValue placeholder="Choose a state" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {US_STATE_OPTIONS.map((o) => (
-                            <SelectItem key={o.value} value={o.value}>
-                              {o.label}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                      <p className="mt-2 text-xs text-muted-foreground">
-                        Which insects are active depends on where and when you were bitten.
-                      </p>
-                    </div>
+                      <legend className="font-display text-base font-semibold text-foreground">
+                        Exposure
+                      </legend>
+                      <div>
+                        <label
+                          htmlFor="environment"
+                          className="text-sm font-medium text-foreground"
+                        >
+                          Where were you exposed?
+                        </label>
+                        <Select
+                          value={form.environment}
+                          onValueChange={(value) => dispatch({ type: "setEnvironment", value })}
+                        >
+                          <SelectTrigger id="environment" className="mt-2 w-full">
+                            <SelectValue placeholder="Choose an environment" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {ENVIRONMENT_OPTIONS.map((o) => (
+                              <SelectItem key={o.value} value={o.value}>
+                                {o.label}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      <div>
+                        <label htmlFor="state" className="text-sm font-medium text-foreground">
+                          Which state were you in?
+                        </label>
+                        <Select
+                          value={form.usState}
+                          onValueChange={(value) => dispatch({ type: "setUsState", value })}
+                        >
+                          <SelectTrigger id="state" className="mt-2 w-full">
+                            <SelectValue placeholder="Choose a state" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {US_STATE_OPTIONS.map((o) => (
+                              <SelectItem key={o.value} value={o.value}>
+                                {o.label}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                        <p className="mt-2 text-xs text-muted-foreground">
+                          Which insects are active depends on where and when you were bitten.
+                        </p>
+                      </div>
                     </fieldset>
                     <fieldset className="space-y-5 border-t border-border pt-6">
-                      <legend className="font-display text-base font-semibold text-foreground">Reaction details</legend>
-                    <div>
-                      <label htmlFor="body-location" className="text-sm font-medium text-foreground">
-                        Where on your body is the bite?
-                      </label>
-                      <Select
-                        value={form.bodyLocation}
-                        onValueChange={(value) => dispatch({ type: "setBodyLocation", value })}
-                      >
-                        <SelectTrigger id="body-location" className="mt-2 w-full">
-                          <SelectValue placeholder="Choose a body location" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {BODY_LOCATION_OPTIONS.map((o) => (
-                            <SelectItem key={o.value} value={o.value}>
-                              {o.label}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                      <p className="mt-2 text-xs text-muted-foreground">
-                        Different insects target specific areas like ankles, waistbands, or exposed
-                        skin.
-                      </p>
-                    </div>
-                    <div>
-                      <label htmlFor="sensation" className="text-sm font-medium text-foreground">
-                        How does it feel?
-                      </label>
-                      <Select
-                        value={form.sensation}
-                        onValueChange={(value) => dispatch({ type: "setSensation", value })}
-                      >
-                        <SelectTrigger id="sensation" className="mt-2 w-full">
-                          <SelectValue placeholder="Choose a sensation" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {SENSATION_OPTIONS.map((o) => (
-                            <SelectItem key={o.value} value={o.value}>
-                              {o.label}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                      <p className="mt-2 text-xs text-muted-foreground">
-                        Tick bites are often painless, while bees and wasps cause immediate sharp
-                        pain.
-                      </p>
-                    </div>
-                    <div>
-                      <label htmlFor="duration" className="text-sm font-medium text-foreground">
-                        How long have you had it?
-                      </label>
-                      <Select
-                        value={form.duration}
-                        onValueChange={(value) => dispatch({ type: "setDuration", value })}
-                      >
-                        <SelectTrigger id="duration" className="mt-2 w-full">
-                          <SelectValue placeholder="Choose a duration" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {DURATION_OPTIONS.map((o) => (
-                            <SelectItem key={o.value} value={o.value}>
-                              {o.label}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </div>
+                      <legend className="font-display text-base font-semibold text-foreground">
+                        Reaction details
+                      </legend>
+                      <div>
+                        <label
+                          htmlFor="body-location"
+                          className="text-sm font-medium text-foreground"
+                        >
+                          Where on your body is the bite?
+                        </label>
+                        <Select
+                          value={form.bodyLocation}
+                          onValueChange={(value) => dispatch({ type: "setBodyLocation", value })}
+                        >
+                          <SelectTrigger id="body-location" className="mt-2 w-full">
+                            <SelectValue placeholder="Choose a body location" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {BODY_LOCATION_OPTIONS.map((o) => (
+                              <SelectItem key={o.value} value={o.value}>
+                                {o.label}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                        <p className="mt-2 text-xs text-muted-foreground">
+                          Different insects target specific areas like ankles, waistbands, or
+                          exposed skin.
+                        </p>
+                      </div>
+                      <div>
+                        <label htmlFor="sensation" className="text-sm font-medium text-foreground">
+                          How does it feel?
+                        </label>
+                        <Select
+                          value={form.sensation}
+                          onValueChange={(value) => dispatch({ type: "setSensation", value })}
+                        >
+                          <SelectTrigger id="sensation" className="mt-2 w-full">
+                            <SelectValue placeholder="Choose a sensation" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {SENSATION_OPTIONS.map((o) => (
+                              <SelectItem key={o.value} value={o.value}>
+                                {o.label}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                        <p className="mt-2 text-xs text-muted-foreground">
+                          Tick bites are often painless, while bees and wasps cause immediate sharp
+                          pain.
+                        </p>
+                      </div>
+                      <div>
+                        <label htmlFor="duration" className="text-sm font-medium text-foreground">
+                          How long have you had it?
+                        </label>
+                        <Select
+                          value={form.duration}
+                          onValueChange={(value) => dispatch({ type: "setDuration", value })}
+                        >
+                          <SelectTrigger id="duration" className="mt-2 w-full">
+                            <SelectValue placeholder="Choose a duration" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {DURATION_OPTIONS.map((o) => (
+                              <SelectItem key={o.value} value={o.value}>
+                                {o.label}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
                     </fieldset>
                   </div>
                 </div>
@@ -470,13 +484,19 @@ function TriagePage() {
 
               {step < 2 ? (
                 <div className="justify-self-end text-right">
-                  <Button aria-describedby="continue-help" onClick={() => setStep((s) => s + 1)} disabled={!canContinue}>
+                  <Button
+                    aria-describedby="continue-help"
+                    onClick={() => setStep((s) => s + 1)}
+                    disabled={!canContinue}
+                  >
                     Continue
                     <ArrowRight className="size-4" />
                   </Button>
                   {!canContinue && (
                     <p id="continue-help" className="mt-2 max-w-56 text-xs text-muted-foreground">
-                      {step === 0 ? "Add a skin lesion photo to continue." : "Complete the required exposure details to continue."}
+                      {step === 0
+                        ? "Add a skin lesion photo to continue."
+                        : "Complete the required exposure details to continue."}
                     </p>
                   )}
                 </div>
@@ -656,7 +676,7 @@ function ResultsDashboard({
     Boolean(response.hasErythemaMigrans) ||
     /erythema migrans|bull'?s?[- ]?eye|annular target/i.test(topResult?.description ?? "") ||
     /erythema migrans|bull'?s?[- ]?eye|annular target/i.test(
-      String(response['lesionReading'] ?? ""),
+      String(response["lesionReading"] ?? ""),
     ) ||
     Boolean(
       topResult?.matchedFactors?.some((f) => /annular|target rash|erythema migrans/i.test(f)),
@@ -683,7 +703,11 @@ function ResultsDashboard({
     <section aria-live="polite" className="mt-6 space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-border/60 pb-4">
         <div>
-          <h1 ref={headingRef} tabIndex={-1} className="font-display text-3xl font-bold leading-tight text-foreground outline-none">
+          <h1
+            ref={headingRef}
+            tabIndex={-1}
+            className="font-display text-3xl font-bold leading-tight text-foreground outline-none"
+          >
             Your assessment
           </h1>
           <p className="mt-1 text-sm text-muted-foreground">
