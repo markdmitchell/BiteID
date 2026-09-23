@@ -74,14 +74,17 @@ export function ProbabilityCard({
             )}
           </div>
         </div>
-        <div className="flex flex-col items-end gap-1">
-          <span className="font-display text-2xl font-bold tabular-nums text-foreground">
+        <div className="flex flex-col items-end gap-0.5">
+          <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
+            Visual Match
+          </span>
+          <span className="font-display text-xl sm:text-2xl font-bold tabular-nums text-foreground">
             {Math.round(value)}%
           </span>
           <button
             type="button"
             onClick={() => setIsExpanded((prev) => !prev)}
-            className="inline-flex items-center gap-1 rounded-md px-2 py-1 text-xs font-medium text-primary hover:bg-primary/10 transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+            className="inline-flex items-center gap-1 rounded-md px-2 py-1 text-xs font-medium text-primary hover:bg-primary/10 transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring mt-0.5"
             aria-expanded={isExpanded}
           >
             <span>{isExpanded ? "Hide details" : "View details"}</span>

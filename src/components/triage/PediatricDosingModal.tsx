@@ -6,8 +6,9 @@ import {
   AlertTriangle,
   CheckCircle2,
   Pill,
-  Calculator,
+  BookOpen,
   Info,
+  PhoneCall,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
@@ -39,53 +40,129 @@ export function PediatricDosingModal({
     return unit === "lbs" ? weightValue : weightValue * 2.20462;
   }, [weightValue, unit]);
 
-  // Acetaminophen (160 mg / 5 mL) -> 32 mg/mL
-  // Clinical dosing: 10 - 15 mg/kg
-  const tylenolMinMg = Math.round(effectiveWeightKg * 10);
-  const tylenolMaxMg = Math.round(effectiveWeightKg * 15);
-  const tylenolMinMl = (tylenolMinMg / 32).toFixed(1);
-  const tylenolMaxMl = (tylenolMaxMg / 32).toFixed(1);
-
-  // Ibuprofen (100 mg / 5 mL) -> 20 mg/mL
-  // Clinical dosing: 10 mg/kg
-  const motrinMg = Math.round(effectiveWeightKg * 10);
-  const motrinMl = (motrinMg / 20).toFixed(1);
-
-  // Cetirizine (5 mg / 5 mL) -> 1 mg/mL
-  const cetirizineDose =
-    effectiveWeightKg < 10
-      ? { mg: 2.5, ml: 2.5, label: "6 to 23 months (once daily)" }
-      : effectiveWeightKg < 18
-        ? { mg: 2.5, ml: 2.5, label: "2 to 5 years (once daily)" }
-        : { mg: 5, ml: 5, label: "6+ years (once daily)" };
-
-  // Diphenhydramine (12.5 mg / 5 mL) -> 2.5 mg/mL
-  // Clinical dosing: 1 - 1.25 mg/kg
-  const benadrylMg = Math.min(50, Math.round(effectiveWeightKg * 1.1));
-  const benadrylMl = (benadrylMg / 2.5).toFixed(1);
-
   const isUnder6Mo = ageTier === "under_6mo";
   const isUnder2Yr = ageTier === "under_6mo" || ageTier === "6_to_23mo";
+
+  // FDA & Manufacturer standard packaging brackets
+  const tylenolBracket = useMemo(() => {
+    if (effectiveWeightLbs < 24 || isUnder2Yr) {
+      return {
+        bracket: "Under 24 lbs (< 2 yrs)",
+        dose: "Ask a doctor",
+        note: "Pediatrician consultation required",
+      };
+    }
+    if (effectiveWeightLbs <= 35) {
+      return {
+        bracket: "24–35 lbs (2–3 yrs)",
+        dose: "5 mL (160 mg)",
+        note: "Every 4–6 hrs as needed (Max 5 doses/day)",
+      };
+    }
+    if (effectiveWeightLbs <= 47) {
+      return {
+        bracket: "36–47 lbs (4–5 yrs)",
+        dose: "7.5 mL (240 mg)",
+        note: "Every 4–6 hrs as needed (Max 5 doses/day)",
+      };
+    }
+    if (effectiveWeightLbs <= 59) {
+      return {
+        bracket: "48–59 lbs (6–8 yrs)",
+        dose: "10 mL (320 mg)",
+        note: "Every 4–6 hrs as needed (Max 5 doses/day)",
+      };
+    }
+    if (effectiveWeightLbs <= 71) {
+      return {
+        bracket: "60–71 lbs (9–10 yrs)",
+        dose: "12.5 mL (400 mg)",
+        note: "Every 4–6 hrs as needed (Max 5 doses/day)",
+      };
+    }
+    return {
+      bracket: "72–95 lbs (11 yrs)",
+      dose: "15 mL (480 mg)",
+      note: "Every 4–6 hrs as needed (Max 5 doses/day)",
+    };
+  }, [effectiveWeightLbs, isUnder2Yr]);
+
+  const motrinBracket = useMemo(() => {
+    if (isUnder6Mo) {
+      return {
+        bracket: "Under 6 Months",
+        dose: "CONTRAINDICATED",
+        note: "Immature renal clearance",
+      };
+    }
+    if (effectiveWeightLbs < 18) {
+      return {
+        bracket: "12–17 lbs (6–11 mos)",
+        dose: "Ask doctor / 2.5 mL (50 mg)",
+        note: "Confirm with pediatrician",
+      };
+    }
+    if (effectiveWeightLbs < 24) {
+      return {
+        bracket: "18–23 lbs (12–23 mos)",
+        dose: "Ask doctor / 4 mL (80 mg)",
+        note: "Confirm with pediatrician",
+      };
+    }
+    if (effectiveWeightLbs <= 35) {
+      return {
+        bracket: "24–35 lbs (2–3 yrs)",
+        dose: "5 mL (100 mg)",
+        note: "Every 6–8 hrs (Max 4 doses/day)",
+      };
+    }
+    if (effectiveWeightLbs <= 47) {
+      return {
+        bracket: "36–47 lbs (4–5 yrs)",
+        dose: "7.5 mL (150 mg)",
+        note: "Every 6–8 hrs (Max 4 doses/day)",
+      };
+    }
+    if (effectiveWeightLbs <= 59) {
+      return {
+        bracket: "48–59 lbs (6–8 yrs)",
+        dose: "10 mL (200 mg)",
+        note: "Every 6–8 hrs (Max 4 doses/day)",
+      };
+    }
+    if (effectiveWeightLbs <= 71) {
+      return {
+        bracket: "60–71 lbs (9–10 yrs)",
+        dose: "12.5 mL (250 mg)",
+        note: "Every 6–8 hrs (Max 4 doses/day)",
+      };
+    }
+    return {
+      bracket: "72–95 lbs (11 yrs)",
+      dose: "15 mL (300 mg)",
+      note: "Every 6–8 hrs (Max 4 doses/day)",
+    };
+  }, [effectiveWeightLbs, isUnder6Mo]);
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-2xl max-h-[92vh] overflow-y-auto p-0 gap-0 border-border bg-card rounded-2xl sm:rounded-3xl">
         <DialogTitle className="sr-only">
-          Pediatric Weight-Based Medication & First Aid Dosing Calculator
+          Pediatric OTC Medication Safety &amp; Packaging Reference Guide
         </DialogTitle>
 
         {/* Header */}
         <div className="sticky top-0 z-20 flex items-center justify-between border-b border-border/80 bg-card/95 px-5 py-4 backdrop-blur-md">
           <div className="flex items-center gap-2.5">
             <span className="flex size-8 items-center justify-center rounded-lg bg-primary text-primary-foreground shadow-xs">
-              <Calculator className="size-4" />
+              <BookOpen className="size-4" />
             </span>
             <div>
               <h2 className="font-display text-base font-bold text-foreground">
-                Pediatric Weight-Based Dosing Calculator
+                Pediatric Medication Safety &amp; Packaging Guide
               </h2>
               <p className="text-xs text-muted-foreground">
-                Weight-adjusted OTC pain, fever & antihistamine oral volumes.
+                Manufacturer OTC packaging tables &amp; pediatric safety limits. Not a prescription.
               </p>
             </div>
           </div>
@@ -104,7 +181,7 @@ export function PediatricDosingModal({
           <div className="rounded-xl border-2 border-destructive/40 bg-destructive/10 p-3.5 space-y-1 text-foreground">
             <div className="flex items-center gap-1.5 font-bold uppercase tracking-wide text-destructive text-[11px]">
               <AlertOctagon className="size-4 shrink-0" />
-              <span>BLACK-BOX PEDIATRIC CONTRAINDICATION (ASPIRIN & PEPTO-BISMOL)</span>
+              <span>BLACK-BOX PEDIATRIC CONTRAINDICATION (ASPIRIN &amp; PEPTO-BISMOL)</span>
             </div>
             <p className="leading-relaxed text-muted-foreground">
               <strong>NEVER administer Aspirin (acetylsalicylic acid)</strong> or{" "}
@@ -167,12 +244,12 @@ export function PediatricDosingModal({
             )}
           </div>
 
-          {/* WEIGHT SELECTOR CONTROL */}
+          {/* WEIGHT BRACKET LOOKUP */}
           <div className="rounded-2xl border border-border bg-muted/20 p-4 sm:p-5 space-y-3">
             <div className="flex items-center justify-between">
               <span className="font-bold text-foreground uppercase tracking-wider text-[11px] flex items-center gap-1.5">
-                <Calculator className="size-4 text-primary" />
-                Child&apos;s Body Weight:
+                <BookOpen className="size-4 text-primary" />
+                Child&apos;s Body Weight (Packaging Lookup):
               </span>
               <div className="flex items-center gap-1 bg-card rounded-lg p-0.5 border border-border">
                 <button
@@ -233,41 +310,33 @@ export function PediatricDosingModal({
                   ? `${effectiveWeightKg.toFixed(1)} kg`
                   : `${effectiveWeightLbs.toFixed(0)} lbs`}
               </span>
-              <span>
-                Typical Weight For:{" "}
-                {isUnder6Mo
-                  ? "0–5 months"
-                  : isUnder2Yr
-                    ? "6–23 months"
-                    : `~${Math.min(12, Math.max(2, Math.round(effectiveWeightKg / 3.5)))} yrs`}
-              </span>
+              <span>Weight Bracket: {effectiveWeightLbs.toFixed(0)} lbs</span>
             </div>
           </div>
 
-          {/* CALCULATED MEDICATION DOSAGES */}
+          {/* OFFICIAL MANUFACTURER OTC PACKAGING REFERENCE */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5">
             {/* Acetaminophen / Tylenol */}
             <div className="rounded-xl border border-border bg-card p-4 space-y-2 shadow-xs">
               <div className="flex items-center justify-between border-b border-border/60 pb-1.5">
                 <span className="font-bold text-foreground text-xs uppercase flex items-center gap-1.5">
                   <Pill className="size-3.5 text-primary" />
-                  Acetaminophen (Tylenol)
+                  Children&apos;s Acetaminophen (Tylenol)
                 </span>
                 <span className="text-[10px] text-muted-foreground font-mono">160 mg / 5 mL</span>
               </div>
               <p className="text-[11px] text-muted-foreground">
-                Dosing: <strong>10–15 mg/kg</strong> every 4–6 hours (Max 5 doses per 24 hours).
-                {isUnder6Mo && " Use strictly under pediatrician supervision."}
+                Standard FDA manufacturer packaging label reference.
               </p>
-              <div className="rounded-lg bg-primary/10 border border-primary/20 p-2.5 text-center space-y-0.5">
+              <div className="rounded-lg bg-primary/10 border border-primary/20 p-3 text-center space-y-1">
                 <span className="text-[10px] text-muted-foreground uppercase font-bold block">
-                  Recommended Single Oral Dose:
+                  Package Label Dosing for {tylenolBracket.bracket}:
                 </span>
                 <p className="font-display text-lg font-black text-primary font-mono">
-                  {tylenolMinMl} – {tylenolMaxMl} mL
+                  {tylenolBracket.dose}
                 </p>
                 <span className="text-[10px] text-primary font-medium block">
-                  ({tylenolMinMg} – {tylenolMaxMg} mg)
+                  {tylenolBracket.note}
                 </span>
               </div>
             </div>
@@ -278,7 +347,7 @@ export function PediatricDosingModal({
                 <div className="flex items-center justify-between border-b border-destructive/20 pb-1.5">
                   <span className="font-bold text-destructive text-xs uppercase flex items-center gap-1.5">
                     <AlertOctagon className="size-3.5 text-destructive" />
-                    Ibuprofen (Motrin) — LOCKED
+                    Children&apos;s Ibuprofen (Motrin) — LOCKED
                   </span>
                   <span className="text-[10px] font-bold text-destructive uppercase">
                     Contraindicated
@@ -290,7 +359,7 @@ export function PediatricDosingModal({
                   </p>
                   <p className="text-[10px] text-muted-foreground leading-relaxed">
                     Infant kidneys under 6 months cannot excrete ibuprofen safely, creating risk of
-                    acute renal toxicity. Use Acetaminophen instead.
+                    acute renal toxicity. Consult your pediatrician.
                   </p>
                 </div>
               </div>
@@ -299,39 +368,39 @@ export function PediatricDosingModal({
                 <div className="flex items-center justify-between border-b border-border/60 pb-1.5">
                   <span className="font-bold text-foreground text-xs uppercase flex items-center gap-1.5">
                     <Pill className="size-3.5 text-emerald-600 dark:text-emerald-400" />
-                    Ibuprofen (Motrin / Advil)
+                    Children&apos;s Ibuprofen (Motrin / Advil)
                   </span>
                   <span className="text-[10px] text-muted-foreground font-mono">100 mg / 5 mL</span>
                 </div>
                 <p className="text-[11px] text-muted-foreground">
-                  Dosing: <strong>10 mg/kg</strong> every 6–8 hours. Only for infants &ge; 6 months.
+                  Standard FDA manufacturer packaging label reference.
                 </p>
-                <div className="rounded-lg bg-emerald-500/10 border border-emerald-500/20 p-2.5 text-center space-y-0.5">
+                <div className="rounded-lg bg-emerald-500/10 border border-emerald-500/20 p-3 text-center space-y-1">
                   <span className="text-[10px] text-muted-foreground uppercase font-bold block">
-                    Recommended Single Oral Dose:
+                    Package Label Dosing for {motrinBracket.bracket}:
                   </span>
                   <p className="font-display text-lg font-black text-emerald-700 dark:text-emerald-400 font-mono">
-                    {motrinMl} mL
+                    {motrinBracket.dose}
                   </p>
                   <span className="text-[10px] text-emerald-700 dark:text-emerald-400 font-medium block">
-                    ({motrinMg} mg)
+                    {motrinBracket.note}
                   </span>
                 </div>
               </div>
             )}
 
             {/* Cetirizine / Zyrtec */}
-            {isUnder6Mo ? (
+            {isUnder2Yr ? (
               <div className="rounded-xl border border-border/60 bg-muted/30 p-4 space-y-2 shadow-xs">
                 <div className="flex items-center justify-between border-b border-border/60 pb-1.5">
                   <span className="font-bold text-muted-foreground text-xs uppercase flex items-center gap-1.5">
                     <Pill className="size-3.5 text-muted-foreground" />
                     Cetirizine (Zyrtec) — LOCKED
                   </span>
-                  <span className="text-[10px] text-muted-foreground font-mono">Under 6 Mo</span>
+                  <span className="text-[10px] text-muted-foreground font-mono">Under 2 Years</span>
                 </div>
                 <p className="text-[11px] text-muted-foreground leading-relaxed">
-                  Cetirizine is not approved for OTC self-administration in infants under 6 months.
+                  Cetirizine is not approved for OTC self-administration in children under 2 years.
                   Consult your pediatrician.
                 </p>
               </div>
@@ -340,17 +409,19 @@ export function PediatricDosingModal({
                 <div className="flex items-center justify-between border-b border-border/60 pb-1.5">
                   <span className="font-bold text-foreground text-xs uppercase flex items-center gap-1.5">
                     <Pill className="size-3.5 text-purple-600 dark:text-purple-400" />
-                    Cetirizine (Zyrtec)
+                    Children&apos;s Cetirizine (Zyrtec)
                   </span>
                   <span className="text-[10px] text-muted-foreground font-mono">5 mg / 5 mL</span>
                 </div>
                 <p className="text-[11px] text-muted-foreground">
-                  Non-sedating 2nd-gen antihistamine for localized itch & wheals (
-                  {cetirizineDose.label}).
+                  Non-sedating antihistamine packaging reference for allergic itch.
                 </p>
-                <div className="rounded-lg bg-purple-500/10 border border-purple-500/20 p-2 text-center">
-                  <p className="font-display text-base font-bold text-purple-700 dark:text-purple-300 font-mono">
-                    {cetirizineDose.ml} mL ({cetirizineDose.mg} mg) once daily
+                <div className="rounded-lg bg-purple-500/10 border border-purple-500/20 p-2.5 text-center space-y-0.5">
+                  <p className="font-display text-sm font-bold text-purple-700 dark:text-purple-300 font-mono">
+                    2 to 5 yrs: 2.5 mL (2.5 mg) once daily
+                  </p>
+                  <p className="text-[10px] text-purple-700 dark:text-purple-300 font-mono">
+                    6+ yrs: 5 mL to 10 mL (5–10 mg) once daily
                   </p>
                 </div>
               </div>
@@ -362,7 +433,7 @@ export function PediatricDosingModal({
                 <div className="flex items-center justify-between border-b border-amber-500/20 pb-1.5">
                   <span className="font-bold text-amber-900 dark:text-amber-200 text-xs uppercase flex items-center gap-1.5">
                     <AlertOctagon className="size-3.5 text-amber-600" />
-                    Diphenhydramine — LOCKED
+                    Diphenhydramine (Benadryl) — LOCKED
                   </span>
                   <span className="text-[10px] font-bold text-amber-700 dark:text-amber-300 uppercase">
                     &lt; 2 Years
@@ -384,19 +455,21 @@ export function PediatricDosingModal({
                 <div className="flex items-center justify-between border-b border-border/60 pb-1.5">
                   <span className="font-bold text-foreground text-xs uppercase flex items-center gap-1.5">
                     <Pill className="size-3.5 text-blue-600 dark:text-blue-400" />
-                    Diphenhydramine (Benadryl)
+                    Children&apos;s Diphenhydramine (Benadryl)
                   </span>
                   <span className="text-[10px] text-muted-foreground font-mono">
                     12.5 mg / 5 mL
                   </span>
                 </div>
                 <p className="text-[11px] text-muted-foreground">
-                  Sedating 1st-gen antihistamine for acute stings/hives (1–1.25 mg/kg every 6
-                  hours).
+                  Sedating antihistamine packaging reference for acute hives.
                 </p>
-                <div className="rounded-lg bg-blue-500/10 border border-blue-500/20 p-2 text-center">
-                  <p className="font-display text-base font-bold text-blue-700 dark:text-blue-300 font-mono">
-                    {benadrylMl} mL ({benadrylMg} mg)
+                <div className="rounded-lg bg-blue-500/10 border border-blue-500/20 p-2.5 text-center space-y-0.5">
+                  <p className="font-display text-sm font-bold text-blue-700 dark:text-blue-300 font-mono">
+                    2 to 5 yrs: Do not use unless directed by doctor
+                  </p>
+                  <p className="text-[10px] text-blue-700 dark:text-blue-300 font-mono">
+                    6 to 11 yrs: 5 mL to 10 mL (12.5–25 mg) every 4–6 hrs
                   </p>
                 </div>
               </div>
@@ -413,8 +486,27 @@ export function PediatricDosingModal({
               Never use kitchen teaspoons or tablespoons to measure pediatric liquid medications.
               Household silverware spoons vary in volume from 2.5 mL to over 9 mL, resulting in
               dangerous under- or overdosing. Always use the calibrated oral syringe or dosing cup
-              provided by your pharmacy.
+              provided with the bottle.
             </p>
+          </div>
+
+          {/* POISON CONTROL EMERGENCY BAR */}
+          <div className="rounded-xl border border-emerald-500/30 bg-emerald-500/5 p-3 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+            <div className="space-y-0.5">
+              <p className="font-bold text-emerald-700 dark:text-emerald-400 text-xs">
+                Questions About Child Dosing or Accidental Ingestion?
+              </p>
+              <p className="text-[11px] text-muted-foreground">
+                Free, expert pediatric toxicologists and nurses available 24/7.
+              </p>
+            </div>
+            <a
+              href="tel:18002221222"
+              className="inline-flex items-center gap-1.5 rounded-lg bg-emerald-600 px-3 py-1.5 text-xs font-bold text-white shadow-xs hover:bg-emerald-500 shrink-0 self-start sm:self-auto"
+            >
+              <PhoneCall className="size-3.5" />
+              <span>Call 1-800-222-1222</span>
+            </a>
           </div>
         </div>
 
@@ -422,7 +514,9 @@ export function PediatricDosingModal({
         <div className="border-t border-border/80 bg-muted/20 px-5 py-3 flex items-center justify-between text-xs text-muted-foreground">
           <div className="flex items-center gap-1.5">
             <Info className="size-3.5 text-primary shrink-0" />
-            <span>Consult your pediatrician for children under 2 months or acute emergencies.</span>
+            <span>
+              Consult your pediatrician before administering any new medication to a child.
+            </span>
           </div>
           <Button size="sm" onClick={() => onOpenChange(false)} className="text-xs">
             Done

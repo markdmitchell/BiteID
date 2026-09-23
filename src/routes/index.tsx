@@ -28,6 +28,7 @@ import {
   Zap,
   Calculator,
   Camera,
+  BookOpen,
   Navigation,
   Volume2,
   VolumeX,
@@ -59,6 +60,7 @@ import { SnakebiteSurvivalModal } from "@/components/triage/SnakebiteSurvivalMod
 import { KnownCulpritModal } from "@/components/triage/KnownCulpritModal";
 import { PwaInstallBanner } from "@/components/triage/PwaInstallBanner";
 import { PediatricDosingModal } from "@/components/triage/PediatricDosingModal";
+import { SafeHarborModal } from "@/components/triage/SafeHarborModal";
 import { ReconnectionSyncBanner } from "@/components/triage/ReconnectionSyncBanner";
 import { PrivacySanitizationModal } from "@/components/triage/PrivacySanitizationModal";
 import { detectUsStateFromOfflineGps } from "@/lib/geo-offline";
@@ -126,16 +128,21 @@ function TriagePage() {
   const [status, setStatus] = useState<"idle" | "sending" | "done">("idle");
   const [response, setResponse] = useState<TriageResponse | null>(null);
   const [privacyModalOpen, setPrivacyModalOpen] = useState(false);
+  const [safeHarborOpen, setSafeHarborOpen] = useState(false);
   const [highContrastMode, setHighContrastMode] = useState<boolean>(() => {
     if (typeof window === "undefined") return false;
     return localStorage.getItem("biteid_high_contrast") === "true";
   });
   const resultsHeadingRef = useRef<HTMLHeadingElement>(null);
 
-  // Silently warm offline cache and run auto-retention purge for data > 30 days
+  // Silently warm offline cache, run auto-retention purge, and verify legal safe harbor consent
   useEffect(() => {
     startSilentCacheWarming();
     purgeExpiredHealthData(30);
+    const ack = localStorage.getItem("biteid_safe_harbor_acknowledged");
+    if (!ack) {
+      setSafeHarborOpen(true);
+    }
   }, []);
 
   async function handleSyncQueuedIntake(intake: StashedIntake) {
@@ -904,6 +911,13 @@ function TriagePage() {
       />
       <PediatricDosingModal open={dosingModalOpen} onOpenChange={setDosingModalOpen} />
       <PrivacySanitizationModal open={privacyModalOpen} onOpenChange={setPrivacyModalOpen} />
+      <SafeHarborModal
+        open={safeHarborOpen}
+        onAcknowledge={() => {
+          setSafeHarborOpen(false);
+          localStorage.setItem("biteid_safe_harbor_acknowledged", "true");
+        }}
+      />
     </main>
   );
 }
@@ -1094,12 +1108,12 @@ function ResultsDashboard({
           <h1
             ref={headingRef}
             tabIndex={-1}
-            className="font-display text-3xl font-bold leading-tight text-foreground outline-none"
+            className="font-display text-2xl sm:text-3xl font-bold leading-tight text-foreground outline-none"
           >
-            Your assessment
+            Visual Reference Guide &amp; Intake
           </h1>
           <p className="mt-1 text-sm text-muted-foreground">
-            Ranked from most to least likely, based on what you shared.
+            Ranked educational visual matches to compare with your skin and share with your doctor.
           </p>
         </div>
         <div className="grid grid-cols-2 gap-2 sm:flex sm:flex-wrap sm:justify-end">
@@ -1135,10 +1149,10 @@ function ResultsDashboard({
             variant="default"
             size="sm"
             onClick={() => setSummaryOpen(true)}
-            className="font-medium shadow-xs"
+            className="font-semibold shadow-xs"
           >
             <FileText className="size-4 mr-1.5" />
-            Doctor Summary (PDF)
+            Doctor Summary (SBAR &amp; QR)
           </Button>
           <Button variant="ghost" size="sm" onClick={onReset} className="text-muted-foreground">
             <RotateCcw className="size-4" />
@@ -1173,8 +1187,8 @@ function ResultsDashboard({
                 onClick={onOpenDosingModal}
                 className="h-7 px-2.5 text-xs font-semibold border-primary/30 text-primary hover:bg-primary/10 flex items-center gap-1.5"
               >
-                <Calculator className="size-3.5 text-primary" />
-                <span>Pediatric Dosing Calc</span>
+                <BookOpen className="size-3.5 text-primary" />
+                <span>Pediatric Safety Guide</span>
               </Button>
             )}
             <a

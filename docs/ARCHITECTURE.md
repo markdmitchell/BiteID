@@ -86,5 +86,10 @@ done    ResultsDashboard (ranked cards, guidance, top-result reaction references
    of alpha.
 9. Reaction images are non-diagnostic visual references selected from the top result's
    stable ID. Keep the general `fitz-*.jpg` set as the fallback for unknown or absent IDs.
+10. **Legal Safe Harbor Posture**: BiteID is an Educational Visual Reference Guide, Triage Gate,
+    and Doctor-Ready Clinical Scribe. It does not provide medical diagnoses, clinical treatment
+    plans, or individualized pharmaceutical drug dosages. Pediatric medication information is
+    restricted to official FDA manufacturer packaging tables with mandatory physician consultation
+    rules. Never re-introduce automated algorithmic prescribing or claim diagnostic certainty.
 
 See [BACKEND_CONTRACT.md](./BACKEND_CONTRACT.md) for the request/response shape.
