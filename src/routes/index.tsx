@@ -49,6 +49,7 @@ import { UploadCard } from "@/components/triage/UploadCard";
 import { StepNav } from "@/components/triage/StepNav";
 import { EmergencyModal } from "@/components/triage/EmergencyModal";
 import { ProbabilityCard } from "@/components/triage/ProbabilityCard";
+import { ClinicalDiscriminatorCard } from "@/components/triage/ClinicalDiscriminatorCard";
 import { FitzpatrickTabs } from "@/components/triage/FitzpatrickTabs";
 import { ClinicalSummaryModal } from "@/components/triage/ClinicalSummaryModal";
 import { UrgentCareLocator } from "@/components/triage/UrgentCareLocator";
@@ -1535,6 +1536,15 @@ function ResultsDashboard({
               defaultExpanded={true}
             />
           </div>
+
+          {secondaryResults.length > 0 && (
+            <ClinicalDiscriminatorCard
+              topResult={topResult}
+              runnerUpResult={secondaryResults[0]}
+              response={response}
+              form={form}
+            />
+          )}
 
           {response.mimickerAlert?.detected && (
             <div className="rounded-lg border-2 border-primary/30 bg-primary/5 p-5 shadow-sm sm:p-6">
