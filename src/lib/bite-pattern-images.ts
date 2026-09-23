@@ -74,10 +74,50 @@ import aspCaterpillarIii from "@/assets/bite-patterns/asp-caterpillar-i-ii.jpg";
 import aspCaterpillarIiiIv from "@/assets/bite-patterns/asp-caterpillar-iii-iv.jpg";
 import aspCaterpillarVvi from "@/assets/bite-patterns/asp-caterpillar-v-vi.jpg";
 
+// Temporal Evolution Progression Images
+import brownRecluseEarlyIii from "@/assets/bite-patterns/brown-recluse-early-i-ii.jpg";
+import brownRecluseEarlyIiiIv from "@/assets/bite-patterns/brown-recluse-early-iii-iv.jpg";
+import brownRecluseEarlyVvi from "@/assets/bite-patterns/brown-recluse-early-v-vi.jpg";
+import brownRecluseLateIii from "@/assets/bite-patterns/brown-recluse-late-i-ii.jpg";
+import brownRecluseLateIiiIv from "@/assets/bite-patterns/brown-recluse-late-iii-iv.jpg";
+import brownRecluseLateVvi from "@/assets/bite-patterns/brown-recluse-late-v-vi.jpg";
+
+import emEarlyIii from "@/assets/bite-patterns/erythema-migrans-early-i-ii.jpg";
+import emEarlyIiiIv from "@/assets/bite-patterns/erythema-migrans-early-iii-iv.jpg";
+import emEarlyVvi from "@/assets/bite-patterns/erythema-migrans-early-v-vi.jpg";
+import emLateIii from "@/assets/bite-patterns/erythema-migrans-late-i-ii.jpg";
+import emLateIiiIv from "@/assets/bite-patterns/erythema-migrans-late-iii-iv.jpg";
+import emLateVvi from "@/assets/bite-patterns/erythema-migrans-late-v-vi.jpg";
+
+import fireAntEarlyIii from "@/assets/bite-patterns/fire-ant-early-i-ii.jpg";
+import fireAntEarlyIiiIv from "@/assets/bite-patterns/fire-ant-early-iii-iv.jpg";
+import fireAntEarlyVvi from "@/assets/bite-patterns/fire-ant-early-v-vi.jpg";
+import fireAntLateIii from "@/assets/bite-patterns/fire-ant-late-i-ii.jpg";
+import fireAntLateIiiIv from "@/assets/bite-patterns/fire-ant-late-iii-iv.jpg";
+import fireAntLateVvi from "@/assets/bite-patterns/fire-ant-late-v-vi.jpg";
+
+import pitViperEarlyIii from "@/assets/bite-patterns/pit-viper-early-i-ii.jpg";
+import pitViperEarlyIiiIv from "@/assets/bite-patterns/pit-viper-early-iii-iv.jpg";
+import pitViperEarlyVvi from "@/assets/bite-patterns/pit-viper-early-v-vi.jpg";
+import pitViperLateIii from "@/assets/bite-patterns/pit-viper-late-i-ii.jpg";
+import pitViperLateIiiIv from "@/assets/bite-patterns/pit-viper-late-iii-iv.jpg";
+import pitViperLateVvi from "@/assets/bite-patterns/pit-viper-late-v-vi.jpg";
+
+export type TemporalStageKey = "early" | "peak" | "late";
+
+export type TemporalStageInfo = {
+  key: TemporalStageKey;
+  label: string;
+  timeframe: string;
+  description: string;
+  images: { "i-ii": string; "iii-iv": string; "v-vi": string };
+};
+
 export type BitePatternSet = {
   label: string;
   pattern: string;
   images: { "i-ii": string; "iii-iv": string; "v-vi": string };
+  temporalStages?: Record<TemporalStageKey, TemporalStageInfo>;
 };
 
 export const GENERAL_BITE_PATTERN: BitePatternSet = {
@@ -123,8 +163,46 @@ const BITE_PATTERNS: Record<string, BitePatternSet> = {
   },
   brown_recluse: {
     label: "Brown recluse",
-    pattern: "a mild localized nonspecific bump",
+    pattern: "a central sinking ischemic depression or necrotic eschar",
     images: { "i-ii": brownRecluseIii, "iii-iv": brownRecluseIiiIv, "v-vi": brownRecluseVvi },
+    temporalStages: {
+      early: {
+        key: "early",
+        label: "Acute Ischemic Blanching",
+        timeframe: "< 12 Hours",
+        description:
+          "Central erythematous puncture dot surrounded by an irregular ring of pale blanched ischemic skin and outer erythema (early 'red, white, and red' halo) before tissue depression occurs.",
+        images: {
+          "i-ii": brownRecluseEarlyIii,
+          "iii-iv": brownRecluseEarlyIiiIv,
+          "v-vi": brownRecluseEarlyVvi,
+        },
+      },
+      peak: {
+        key: "peak",
+        label: "Sinking Necrosis / Bulla",
+        timeframe: "24–48 Hours",
+        description:
+          "Central dusky violaceous depression with localized hemorrhagic bleb/bulla, surrounded by an indurated inflammatory erythematous border.",
+        images: {
+          "i-ii": brownRecluseIii,
+          "iii-iv": brownRecluseIiiIv,
+          "v-vi": brownRecluseVvi,
+        },
+      },
+      late: {
+        key: "late",
+        label: "Dry Necrotic Eschar",
+        timeframe: "Day 4–7+",
+        description:
+          "Depressed, dry, leathery black eschar with steep, scalloped ulcer margins. The necrotic eschar often separates over 2–4 weeks.",
+        images: {
+          "i-ii": brownRecluseLateIii,
+          "iii-iv": brownRecluseLateIiiIv,
+          "v-vi": brownRecluseLateVvi,
+        },
+      },
+    },
   },
   black_widow: {
     label: "Black widow",
@@ -149,11 +227,87 @@ const BITE_PATTERNS: Record<string, BitePatternSet> = {
       "iii-iv": erythemaMigransIiiIv,
       "v-vi": erythemaMigransVvi,
     },
+    temporalStages: {
+      early: {
+        key: "early",
+        label: "Expanding Solid Macule",
+        timeframe: "Day 1–3",
+        description:
+          "Uniformly erythematous round or oval macule expanding outward from the tick bite site (> 5 cm diameter) before central clearance appears.",
+        images: {
+          "i-ii": emEarlyIii,
+          "iii-iv": emEarlyIiiIv,
+          "v-vi": emEarlyVvi,
+        },
+      },
+      peak: {
+        key: "peak",
+        label: "Classic Targetoid Bullseye",
+        timeframe: "Day 4–7",
+        description:
+          "Hallmark annular lesion featuring a central erythematous nidus, clear intermediate ring, and distinct advancing erythematous perimeter.",
+        images: {
+          "i-ii": erythemaMigransIii,
+          "iii-iv": erythemaMigransIiiIv,
+          "v-vi": erythemaMigransVvi,
+        },
+      },
+      late: {
+        key: "late",
+        label: "Giant Disseminated Plaque",
+        timeframe: "Day 8–14+",
+        description:
+          "Massive centrifugal annular ring expanding > 15–20 cm across torso or thigh; may present with secondary disseminated satellite rings.",
+        images: {
+          "i-ii": emLateIii,
+          "iii-iv": emLateIiiIv,
+          "v-vi": emLateVvi,
+        },
+      },
+    },
   },
   fire_ant: {
     label: "Fire ant",
     pattern: "multiple intensely itchy, pustular welts with an erythematous base",
     images: { "i-ii": fireAntIii, "iii-iv": fireAntIiiIv, "v-vi": fireAntVvi },
+    temporalStages: {
+      early: {
+        key: "early",
+        label: "Sterile Wheal & Flare",
+        timeframe: "< 4 Hours",
+        description:
+          "Immediate intense burning sting sensation producing raised urticarial wheals with a tiny central punctum before pustule formation.",
+        images: {
+          "i-ii": fireAntEarlyIii,
+          "iii-iv": fireAntEarlyIiiIv,
+          "v-vi": fireAntEarlyVvi,
+        },
+      },
+      peak: {
+        key: "peak",
+        label: "Umbilicated Sterile Pustule",
+        timeframe: "24 Hours",
+        description:
+          "Characteristic sterile dome-shaped white/yellow pustule containing non-infectious necrotic eosinophilic debris.",
+        images: {
+          "i-ii": fireAntIii,
+          "iii-iv": fireAntIiiIv,
+          "v-vi": fireAntVvi,
+        },
+      },
+      late: {
+        key: "late",
+        label: "Crusted Excoriation",
+        timeframe: "Day 3–5",
+        description:
+          "Ruptured pustules forming shallow erosions and small honey-colored crusts with resolving dusky erythema.",
+        images: {
+          "i-ii": fireAntLateIii,
+          "iii-iv": fireAntLateIiiIv,
+          "v-vi": fireAntLateVvi,
+        },
+      },
+    },
   },
   chigger: {
     label: "Chigger (Harvest mite)",
@@ -199,6 +353,44 @@ const BITE_PATTERNS: Record<string, BitePatternSet> = {
     label: "Pit viper (Copperhead / Rattlesnake)",
     pattern: "two distinct deep puncture fang marks with progressive edema and ecchymosis",
     images: { "i-ii": pitViperIii, "iii-iv": pitViperIiiIv, "v-vi": pitViperVvi },
+    temporalStages: {
+      early: {
+        key: "early",
+        label: "Paired Punctures & Bruising",
+        timeframe: "< 4 Hours",
+        description:
+          "Two distinct puncture fang marks accompanied by rapid spreading tender edema and early ecclesiastical purplish bruising.",
+        images: {
+          "i-ii": pitViperEarlyIii,
+          "iii-iv": pitViperEarlyIiiIv,
+          "v-vi": pitViperEarlyVvi,
+        },
+      },
+      peak: {
+        key: "peak",
+        label: "Tense Bullae & Limb Swelling",
+        timeframe: "24–48 Hours",
+        description:
+          "Severe edema extending up limb with tense hemorrhagic bullae and intense deep-tissue ecchymosis.",
+        images: {
+          "i-ii": pitViperIii,
+          "iii-iv": pitViperIiiIv,
+          "v-vi": pitViperVvi,
+        },
+      },
+      late: {
+        key: "late",
+        label: "Desquamation & Resolving Slough",
+        timeframe: "Day 4–7+",
+        description:
+          "Healing puncture wounds with yellowish-green resolving hematoma breakdown, localized epidermal peeling, and demarcated tissue.",
+        images: {
+          "i-ii": pitViperLateIii,
+          "iii-iv": pitViperLateIiiIv,
+          "v-vi": pitViperLateVvi,
+        },
+      },
+    },
   },
   coral_snake: {
     label: "Coral snake",

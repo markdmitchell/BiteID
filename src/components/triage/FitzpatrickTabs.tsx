@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { bitePatternOf } from "@/lib/bite-pattern-images";
+import { bitePatternOf, type TemporalStageKey } from "@/lib/bite-pattern-images";
+import { Clock, Info } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const STANDARD_TONES = [
@@ -29,7 +30,7 @@ const ERYTHEMA_MIGRANS_TONES = [
     value: "i-ii",
     label: "Types I–II",
     swatch: "#f2d3c2",
-    note: "Fair skin: Classic bright red expanding circular plaque with distinct central clearing (bullseye). Readily evident.",
+    note: "Fair skin: Classic bright red circular plaque with distinct central clearing (bullseye). Readily evident.",
   },
   {
     value: "iii-iv",
@@ -60,6 +61,7 @@ export function FitzpatrickTabs({
   const [selectedPattern, setSelectedPattern] = useState<string>(
     isErythemaMigrans ? "erythema_migrans" : (resultId ?? "general"),
   );
+  const [selectedStage, setSelectedStage] = useState<TemporalStageKey>("peak");
 
   const activeId = isTickRelated ? selectedPattern : resultId;
   const isEmActive = activeId === "erythema_migrans";
@@ -71,11 +73,23 @@ export function FitzpatrickTabs({
       ? (resultName ?? reference.label)
       : reference.label;
 
+  const hasTemporalProgression = Boolean(reference.temporalStages);
+  const currentStageInfo = reference.temporalStages?.[selectedStage];
+  const activeImages = currentStageInfo?.images ?? reference.images;
+
   return (
     <div className="rounded-lg border border-border bg-card p-4 sm:p-5">
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
-          <h2 className="font-display text-lg font-semibold text-foreground">Visual reference</h2>
+          <div className="flex items-center gap-2">
+            <h2 className="font-display text-lg font-semibold text-foreground">Visual reference</h2>
+            {hasTemporalProgression && (
+              <span className="inline-flex items-center gap-1 rounded-full bg-primary/10 px-2 py-0.5 text-[11px] font-semibold text-primary">
+                <Clock className="size-3" />
+                <span>Multi-Stage Evolution</span>
+              </span>
+            )}
+          </div>
           <p className="mt-1 text-sm text-muted-foreground">
             Compare one possible {referenceName} reaction pattern across skin tones.
           </p>
@@ -111,6 +125,62 @@ export function FitzpatrickTabs({
         )}
       </div>
 
+      {/* Temporal Timeline Evolution Selector (when available) */}
+      {hasTemporalProgression && reference.temporalStages && (
+        <div className="mt-4 rounded-xl border border-primary/20 bg-primary/5 p-3 sm:p-3.5 space-y-2.5">
+          <div className="flex flex-wrap items-center justify-between gap-2">
+            <div className="flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-primary">
+              <Clock className="size-3.5" />
+              <span>Timeline / Progression Stage</span>
+            </div>
+            {currentStageInfo && (
+              <span className="rounded-md bg-primary/10 px-2 py-0.5 text-xs font-semibold text-primary">
+                Typical Onset: {currentStageInfo.timeframe}
+              </span>
+            )}
+          </div>
+
+          <div className="grid grid-cols-3 gap-1.5 rounded-lg border border-border/70 bg-card p-1">
+            {(["early", "peak", "late"] as const).map((stageKey) => {
+              const stage = reference.temporalStages?.[stageKey];
+              if (!stage) return null;
+              const isSelected = selectedStage === stageKey;
+
+              return (
+                <button
+                  key={stageKey}
+                  type="button"
+                  onClick={() => setSelectedStage(stageKey)}
+                  className={cn(
+                    "flex flex-col items-center justify-center rounded-md px-2 py-1.5 text-center transition-all",
+                    isSelected
+                      ? "bg-primary text-primary-foreground shadow-xs font-semibold"
+                      : "text-muted-foreground hover:bg-muted/50 hover:text-foreground",
+                  )}
+                >
+                  <span className="text-xs leading-tight">{stage.label}</span>
+                  <span
+                    className={cn(
+                      "text-[10px] opacity-80",
+                      isSelected ? "text-primary-foreground" : "text-muted-foreground",
+                    )}
+                  >
+                    {stage.timeframe}
+                  </span>
+                </button>
+              );
+            })}
+          </div>
+
+          {currentStageInfo && (
+            <div className="flex items-start gap-1.5 text-xs text-muted-foreground leading-relaxed pt-0.5">
+              <Info className="size-3.5 text-primary shrink-0 mt-0.5" />
+              <span>{currentStageInfo.description}</span>
+            </div>
+          )}
+        </div>
+      )}
+
       <Tabs defaultValue="i-ii" className="mt-4">
         <TabsList className="w-full">
           {tones.map((tone) => (
@@ -128,16 +198,21 @@ export function FitzpatrickTabs({
         {tones.map((tone) => (
           <TabsContent key={tone.value} value={tone.value} className="mt-4">
             <img
-              src={reference.images[tone.value as keyof typeof reference.images]}
-              alt={`AI-generated reference showing ${reference.pattern} on Fitzpatrick ${tone.label} skin`}
+              src={activeImages[tone.value as keyof typeof activeImages]}
+              alt={`AI-generated reference showing ${currentStageInfo ? `${currentStageInfo.label} (${currentStageInfo.timeframe})` : reference.pattern} on Fitzpatrick ${tone.label} skin`}
               width={1200}
               height={752}
               loading="lazy"
               className="w-full rounded-md border border-border object-cover"
             />
-            <p className="mt-2 text-xs text-muted-foreground">
-              AI-generated visual reference — not confirmation or diagnosis
-            </p>
+            <div className="mt-2 flex flex-wrap items-center justify-between gap-2 text-xs text-muted-foreground">
+              <span>AI-generated visual reference — not confirmation or diagnosis</span>
+              {currentStageInfo && (
+                <span className="font-medium text-foreground">
+                  Showing: {currentStageInfo.label} ({currentStageInfo.timeframe})
+                </span>
+              )}
+            </div>
             <p className="mt-3 text-sm leading-relaxed text-muted-foreground">{tone.note}</p>
           </TabsContent>
         ))}

@@ -20,7 +20,7 @@ import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { VECTOR_DATABASE, type VectorInfo } from "@/lib/geo-pest.server";
 import { creatureReferenceOf } from "@/lib/creature-images";
-import { bitePatternOf } from "@/lib/bite-pattern-images";
+import { bitePatternOf, type TemporalStageKey } from "@/lib/bite-pattern-images";
 
 type KnownCulpritModalProps = {
   open: boolean;
@@ -287,24 +287,31 @@ export function KnownCulpritModal({
     return CREATURE_MYTH_BUSTERS[selectedId] ?? DEFAULT_MYTH_BUSTERS;
   }, [selectedId]);
 
+  const [selectedStage, setSelectedStage] = useState<TemporalStageKey>("peak");
+
   const creaturePhoto = selectedId ? creatureReferenceOf(selectedId) : undefined;
   const lesionSet = selectedId ? bitePatternOf(selectedId) : undefined;
-  const lesionI_II = lesionSet
+
+  const hasTemporalProgression = Boolean(lesionSet?.temporalStages);
+  const currentStageInfo = lesionSet?.temporalStages?.[selectedStage];
+  const activeImages = currentStageInfo?.images ?? lesionSet?.images;
+
+  const lesionI_II = activeImages
     ? {
-        src: lesionSet.images["i-ii"],
-        alt: `${lesionSet.label}: ${lesionSet.pattern} on Fitzpatrick I–II skin`,
+        src: activeImages["i-ii"],
+        alt: `${lesionSet?.label}: ${currentStageInfo ? currentStageInfo.label : lesionSet?.pattern} on Fitzpatrick I–II skin`,
       }
     : undefined;
-  const lesionIII_IV = lesionSet
+  const lesionIII_IV = activeImages
     ? {
-        src: lesionSet.images["iii-iv"],
-        alt: `${lesionSet.label}: ${lesionSet.pattern} on Fitzpatrick III–IV skin`,
+        src: activeImages["iii-iv"],
+        alt: `${lesionSet?.label}: ${currentStageInfo ? currentStageInfo.label : lesionSet?.pattern} on Fitzpatrick III–IV skin`,
       }
     : undefined;
-  const lesionV_VI = lesionSet
+  const lesionV_VI = activeImages
     ? {
-        src: lesionSet.images["v-vi"],
-        alt: `${lesionSet.label}: ${lesionSet.pattern} on Fitzpatrick V–VI skin`,
+        src: activeImages["v-vi"],
+        alt: `${lesionSet?.label}: ${currentStageInfo ? currentStageInfo.label : lesionSet?.pattern} on Fitzpatrick V–VI skin`,
       }
     : undefined;
 
@@ -507,14 +514,80 @@ export function KnownCulpritModal({
                 <TabsContent value="tones" className="mt-5 space-y-4">
                   <div className="space-y-3">
                     <div>
-                      <h4 className="font-display text-base font-bold text-foreground">
-                        Multi-Tone Visual Verification
-                      </h4>
+                      <div className="flex items-center gap-2">
+                        <h4 className="font-display text-base font-bold text-foreground">
+                          Multi-Tone Visual Verification
+                        </h4>
+                        {hasTemporalProgression && (
+                          <span className="inline-flex items-center gap-1 rounded-full bg-primary/10 px-2 py-0.5 text-[11px] font-semibold text-primary">
+                            <Clock className="size-3" />
+                            <span>Multi-Stage Evolution</span>
+                          </span>
+                        )}
+                      </div>
                       <p className="text-xs text-muted-foreground">
                         Compare your reaction against verified clinical references across different
                         Fitzpatrick skin tones.
                       </p>
                     </div>
+
+                    {/* Timeline Progression Selector */}
+                    {hasTemporalProgression && lesionSet?.temporalStages && (
+                      <div className="rounded-xl border border-primary/20 bg-primary/5 p-3 space-y-2.5">
+                        <div className="flex flex-wrap items-center justify-between gap-2">
+                          <div className="flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-primary">
+                            <Clock className="size-3.5" />
+                            <span>Timeline / Progression Stage</span>
+                          </div>
+                          {currentStageInfo && (
+                            <span className="rounded-md bg-primary/10 px-2 py-0.5 text-xs font-semibold text-primary">
+                              Typical Onset: {currentStageInfo.timeframe}
+                            </span>
+                          )}
+                        </div>
+
+                        <div className="grid grid-cols-3 gap-1.5 rounded-lg border border-border/70 bg-card p-1">
+                          {(["early", "peak", "late"] as const).map((stageKey) => {
+                            const stage = lesionSet.temporalStages?.[stageKey];
+                            if (!stage) return null;
+                            const isSelected = selectedStage === stageKey;
+
+                            return (
+                              <button
+                                key={stageKey}
+                                type="button"
+                                onClick={() => setSelectedStage(stageKey)}
+                                className={cn(
+                                  "flex flex-col items-center justify-center rounded-md px-2 py-1.5 text-center transition-all",
+                                  isSelected
+                                    ? "bg-primary text-primary-foreground shadow-xs font-semibold"
+                                    : "text-muted-foreground hover:bg-muted/50 hover:text-foreground",
+                                )}
+                              >
+                                <span className="text-xs leading-tight">{stage.label}</span>
+                                <span
+                                  className={cn(
+                                    "text-[10px] opacity-80",
+                                    isSelected
+                                      ? "text-primary-foreground"
+                                      : "text-muted-foreground",
+                                  )}
+                                >
+                                  {stage.timeframe}
+                                </span>
+                              </button>
+                            );
+                          })}
+                        </div>
+
+                        {currentStageInfo && (
+                          <div className="flex items-start gap-1.5 text-xs text-muted-foreground leading-relaxed pt-0.5">
+                            <Info className="size-3.5 text-primary shrink-0 mt-0.5" />
+                            <span>{currentStageInfo.description}</span>
+                          </div>
+                        )}
+                      </div>
+                    )}
 
                     <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
                       {lesionI_II && (
