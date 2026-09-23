@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useEffect, useReducer, useState } from "react";
+import { useEffect, useReducer, useRef, useState } from "react";
 import {
   Activity,
   AlertCircle,
@@ -90,12 +90,17 @@ function TriagePage() {
   const [selectedCulpritId, setSelectedCulpritId] = useState<string | null>(null);
   const [status, setStatus] = useState<"idle" | "sending" | "done">("idle");
   const [response, setResponse] = useState<TriageResponse | null>(null);
+  const resultsHeadingRef = useRef<HTMLHeadingElement>(null);
 
   const hasEmergency = form.symptoms.length > 0;
 
   useEffect(() => {
     if (hasEmergency) setModalOpen(true);
-  }, [form.symptoms.length, hasEmergency]);
+  }, [form.symptoms, hasEmergency]);
+
+  useEffect(() => {
+    if (status === "done") resultsHeadingRef.current?.focus();
+  }, [status]);
 
   const canContinue =
     (step === 0 && !!form.lesionImage) ||
@@ -119,20 +124,19 @@ function TriagePage() {
 
   return (
     <main className="min-h-screen bg-background pb-20 font-sans">
-      <header className="border-b border-border bg-card/70 backdrop-blur">
-        <div className="mx-auto flex max-w-3xl items-center justify-between gap-3 px-5 py-4">
-          <div className="flex items-center gap-3">
+      <header className="border-b border-border bg-card/90 backdrop-blur">
+        <div className="mx-auto grid max-w-3xl grid-cols-[minmax(0,1fr)_auto] items-center gap-3 px-5 py-3.5">
+          <div className="flex min-w-0 items-center gap-3">
             <Link
               to="/"
-              onClick={reset}
-              className="flex items-center gap-3 transition-opacity hover:opacity-90"
-              title="Return to Triage Intake"
+              className="flex min-w-0 items-center gap-3 transition-opacity hover:opacity-90"
+              aria-label="BiteID home"
             >
               <img src={biteIdIcon} alt="BiteID" className="size-9 shrink-0 object-contain" />
-              <div className="flex flex-wrap items-baseline gap-2">
+              <div className="min-w-0">
                 <p className="font-display text-base font-semibold text-foreground">BiteID</p>
-                <span className="rounded-full bg-caution/20 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-caution-foreground">
-                  Alpha — testing only
+                <span className="block text-[10px] font-semibold uppercase text-caution-foreground">
+                  Alpha · testing only
                 </span>
               </div>
             </Link>
@@ -145,6 +149,7 @@ function TriagePage() {
               type="button"
               variant="outline"
               size="sm"
+              aria-label="Identify a known bug"
               onClick={() => {
                 setSelectedCulpritId(null);
                 setKnownCulpritOpen(true);
@@ -152,27 +157,29 @@ function TriagePage() {
               className="flex items-center gap-1.5 border-primary/30 text-xs font-semibold text-primary hover:bg-primary/10"
             >
               <Zap className="size-3.5 text-primary" />
-              <span className="hidden sm:inline">Known Bug</span>
+              <span className="hidden md:inline">Known Bug</span>
             </Button>
             <Button
               type="button"
               variant="outline"
               size="sm"
+              aria-label="Open snakebite emergency guidance"
               onClick={() => setSnakebiteOpen(true)}
               className="flex items-center gap-1.5 border-destructive/40 text-xs font-semibold text-destructive hover:bg-destructive/10"
             >
               <ShieldAlert className="size-3.5 text-destructive" />
-              <span className="hidden sm:inline">Snakebite SOS</span>
+              <span className="hidden md:inline">Snakebite SOS</span>
             </Button>
             <Button
               type="button"
               variant="outline"
               size="sm"
+              aria-label="Open field kit"
               onClick={() => setFieldKitOpen(true)}
               className="flex items-center gap-1.5 border-primary/30 text-xs font-semibold text-primary hover:bg-primary/10"
             >
               <Compass className="size-3.5 text-primary" />
-              <span>Field Kit</span>
+              <span className="hidden md:inline">Field Kit</span>
             </Button>
           </div>
         </div>
@@ -180,7 +187,7 @@ function TriagePage() {
 
       <div className="mx-auto max-w-3xl px-5">
         {hasEmergency && (
-          <div className="mt-5 flex items-start gap-3 rounded-2xl bg-destructive px-4 py-3 text-destructive-foreground">
+          <div role="alert" aria-live="assertive" className="mt-5 flex items-start gap-3 rounded-lg bg-destructive px-4 py-3 text-destructive-foreground">
             <AlertTriangle className="mt-0.5 size-5 shrink-0" />
             <p className="text-sm font-medium">
               You reported an emergency symptom. Get urgent medical care now — do not rely on this
@@ -201,14 +208,15 @@ function TriagePage() {
               setSelectedCulpritId(null);
               setKnownCulpritOpen(true);
             }}
+            headingRef={resultsHeadingRef}
           />
         ) : (
           <section className="mt-6">
             {step === 0 && (
-              <div className="mb-6 rounded-2xl border-2 border-primary/25 bg-gradient-to-br from-primary/5 via-card to-card p-4 sm:p-5 shadow-xs">
+              <div className="mb-7 rounded-lg border border-primary/25 bg-card p-4 sm:p-5">
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                   <div className="space-y-1">
-                    <span className="inline-flex items-center gap-1.5 rounded-full bg-primary/10 px-2.5 py-0.5 text-[11px] font-bold text-primary uppercase tracking-wider">
+                    <span className="inline-flex items-center gap-1.5 rounded-md bg-primary/10 px-2.5 py-1 text-[11px] font-bold uppercase text-primary">
                       <Zap className="size-3" />
                       Skip The Photo Quiz
                     </span>
@@ -227,7 +235,7 @@ function TriagePage() {
                       setSelectedCulpritId(null);
                       setKnownCulpritOpen(true);
                     }}
-                    className="shrink-0 gap-2 font-semibold shadow-xs text-xs"
+                    className="w-full shrink-0 gap-2 text-xs font-semibold sm:w-auto"
                   >
                     <span>I Know What Bit Me</span>
                     <ArrowRight className="size-4" />
@@ -241,8 +249,8 @@ function TriagePage() {
             <div className={step === 0 ? "" : "mt-7"}>
               {step === 0 && (
                 <div>
-                  <h1 className="font-display text-2xl font-bold tracking-tight text-foreground">
-                    Not sure? Upload a photo.
+                   <h1 className="font-display text-3xl font-bold leading-tight text-foreground">
+                     Identify your bite
                   </h1>
                   <p className="mt-2 text-sm text-muted-foreground">
                     A close, well-lit photo works best. If you caught the insect, a second photo
@@ -251,7 +259,7 @@ function TriagePage() {
                   <div className="mt-5">
                     <StepNav current={step} />
                   </div>
-                  <div className="mt-5 grid gap-4 sm:grid-cols-2">
+                   <div className="mt-6 space-y-4">
                     <UploadCard
                       title="Skin lesion"
                       hint="The bite, sting or rash itself."
@@ -264,6 +272,7 @@ function TriagePage() {
                       hint="The insect, if you have it."
                       file={form.bugImage}
                       onChange={(file) => dispatch({ type: "setBug", file })}
+                       compact
                     />
                   </div>
                 </div>
@@ -271,22 +280,24 @@ function TriagePage() {
 
               {step === 1 && (
                 <div>
-                  <h1 className="font-display text-2xl font-bold tracking-tight text-foreground">
+                  <h1 className="font-display text-3xl font-bold leading-tight text-foreground">
                     A little context
                   </h1>
                   <p className="mt-2 text-sm text-muted-foreground">
                     Where you were and how long this has been going on.
                   </p>
-                  <div className="mt-5 space-y-5 rounded-2xl border border-border bg-card p-5">
+                  <div className="mt-5 space-y-7 rounded-lg border border-border bg-card p-4 sm:p-6">
+                    <fieldset className="space-y-5">
+                      <legend className="font-display text-base font-semibold text-foreground">Exposure</legend>
                     <div>
-                      <label className="text-sm font-medium text-foreground">
+                      <label htmlFor="environment" className="text-sm font-medium text-foreground">
                         Where were you exposed?
                       </label>
                       <Select
                         value={form.environment}
                         onValueChange={(value) => dispatch({ type: "setEnvironment", value })}
                       >
-                        <SelectTrigger className="mt-2 w-full">
+                        <SelectTrigger id="environment" className="mt-2 w-full">
                           <SelectValue placeholder="Choose an environment" />
                         </SelectTrigger>
                         <SelectContent>
@@ -299,14 +310,14 @@ function TriagePage() {
                       </Select>
                     </div>
                     <div>
-                      <label className="text-sm font-medium text-foreground">
+                      <label htmlFor="state" className="text-sm font-medium text-foreground">
                         Which state were you in?
                       </label>
                       <Select
                         value={form.usState}
                         onValueChange={(value) => dispatch({ type: "setUsState", value })}
                       >
-                        <SelectTrigger className="mt-2 w-full">
+                        <SelectTrigger id="state" className="mt-2 w-full">
                           <SelectValue placeholder="Choose a state" />
                         </SelectTrigger>
                         <SelectContent>
@@ -321,15 +332,18 @@ function TriagePage() {
                         Which insects are active depends on where and when you were bitten.
                       </p>
                     </div>
+                    </fieldset>
+                    <fieldset className="space-y-5 border-t border-border pt-6">
+                      <legend className="font-display text-base font-semibold text-foreground">Reaction details</legend>
                     <div>
-                      <label className="text-sm font-medium text-foreground">
+                      <label htmlFor="body-location" className="text-sm font-medium text-foreground">
                         Where on your body is the bite?
                       </label>
                       <Select
                         value={form.bodyLocation}
                         onValueChange={(value) => dispatch({ type: "setBodyLocation", value })}
                       >
-                        <SelectTrigger className="mt-2 w-full">
+                        <SelectTrigger id="body-location" className="mt-2 w-full">
                           <SelectValue placeholder="Choose a body location" />
                         </SelectTrigger>
                         <SelectContent>
@@ -346,14 +360,14 @@ function TriagePage() {
                       </p>
                     </div>
                     <div>
-                      <label className="text-sm font-medium text-foreground">
+                      <label htmlFor="sensation" className="text-sm font-medium text-foreground">
                         How does it feel?
                       </label>
                       <Select
                         value={form.sensation}
                         onValueChange={(value) => dispatch({ type: "setSensation", value })}
                       >
-                        <SelectTrigger className="mt-2 w-full">
+                        <SelectTrigger id="sensation" className="mt-2 w-full">
                           <SelectValue placeholder="Choose a sensation" />
                         </SelectTrigger>
                         <SelectContent>
@@ -370,14 +384,14 @@ function TriagePage() {
                       </p>
                     </div>
                     <div>
-                      <label className="text-sm font-medium text-foreground">
+                      <label htmlFor="duration" className="text-sm font-medium text-foreground">
                         How long have you had it?
                       </label>
                       <Select
                         value={form.duration}
                         onValueChange={(value) => dispatch({ type: "setDuration", value })}
                       >
-                        <SelectTrigger className="mt-2 w-full">
+                        <SelectTrigger id="duration" className="mt-2 w-full">
                           <SelectValue placeholder="Choose a duration" />
                         </SelectTrigger>
                         <SelectContent>
@@ -389,13 +403,14 @@ function TriagePage() {
                         </SelectContent>
                       </Select>
                     </div>
+                    </fieldset>
                   </div>
                 </div>
               )}
 
               {step === 2 && (
                 <div>
-                  <h1 className="font-display text-2xl font-bold tracking-tight text-foreground">
+                  <h1 className="font-display text-3xl font-bold leading-tight text-foreground">
                     Safety check
                   </h1>
                   <p className="mt-2 text-sm text-muted-foreground">
@@ -407,7 +422,7 @@ function TriagePage() {
                       return (
                         <label
                           key={symptom.value}
-                          className={`flex cursor-pointer items-center gap-3 rounded-xl border p-4 transition-colors ${
+                          className={`flex min-h-12 cursor-pointer items-center gap-3 rounded-lg border p-4 transition-colors ${
                             checked
                               ? "border-destructive bg-destructive/5"
                               : "border-border bg-card hover:border-primary/40"
@@ -426,7 +441,7 @@ function TriagePage() {
                       );
                     })}
 
-                    <label className="flex cursor-pointer items-center gap-3 rounded-xl border border-border bg-muted/40 p-4">
+                    <label className="flex min-h-12 cursor-pointer items-center gap-3 rounded-lg border border-border bg-muted/40 p-4">
                       <Checkbox
                         checked={form.noneOfThese}
                         onCheckedChange={(value) =>
@@ -443,7 +458,7 @@ function TriagePage() {
               )}
             </div>
 
-            <div className="mt-8 flex items-center justify-between gap-3">
+            <div className="mt-8 grid grid-cols-[auto_minmax(0,1fr)] items-end gap-3 border-t border-border pt-5">
               <Button
                 variant="ghost"
                 onClick={() => setStep((s) => Math.max(0, s - 1))}
@@ -454,13 +469,20 @@ function TriagePage() {
               </Button>
 
               {step < 2 ? (
-                <Button onClick={() => setStep((s) => s + 1)} disabled={!canContinue}>
-                  Continue
-                  <ArrowRight className="size-4" />
-                </Button>
+                <div className="justify-self-end text-right">
+                  <Button aria-describedby="continue-help" onClick={() => setStep((s) => s + 1)} disabled={!canContinue}>
+                    Continue
+                    <ArrowRight className="size-4" />
+                  </Button>
+                  {!canContinue && (
+                    <p id="continue-help" className="mt-2 max-w-56 text-xs text-muted-foreground">
+                      {step === 0 ? "Add a skin lesion photo to continue." : "Complete the required exposure details to continue."}
+                    </p>
+                  )}
+                </div>
               ) : (
                 <div className="flex flex-col items-end gap-2">
-                  <Button onClick={handleSubmit}>
+                  <Button onClick={handleSubmit} disabled={status === "sending"} aria-live="polite">
                     {status === "sending" && <Loader2 className="size-4 animate-spin" />}
                     {status === "sending" ? "Sending your intake…" : "Get assessment"}
                   </Button>
@@ -475,7 +497,7 @@ function TriagePage() {
           </section>
         )}
 
-        <p className="mt-10 text-xs leading-relaxed text-muted-foreground">
+        <p className="mt-8 border-t border-border pt-5 text-xs leading-relaxed text-muted-foreground">
           <span className="font-semibold text-foreground">Alpha version — for testing only.</span>{" "}
           BiteID is an unfinished prototype and is not a medical service. This tool provides general
           information only and is not a diagnosis. Always consult a qualified clinician about a
@@ -544,6 +566,7 @@ function ResultsDashboard({
   onOpenFieldKit,
   onOpenSnakebite,
   onOpenKnownCulprit,
+  headingRef,
 }: {
   response: TriageResponse;
   form: TriageFormState;
@@ -552,6 +575,7 @@ function ResultsDashboard({
   onOpenFieldKit?: () => void;
   onOpenSnakebite?: () => void;
   onOpenKnownCulprit?: () => void;
+  headingRef: React.RefObject<HTMLHeadingElement | null>;
 }) {
   const [summaryOpen, setSummaryOpen] = useState(false);
   const [locatorOpen, setLocatorOpen] = useState(false);
@@ -659,14 +683,14 @@ function ResultsDashboard({
     <section className="mt-6 space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-border/60 pb-4">
         <div>
-          <h1 className="font-display text-2xl font-bold tracking-tight text-foreground">
+          <h1 ref={headingRef} tabIndex={-1} className="font-display text-3xl font-bold leading-tight text-foreground outline-none">
             Your assessment
           </h1>
           <p className="mt-1 text-sm text-muted-foreground">
             Ranked from most to least likely, based on what you shared.
           </p>
         </div>
-        <div className="flex items-center gap-2 flex-wrap sm:flex-nowrap">
+        <div className="grid grid-cols-2 gap-2 sm:flex sm:flex-wrap sm:justify-end">
           {onOpenKnownCulprit && (
             <Button
               variant="outline"
@@ -693,27 +717,9 @@ function ResultsDashboard({
             <Printer className="size-4 mr-1.5" />
             Doctor Summary (PDF)
           </Button>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => setLocatorOpen(true)}
-            className="font-medium"
-          >
-            <MapPin className="size-4 mr-1.5 text-primary" />
-            Find Urgent Care
-          </Button>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => setTrackerOpen(true)}
-            className="font-medium"
-          >
-            <Activity className="size-4 mr-1.5 text-primary" />
-            Track Rash (24–48h)
-          </Button>
           <Button variant="ghost" size="sm" onClick={onReset} className="text-muted-foreground">
             <RotateCcw className="size-4" />
-            <span className="sr-only sm:not-sr-only sm:ml-1">Start over</span>
+            <span>Start over</span>
           </Button>
         </div>
       </div>
