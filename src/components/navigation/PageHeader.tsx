@@ -16,8 +16,8 @@ export function PageHeader({ activePage }: PageHeaderProps) {
         <div className="flex items-center gap-3">
           <Link
             to="/"
-            className="flex size-8 items-center justify-center rounded-xl bg-muted text-muted-foreground hover:bg-muted/80 transition-colors"
-            title="Return to Triage Intake"
+            className="flex size-11 items-center justify-center rounded-md bg-muted text-muted-foreground transition-colors hover:bg-muted/80 sm:size-9"
+            aria-label="Return to triage intake"
           >
             <ArrowLeft className="size-4" />
           </Link>
@@ -28,7 +28,7 @@ export function PageHeader({ activePage }: PageHeaderProps) {
               <span className="font-display text-base font-bold tracking-tight text-foreground">
                 BiteID
               </span>
-              <span className="rounded-full bg-caution/20 px-2 py-0.5 text-[9px] font-semibold uppercase tracking-wider text-caution-foreground">
+              <span className="rounded-md bg-caution/20 px-2 py-0.5 text-[10px] font-semibold uppercase text-caution-foreground">
                 Alpha
               </span>
             </div>

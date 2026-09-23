@@ -72,7 +72,7 @@ export function FitzpatrickTabs({
       : reference.label;
 
   return (
-    <div className="rounded-2xl border border-border bg-card p-5">
+    <div className="rounded-lg border border-border bg-card p-4 sm:p-5">
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
           <h2 className="font-display text-lg font-semibold text-foreground">Visual reference</h2>
@@ -133,7 +133,7 @@ export function FitzpatrickTabs({
               width={1200}
               height={752}
               loading="lazy"
-              className="w-full rounded-xl border border-border object-cover"
+              className="w-full rounded-md border border-border object-cover"
             />
             <p className="mt-2 text-xs text-muted-foreground">
               AI-generated visual reference — not confirmation or diagnosis
