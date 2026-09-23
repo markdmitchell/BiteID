@@ -1946,6 +1946,8 @@ function ResultsDashboard({
         onOpenChange={setTrackerOpen}
         initialLesionFile={form.lesionImage}
         isErythemaMigrans={isErythemaMigrans}
+        suspectedCondition={topResult?.name}
+        patientProfile={activeProfile}
       />
     </section>
   );

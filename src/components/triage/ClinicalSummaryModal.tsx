@@ -32,6 +32,8 @@ import { stateLabel } from "@/lib/us-states";
 import { getLookalikeDifferentials } from "@/lib/lookalikes";
 import { PATIENT_PERSONAS } from "./PatientProfileSelector";
 
+import type { ProgressionEvaluation } from "@/lib/progression-engine.server";
+
 type ClinicalSummaryModalProps = {
   open: boolean;
   onOpenChange: (open: boolean) => void;
@@ -60,6 +62,7 @@ export function ClinicalSummaryModal({
     baselineDate: string;
     followUpDiameterMm?: number;
     followUpDate?: string;
+    aiEvaluation?: ProgressionEvaluation;
   } | null>(null);
   const uniqueId = useId().replace(/:/g, "").slice(0, 8).toUpperCase();
 
@@ -92,11 +95,27 @@ export function ClinicalSummaryModal({
         }),
       );
       try {
-        const stored = localStorage.getItem("biteid_rash_journal_record");
-        if (stored) {
-          setRashJournal(JSON.parse(stored));
+        const v2 = localStorage.getItem("biteid_rash_journal_record_v2");
+        if (v2) {
+          const parsed = JSON.parse(v2);
+          if (Array.isArray(parsed) && parsed.length > 0) {
+            const first = parsed[0];
+            const last = parsed[parsed.length - 1];
+            setRashJournal({
+              baselineDiameterMm: first.diameterMm,
+              baselineDate: first.date,
+              followUpDiameterMm: parsed.length > 1 ? last.diameterMm : undefined,
+              followUpDate: parsed.length > 1 ? last.date : undefined,
+              aiEvaluation: last.aiEvaluation,
+            });
+          }
         } else {
-          setRashJournal(null);
+          const stored = localStorage.getItem("biteid_rash_journal_record");
+          if (stored) {
+            setRashJournal(JSON.parse(stored));
+          } else {
+            setRashJournal(null);
+          }
         }
       } catch {
         setRashJournal(null);
@@ -165,6 +184,13 @@ ${
         .join(", ")}`
     : ""
 }
+${
+  rashJournal?.aiEvaluation
+    ? `- Serial Lesion AI Delta: Trajectory: ${rashJournal.aiEvaluation.trajectoryLabel} | Cellulitis Risk: ${rashJournal.aiEvaluation.cellulitisRisk.toUpperCase()} | Rate: ${rashJournal.aiEvaluation.expansionRateMmPerDay} mm/day over ${rashJournal.aiEvaluation.hoursElapsed}h.\n  * Margin: ${rashJournal.aiEvaluation.morphologyEvolution.erythemaChange}\n  * Central: ${rashJournal.aiEvaluation.morphologyEvolution.centralFeaturesChange}\n  * Swelling: ${rashJournal.aiEvaluation.morphologyEvolution.edemaChange}`
+    : rashJournal && rashJournal.followUpDiameterMm
+      ? `- Serial Lesion Log: Baseline ${rashJournal.baselineDiameterMm} mm -> Follow-Up ${rashJournal.followUpDiameterMm} mm (Delta: ${rashJournal.followUpDiameterMm - rashJournal.baselineDiameterMm >= 0 ? `+${rashJournal.followUpDiameterMm - rashJournal.baselineDiameterMm}` : rashJournal.followUpDiameterMm - rashJournal.baselineDiameterMm} mm)`
+      : ""
+}
 
 [R] RECOMMENDATION & CLINICAL PLAN
 - Formal physical exam by licensed clinician with vital signs.
@@ -188,6 +214,7 @@ ${
     response.dermatologicalFindings,
     secondaryResults,
     lookalikes,
+    rashJournal,
   ]);
 
   useEffect(() => {
@@ -991,10 +1018,23 @@ ${
 
           {/* Rash Journal 24-48h Progression Record (if present) */}
           {rashJournal && (
-            <div className="rounded border border-border/80 bg-muted/20 p-2.5 text-xs space-y-1 border-b border-border/70 pb-3">
-              <span className="text-[10px] font-bold uppercase text-primary block">
-                Patient 24–48h Centrifugal Rash Expansion Log:
-              </span>
+            <div className="rounded border border-border/80 bg-muted/20 p-2.5 text-xs space-y-2 border-b border-border/70 pb-3">
+              <div className="flex items-center justify-between">
+                <span className="text-[10px] font-bold uppercase text-primary block">
+                  Patient 24–48h Centrifugal Rash Expansion Log:
+                </span>
+                {rashJournal.aiEvaluation && (
+                  <span
+                    className={`rounded-full px-2 py-0.5 text-[9px] font-extrabold uppercase ${
+                      rashJournal.aiEvaluation.cellulitisRisk === "high"
+                        ? "bg-destructive/20 text-destructive"
+                        : "bg-primary/20 text-primary"
+                    }`}
+                  >
+                    AI Cellulitis Risk: {rashJournal.aiEvaluation.cellulitisRisk}
+                  </span>
+                )}
+              </div>
               <div className="flex flex-wrap gap-4 text-xs font-mono">
                 <div>
                   Day 1 Baseline: <strong>{rashJournal.baselineDiameterMm} mm</strong>
@@ -1012,6 +1052,25 @@ ${
                   </div>
                 )}
               </div>
+              {rashJournal.aiEvaluation && (
+                <div className="text-[11px] text-muted-foreground border-t border-border/40 pt-1.5 space-y-1">
+                  <p>
+                    <strong className="text-foreground">AI Progression Trajectory:</strong>{" "}
+                    {rashJournal.aiEvaluation.trajectoryLabel} (Rate:{" "}
+                    {rashJournal.aiEvaluation.expansionRateMmPerDay > 0
+                      ? `+${rashJournal.aiEvaluation.expansionRateMmPerDay}`
+                      : rashJournal.aiEvaluation.expansionRateMmPerDay}{" "}
+                    mm/day)
+                  </p>
+                  <p>
+                    <strong className="text-foreground">Dermal Delta:</strong>{" "}
+                    {rashJournal.aiEvaluation.morphologyEvolution.erythemaChange}
+                  </p>
+                  <p className="italic text-[10px]">
+                    {rashJournal.aiEvaluation.cellulitisRationale}
+                  </p>
+                </div>
+              )}
             </div>
           )}
 

@@ -58,3 +58,46 @@ export const analyseIntakeFn = createServerFn({ method: "POST" })
       return unavailableResponse();
     }
   });
+
+import type { ProgressionIntake, ProgressionEvaluation } from "./progression-engine.server";
+
+function validateProgression(input: unknown): ProgressionIntake {
+  const data = input as Partial<ProgressionIntake> | undefined;
+  if (!data || typeof data.baselineImage !== "string" || !data.baselineImage.startsWith("data:")) {
+    throw new Error("A baseline image is required");
+  }
+  if (typeof data.followUpImage !== "string" || !data.followUpImage.startsWith("data:")) {
+    throw new Error("A follow-up image is required");
+  }
+  return {
+    baselineImage: data.baselineImage,
+    baselineDate:
+      typeof data.baselineDate === "string" ? data.baselineDate : new Date().toISOString(),
+    baselineDiameterMm:
+      typeof data.baselineDiameterMm === "number" ? data.baselineDiameterMm : undefined,
+    followUpImage: data.followUpImage,
+    followUpDate:
+      typeof data.followUpDate === "string" ? data.followUpDate : new Date().toISOString(),
+    followUpDiameterMm:
+      typeof data.followUpDiameterMm === "number" ? data.followUpDiameterMm : undefined,
+    suspectedCondition:
+      typeof data.suspectedCondition === "string" ? data.suspectedCondition : undefined,
+    patientProfile: data.patientProfile ?? "standard_adult",
+    reportedSymptoms: Array.isArray(data.reportedSymptoms)
+      ? data.reportedSymptoms.filter((s): s is string => typeof s === "string")
+      : [],
+  };
+}
+
+export const analyseLesionProgressionFn = createServerFn({ method: "POST" })
+  .inputValidator(validateProgression)
+  .handler(async ({ data }): Promise<ProgressionEvaluation> => {
+    const { evaluateLesionProgression, evaluateProgressionRuleBased } =
+      await import("./progression-engine.server");
+    try {
+      return await evaluateLesionProgression(data);
+    } catch (error) {
+      console.error("BiteID progression analysis failed, using rule-based fallback:", error);
+      return evaluateProgressionRuleBased(data);
+    }
+  });
