@@ -7,10 +7,10 @@ export function SiteFooter() {
     <footer className="border-t border-border bg-card/50 text-foreground">
       <div className="mx-auto max-w-5xl px-5 py-12">
         {/* Top Emergency Action Band */}
-        <div className="mb-10 rounded-2xl border border-destructive/25 bg-destructive/5 p-5 sm:p-6">
+        <div className="mb-10 rounded-lg border border-destructive/25 bg-destructive/5 p-5 sm:p-6">
           <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <div className="flex items-start gap-3.5">
-              <span className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-destructive/15 text-destructive">
+              <span className="flex size-10 shrink-0 items-center justify-center rounded-md bg-destructive/15 text-destructive">
                 <HeartPulse className="size-5" />
               </span>
               <div>

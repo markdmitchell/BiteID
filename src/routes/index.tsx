@@ -583,10 +583,10 @@ function ResultsDashboard({
 
   if (response.isOfflineQueued) {
     return (
-      <section className="mt-6 space-y-6">
-        <div className="rounded-2xl border-2 border-primary/30 bg-card p-6 shadow-sm">
+      <section aria-live="polite" className="mt-6 space-y-6">
+        <div className="rounded-lg border-2 border-primary/30 bg-card p-6 shadow-sm">
           <div className="flex items-start gap-4">
-            <span className="flex size-12 shrink-0 items-center justify-center rounded-2xl bg-primary/10 text-primary">
+            <span className="flex size-12 shrink-0 items-center justify-center rounded-md bg-primary/10 text-primary">
               <WifiOff className="size-6" />
             </span>
             <div className="space-y-3">
@@ -680,7 +680,7 @@ function ResultsDashboard({
     additionalGuidance;
 
   return (
-    <section className="mt-6 space-y-6">
+    <section aria-live="polite" className="mt-6 space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-border/60 pb-4">
         <div>
           <h1 ref={headingRef} tabIndex={-1} className="font-display text-3xl font-bold leading-tight text-foreground outline-none">
@@ -727,7 +727,7 @@ function ResultsDashboard({
       {topResult ? (
         <div className="space-y-6">
           {topResult.id === "pit_viper" && onOpenSnakebite && (
-            <div className="rounded-2xl border-2 border-destructive bg-destructive/10 p-4 sm:p-5">
+            <div className="rounded-lg border-2 border-destructive bg-destructive/10 p-4 sm:p-5">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                 <div className="space-y-1">
                   <p className="flex items-center gap-1.5 text-sm font-bold text-destructive">
@@ -765,7 +765,7 @@ function ResultsDashboard({
           </div>
 
           {response.mimickerAlert?.detected && (
-            <div className="rounded-2xl border-2 border-primary/30 bg-primary/5 p-5 sm:p-6 shadow-sm">
+            <div className="rounded-lg border-2 border-primary/30 bg-primary/5 p-5 shadow-sm sm:p-6">
               <div className="flex items-start gap-3.5">
                 <AlertCircle className="mt-0.5 size-5 shrink-0 text-primary" />
                 <div className="space-y-2">
@@ -795,7 +795,7 @@ function ResultsDashboard({
           )}
 
           {response.dermatologicalFindings && (
-            <div className="rounded-2xl border border-border bg-card p-5 sm:p-6 space-y-4 shadow-xs">
+            <div className="space-y-4 rounded-lg border border-border bg-card p-5 shadow-xs sm:p-6">
               <div className="flex flex-wrap items-center justify-between gap-2 border-b border-border/60 pb-3">
                 <div className="flex items-center gap-2">
                   <span className="flex size-7 items-center justify-center rounded-lg bg-primary/10 text-primary">
@@ -852,7 +852,7 @@ function ResultsDashboard({
           )}
 
           {isErythemaMigrans && (
-            <div className="rounded-2xl border-2 border-caution/40 bg-caution/10 p-5 sm:p-6 shadow-sm">
+            <div className="rounded-lg border-2 border-caution/40 bg-caution/10 p-5 shadow-sm sm:p-6">
               <div className="flex items-start gap-3.5">
                 <AlertTriangle className="mt-0.5 size-5 shrink-0 text-caution-foreground" />
                 <div className="space-y-2">
@@ -918,7 +918,7 @@ function ResultsDashboard({
           )}
 
           {hasActionContent && (
-            <div className="rounded-2xl border-2 border-primary/25 bg-primary/5 p-5 sm:p-6 shadow-sm">
+            <div className="rounded-lg border-2 border-primary/25 bg-primary/5 p-5 shadow-sm sm:p-6">
               <div className="flex items-center gap-2.5 text-primary">
                 <HeartPulse className="size-5 shrink-0" />
                 <h2 className="font-display text-lg font-bold tracking-tight text-foreground">
@@ -1084,11 +1084,11 @@ function ResultsDashboard({
         </div>
       ) : (
         <div className="space-y-4">
-          <div className="rounded-2xl border border-border bg-card p-5 text-sm text-muted-foreground">
+          <div className="rounded-lg border border-border bg-card p-5 text-sm text-muted-foreground">
             The service did not return any ranked findings for this intake.
           </div>
           {rawGuidance && (
-            <div className="rounded-2xl border border-border bg-card p-5">
+            <div className="rounded-lg border border-border bg-card p-5">
               <h2 className="font-display text-lg font-semibold text-foreground">
                 What to do next
               </h2>
@@ -1101,7 +1101,7 @@ function ResultsDashboard({
       )}
 
       {/* Non-Physician Liability & Guidance Notice */}
-      <div className="rounded-2xl border border-border/80 bg-muted/30 p-4 text-xs text-muted-foreground leading-relaxed">
+      <div className="rounded-lg border border-border/80 bg-muted/30 p-4 text-xs leading-relaxed text-muted-foreground">
         <div className="flex items-center gap-2 font-semibold text-foreground mb-1">
           <ShieldCheck className="size-4 text-primary" />
           <span>Non-Physician Disclaimer & Care Guidance</span>
@@ -1116,7 +1116,7 @@ function ResultsDashboard({
       </div>
 
       {response.disclaimer && (
-        <p className="rounded-2xl bg-muted px-5 py-4 text-xs leading-relaxed text-muted-foreground">
+        <p className="rounded-lg bg-muted px-5 py-4 text-xs leading-relaxed text-muted-foreground">
           {response.disclaimer}
         </p>
       )}
