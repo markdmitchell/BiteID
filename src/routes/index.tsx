@@ -3,19 +3,26 @@ import { useEffect, useReducer, useRef, useState } from "react";
 import {
   Activity,
   AlertCircle,
+  AlertOctagon,
   AlertTriangle,
   ArrowLeft,
   ArrowRight,
+  Baby,
+  CheckCircle2,
   Compass,
   Eye,
   FileText,
+  Heart,
   HeartPulse,
   Loader2,
   MapPin,
+  PhoneCall,
+  Pill,
   Printer,
   RotateCcw,
   ShieldAlert,
   ShieldCheck,
+  Sparkles,
   Stethoscope,
   WifiOff,
   Zap,
@@ -43,6 +50,11 @@ import { OfflineFieldKitModal } from "@/components/triage/OfflineFieldKitModal";
 import { SnakebiteSurvivalModal } from "@/components/triage/SnakebiteSurvivalModal";
 import { KnownCulpritModal } from "@/components/triage/KnownCulpritModal";
 import {
+  PatientProfileSelector,
+  PATIENT_PERSONAS,
+} from "@/components/triage/PatientProfileSelector";
+import { VULNERABLE_GUIDANCE_MAP } from "@/lib/vulnerable-guidance.data";
+import {
   BODY_LOCATION_OPTIONS,
   DURATION_OPTIONS,
   FALLBACK_RESPONSE,
@@ -55,6 +67,7 @@ import {
   triageReducer,
   type TriageFormState,
   type TriageResponse,
+  type PatientVulnerabilityProfile,
 } from "@/lib/triage";
 import { US_STATE_OPTIONS } from "@/lib/us-states";
 
@@ -417,6 +430,24 @@ function TriagePage() {
                           </SelectContent>
                         </Select>
                       </div>
+
+                      <div className="border-t border-border/80 pt-5 space-y-2">
+                        <div>
+                          <label className="text-sm font-medium text-foreground block">
+                            Who was bitten or affected?
+                          </label>
+                          <p className="text-xs text-muted-foreground mt-0.5 mb-3">
+                            Enables tailored pediatric weight dosing, pregnancy medication
+                            safeguards, and Beers criteria precautions.
+                          </p>
+                        </div>
+                        <PatientProfileSelector
+                          value={form.patientProfile}
+                          onChange={(val) => dispatch({ type: "setPatientProfile", value: val })}
+                          compact={false}
+                          showSummary={true}
+                        />
+                      </div>
                     </fieldset>
                   </div>
                 </div>
@@ -600,6 +631,9 @@ function ResultsDashboard({
   const [summaryOpen, setSummaryOpen] = useState(false);
   const [locatorOpen, setLocatorOpen] = useState(false);
   const [trackerOpen, setTrackerOpen] = useState(false);
+  const [activeProfile, setActiveProfile] = useState<PatientVulnerabilityProfile>(
+    form.patientProfile ?? "standard_adult",
+  );
 
   if (response.isOfflineQueued) {
     return (
@@ -748,6 +782,40 @@ function ResultsDashboard({
         </div>
       </div>
 
+      {/* Patient Vulnerability Profile Selector & Poison Control Bar */}
+      <div className="rounded-xl border border-border/80 bg-card p-4 shadow-2xs space-y-3">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-border/60 pb-2.5">
+          <div className="flex items-center gap-2">
+            <span className="flex size-7 items-center justify-center rounded-lg bg-primary/10 text-primary">
+              <Baby className="size-4" />
+            </span>
+            <div>
+              <h2 className="text-xs font-bold uppercase tracking-wider text-foreground">
+                Patient Vulnerability Profile
+              </h2>
+              <p className="text-[11px] text-muted-foreground">
+                Instantly recalibrates first-aid advice, black-box warnings, and pediatric/geriatric
+                safety limits.
+              </p>
+            </div>
+          </div>
+          <a
+            href="tel:18002221222"
+            className="inline-flex items-center gap-1.5 rounded-full border border-emerald-500/30 bg-emerald-500/10 px-3 py-1 text-xs font-semibold text-emerald-700 dark:text-emerald-300 hover:bg-emerald-500/20 self-start sm:self-auto"
+          >
+            <PhoneCall className="size-3" />
+            <span>Poison Help: 1-800-222-1222</span>
+          </a>
+        </div>
+
+        <PatientProfileSelector
+          value={activeProfile}
+          onChange={setActiveProfile}
+          compact={false}
+          showSummary={true}
+        />
+      </div>
+
       {topResult ? (
         <div className="space-y-6">
           {topResult.id === "pit_viper" && onOpenSnakebite && (
@@ -775,6 +843,136 @@ function ResultsDashboard({
               </div>
             </div>
           )}
+
+          {/* Dynamic Vulnerable Population Safety Directives Card */}
+          {(() => {
+            if (activeProfile === "standard_adult") return null;
+            const guidance =
+              topResult.vulnerableGuidance ??
+              (topResult.id ? VULNERABLE_GUIDANCE_MAP[topResult.id] : undefined);
+            if (!guidance) return null;
+
+            const isPed = activeProfile === "infant_toddler" || activeProfile === "child";
+            const isPreg = activeProfile === "pregnant_nursing";
+            const isGeri = activeProfile === "geriatric_immune";
+
+            return (
+              <div className="rounded-xl border-2 border-primary/30 bg-primary/5 p-4 sm:p-5 shadow-xs space-y-3">
+                <div className="flex items-center justify-between border-b border-primary/20 pb-2">
+                  <div className="flex items-center gap-2">
+                    {isPed && <Baby className="size-4 text-rose-600 dark:text-rose-400" />}
+                    {isPreg && <Heart className="size-4 text-purple-600 dark:text-purple-400" />}
+                    {isGeri && <ShieldAlert className="size-4 text-blue-600 dark:text-blue-400" />}
+                    <h3 className="text-xs font-bold uppercase tracking-wider text-foreground">
+                      Personalized Safety Directives for{" "}
+                      {PATIENT_PERSONAS.find((p) => p.key === activeProfile)?.label}
+                    </h3>
+                  </div>
+                  <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-primary/10 text-primary border border-primary/20">
+                    Clinical Priority
+                  </span>
+                </div>
+
+                {isPed && guidance.pediatric && (
+                  <div className="space-y-2.5 text-xs">
+                    {guidance.pediatric.blackBoxWarning && (
+                      <div className="rounded-lg border border-destructive/40 bg-destructive/10 p-3 text-destructive font-medium">
+                        <span className="font-bold flex items-center gap-1.5 mb-1">
+                          <AlertOctagon className="size-4 shrink-0" />
+                          BLACK-BOX PEDIATRIC WARNING:
+                        </span>
+                        {guidance.pediatric.blackBoxWarning}
+                      </div>
+                    )}
+                    {guidance.pediatric.atypicalPresentation && (
+                      <div className="rounded-lg border border-amber-500/30 bg-amber-500/10 p-3 text-amber-900 dark:text-amber-200">
+                        <span className="font-bold flex items-center gap-1.5 mb-1">
+                          <Sparkles className="size-4 shrink-0" />
+                          &quot;DO NOT MISS&quot; ATYPICAL PRESENTATION:
+                        </span>
+                        {guidance.pediatric.atypicalPresentation}
+                      </div>
+                    )}
+                    {guidance.pediatric.weightBasedAdvice && (
+                      <div className="rounded-lg border border-border bg-card p-3 text-foreground">
+                        <span className="font-bold flex items-center gap-1.5 text-primary mb-1">
+                          <Pill className="size-4 shrink-0" />
+                          Weight-Based Medication & First Aid:
+                        </span>
+                        {guidance.pediatric.weightBasedAdvice}
+                      </div>
+                    )}
+                  </div>
+                )}
+
+                {isPreg && guidance.pregnancy && (
+                  <div className="space-y-2.5 text-xs">
+                    {guidance.pregnancy.contraindications &&
+                      guidance.pregnancy.contraindications.length > 0 && (
+                        <div className="rounded-lg border border-destructive/40 bg-destructive/10 p-3 text-destructive font-medium">
+                          <span className="font-bold flex items-center gap-1.5 mb-1">
+                            <AlertTriangle className="size-4 shrink-0" />
+                            CONTRAINDICATIONS IN PREGNANCY:
+                          </span>
+                          {guidance.pregnancy.contraindications.join(" • ")}
+                        </div>
+                      )}
+                    {guidance.pregnancy.safeAlternatives && (
+                      <div className="rounded-lg border border-emerald-500/30 bg-emerald-500/10 p-3 text-emerald-900 dark:text-emerald-200">
+                        <span className="font-bold flex items-center gap-1.5 mb-1">
+                          <CheckCircle2 className="size-4 shrink-0" />
+                          Safe First-Line Alternatives:
+                        </span>
+                        {guidance.pregnancy.safeAlternatives}
+                      </div>
+                    )}
+                    {guidance.pregnancy.fetalRisks && (
+                      <div className="rounded-lg border border-border bg-card p-3 text-foreground">
+                        <span className="font-bold flex items-center gap-1.5 text-purple-600 mb-1">
+                          <Heart className="size-4 shrink-0" />
+                          Maternal-Fetal Considerations:
+                        </span>
+                        {guidance.pregnancy.fetalRisks}
+                      </div>
+                    )}
+                  </div>
+                )}
+
+                {isGeri && guidance.geriatric && (
+                  <div className="space-y-2.5 text-xs">
+                    {guidance.geriatric.beersCriteriaWarning && (
+                      <div className="rounded-lg border border-amber-500/40 bg-amber-500/10 p-3 text-amber-900 dark:text-amber-200">
+                        <span className="font-bold flex items-center gap-1.5 mb-1">
+                          <Pill className="size-4 shrink-0" />
+                          BEERS CRITERIA MEDICATION PRECAUTION:
+                        </span>
+                        {guidance.geriatric.beersCriteriaWarning}
+                      </div>
+                    )}
+                    {guidance.geriatric.atypicalPresentation && (
+                      <div className="rounded-lg border border-primary/20 bg-card p-3 text-foreground">
+                        <span className="font-bold flex items-center gap-1.5 text-primary mb-1">
+                          <Sparkles className="size-4 shrink-0" />
+                          Atypical Blunted Presentation:
+                        </span>
+                        {guidance.geriatric.atypicalPresentation}
+                      </div>
+                    )}
+                    {guidance.geriatric.sepsisWarningSigns &&
+                      guidance.geriatric.sepsisWarningSigns.length > 0 && (
+                        <div className="rounded-lg border border-destructive/30 bg-destructive/5 p-3 text-destructive">
+                          <span className="font-bold flex items-center gap-1.5 mb-1">
+                            <ShieldAlert className="size-4 shrink-0" />
+                            Sepsis & Secondary Infection Red Flags (qSOFA):
+                          </span>
+                          {guidance.geriatric.sepsisWarningSigns.join(" • ")}
+                        </div>
+                      )}
+                  </div>
+                )}
+              </div>
+            );
+          })()}
 
           <div className="space-y-2">
             <span className="text-xs font-semibold uppercase tracking-wider text-primary">
@@ -1151,6 +1349,7 @@ function ResultsDashboard({
         response={response}
         form={form}
         isErythemaMigrans={isErythemaMigrans}
+        patientProfile={activeProfile}
       />
 
       <UrgentCareLocator

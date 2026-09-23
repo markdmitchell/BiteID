@@ -51,6 +51,31 @@ export const EMERGENCY_SYMPTOMS: EnvironmentOption[] = [
   { value: "neck", label: "Stiff neck with a severe headache" },
 ];
 
+export type PatientVulnerabilityProfile =
+  "standard_adult" | "infant_toddler" | "child" | "pregnant_nursing" | "geriatric_immune";
+
+export type VulnerablePopulationGuidance = {
+  pediatric?: {
+    cautions: string[];
+    atypicalPresentation?: string;
+    weightBasedAdvice?: string;
+    blackBoxWarning?: string;
+    erCriteria?: string[];
+  };
+  pregnancy?: {
+    cautions: string[];
+    safeAlternatives?: string;
+    contraindications: string[];
+    fetalRisks?: string;
+  };
+  geriatric?: {
+    cautions: string[];
+    atypicalPresentation?: string;
+    beersCriteriaWarning?: string;
+    sepsisWarningSigns?: string[];
+  };
+};
+
 export type TriageFormState = {
   lesionImage: File | null;
   bugImage: File | null;
@@ -59,6 +84,7 @@ export type TriageFormState = {
   usState: string;
   bodyLocation: string;
   sensation: string;
+  patientProfile: PatientVulnerabilityProfile;
   symptoms: string[];
   noneOfThese: boolean;
 };
@@ -71,6 +97,7 @@ export const initialFormState: TriageFormState = {
   usState: "",
   bodyLocation: "any_unspecified",
   sensation: "unsure",
+  patientProfile: "standard_adult",
   symptoms: [],
   noneOfThese: false,
 };
@@ -83,6 +110,7 @@ export type TriageAction =
   | { type: "setUsState"; value: string }
   | { type: "setBodyLocation"; value: string }
   | { type: "setSensation"; value: string }
+  | { type: "setPatientProfile"; value: PatientVulnerabilityProfile }
   | { type: "toggleSymptom"; value: string }
   | { type: "setNoneOfThese"; value: boolean }
   | { type: "reset" };
@@ -103,6 +131,8 @@ export function triageReducer(state: TriageFormState, action: TriageAction): Tri
       return { ...state, bodyLocation: action.value };
     case "setSensation":
       return { ...state, sensation: action.value };
+    case "setPatientProfile":
+      return { ...state, patientProfile: action.value };
     case "toggleSymptom": {
       const has = state.symptoms.includes(action.value);
       const symptoms = has
@@ -131,13 +161,14 @@ export type TriageResultItem = {
   score?: number;
   description?: string;
   summary?: string;
-  urgency?: string;
+  urgency?: "critical" | "urgent" | "non_urgent" | string;
   severity?: string;
   matchedFactors?: string[];
   associatedPathogens?: string[];
   delayedRisks?: string[];
   firstAidAdvice?: string[];
   warningSignsToWatch?: string[];
+  vulnerableGuidance?: VulnerablePopulationGuidance;
 };
 
 export type DermatologicalFindings = {
@@ -227,6 +258,7 @@ export async function submitTriage(state: TriageFormState): Promise<TriageRespon
         usState: state.usState,
         bodyLocation: state.bodyLocation,
         sensation: state.sensation,
+        patientProfile: state.patientProfile,
         monthIndex: new Date().getMonth(),
         symptoms: state.symptoms,
       },

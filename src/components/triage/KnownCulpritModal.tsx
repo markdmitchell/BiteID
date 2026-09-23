@@ -1,17 +1,23 @@
 import { useState, useMemo } from "react";
 import {
   Activity,
+  AlertOctagon,
   AlertTriangle,
   ArrowRight,
+  Baby,
   CheckCircle2,
   Clock,
   Compass,
+  Heart,
   HelpCircle,
   Info,
   MapPin,
+  PhoneCall,
+  Pill,
   Search,
   ShieldAlert,
   ShieldCheck,
+  Sparkles,
   XCircle,
   Zap,
 } from "lucide-react";
@@ -19,6 +25,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { VECTOR_DATABASE, type VectorInfo } from "@/lib/geo-pest.server";
+import { VULNERABLE_GUIDANCE_MAP } from "@/lib/vulnerable-guidance.data";
 import { creatureReferenceOf } from "@/lib/creature-images";
 import { bitePatternOf, type TemporalStageKey } from "@/lib/bite-pattern-images";
 
@@ -333,7 +340,12 @@ export function KnownCulpritModal({
   const [selectedId, setSelectedId] = useState<string | null>(initialVectorId);
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState<string>("all");
-  const [activeTab, setActiveTab] = useState<"protocol" | "myths" | "tones" | "risks">("protocol");
+  const [activeTab, setActiveTab] = useState<
+    "protocol" | "vulnerable" | "myths" | "tones" | "risks"
+  >("protocol");
+  const [vulnerableProfile, setVulnerableProfile] = useState<
+    "pediatric" | "pregnancy" | "geriatric"
+  >("pediatric");
 
   // If initialVectorId changes from parent, sync state
   if (initialVectorId && initialVectorId !== selectedId) {
@@ -491,15 +503,21 @@ export function KnownCulpritModal({
                 onValueChange={(v) => setActiveTab(v as typeof activeTab)}
                 className="w-full"
               >
-                <TabsList className="grid w-full grid-cols-4 bg-muted/60 text-xs">
+                <TabsList className="grid w-full grid-cols-5 bg-muted/60 text-xs">
                   <TabsTrigger value="protocol" className="font-semibold">
                     First 3 Mins
+                  </TabsTrigger>
+                  <TabsTrigger
+                    value="vulnerable"
+                    className="font-semibold text-rose-600 dark:text-rose-400"
+                  >
+                    High-Risk Groups
                   </TabsTrigger>
                   <TabsTrigger value="myths" className="font-semibold">
                     Deadly Myths
                   </TabsTrigger>
                   <TabsTrigger value="tones" className="font-semibold">
-                    Skin Tone Guide
+                    Skin Tones
                   </TabsTrigger>
                   <TabsTrigger value="risks" className="font-semibold">
                     Red Flags & ER
@@ -562,6 +580,288 @@ export function KnownCulpritModal({
                       )}
                     </div>
                   </div>
+                </TabsContent>
+
+                {/* TAB 2: VULNERABLE POPULATION SAFETY */}
+                <TabsContent value="vulnerable" className="mt-5 space-y-4">
+                  {/* Persona Sub-Selector & Poison Control Call Bar */}
+                  <div className="flex flex-wrap items-center justify-between gap-2 border-b border-border pb-3">
+                    <div className="flex items-center gap-1.5">
+                      <button
+                        type="button"
+                        onClick={() => setVulnerableProfile("pediatric")}
+                        className={`flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-semibold transition-all ${
+                          vulnerableProfile === "pediatric"
+                            ? "bg-rose-500/15 text-rose-700 dark:text-rose-300 border border-rose-500/30 shadow-2xs"
+                            : "text-muted-foreground hover:bg-muted"
+                        }`}
+                      >
+                        <Baby className="size-3.5" />
+                        <span>Infants & Kids</span>
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setVulnerableProfile("pregnancy")}
+                        className={`flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-semibold transition-all ${
+                          vulnerableProfile === "pregnancy"
+                            ? "bg-purple-500/15 text-purple-700 dark:text-purple-300 border border-purple-500/30 shadow-2xs"
+                            : "text-muted-foreground hover:bg-muted"
+                        }`}
+                      >
+                        <Heart className="size-3.5" />
+                        <span>Pregnancy & Nursing</span>
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setVulnerableProfile("geriatric")}
+                        className={`flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-semibold transition-all ${
+                          vulnerableProfile === "geriatric"
+                            ? "bg-blue-500/15 text-blue-700 dark:text-blue-300 border border-blue-500/30 shadow-2xs"
+                            : "text-muted-foreground hover:bg-muted"
+                        }`}
+                      >
+                        <ShieldAlert className="size-3.5" />
+                        <span>Older Adults (65+)</span>
+                      </button>
+                    </div>
+
+                    <a
+                      href="tel:18002221222"
+                      className="inline-flex items-center gap-1.5 rounded-full border border-emerald-500/30 bg-emerald-500/10 px-3 py-1 text-xs font-semibold text-emerald-700 dark:text-emerald-300 hover:bg-emerald-500/20"
+                    >
+                      <PhoneCall className="size-3" />
+                      <span>Poison Help: 1-800-222-1222</span>
+                    </a>
+                  </div>
+
+                  {/* Dynamic Persona Guidance Content */}
+                  {(() => {
+                    const guidance =
+                      selectedVector.vulnerableGuidance ??
+                      VULNERABLE_GUIDANCE_MAP[selectedVector.id];
+
+                    if (!guidance) {
+                      return (
+                        <p className="text-xs text-muted-foreground">
+                          Standard clinical monitoring applies for this species.
+                        </p>
+                      );
+                    }
+
+                    if (vulnerableProfile === "pediatric") {
+                      const ped = guidance.pediatric;
+                      if (!ped) {
+                        return (
+                          <p className="text-xs text-muted-foreground">
+                            Standard pediatric first aid and observation apply.
+                          </p>
+                        );
+                      }
+
+                      return (
+                        <div className="space-y-3">
+                          {ped.blackBoxWarning && (
+                            <div className="rounded-xl border border-destructive/40 bg-destructive/10 p-4">
+                              <h5 className="flex items-center gap-2 text-xs font-bold text-destructive">
+                                <AlertOctagon className="size-4 shrink-0" />
+                                <span>CRITICAL PEDIATRIC WARNING</span>
+                              </h5>
+                              <p className="mt-1.5 text-xs font-medium text-foreground leading-relaxed">
+                                {ped.blackBoxWarning}
+                              </p>
+                            </div>
+                          )}
+
+                          {ped.atypicalPresentation && (
+                            <div className="rounded-xl border border-amber-500/30 bg-amber-500/10 p-4">
+                              <h5 className="flex items-center gap-2 text-xs font-bold text-amber-800 dark:text-amber-300">
+                                <Sparkles className="size-4 shrink-0" />
+                                <span>&quot;DO NOT MISS&quot; ATYPICAL PRESENTATION</span>
+                              </h5>
+                              <p className="mt-1.5 text-xs text-foreground leading-relaxed">
+                                {ped.atypicalPresentation}
+                              </p>
+                            </div>
+                          )}
+
+                          {ped.weightBasedAdvice && (
+                            <div className="rounded-xl border border-primary/20 bg-card p-4 shadow-2xs">
+                              <h5 className="flex items-center gap-2 text-xs font-bold text-primary">
+                                <Pill className="size-4 shrink-0" />
+                                <span>Weight-Based Dosing & Administration</span>
+                              </h5>
+                              <p className="mt-1.5 text-xs text-muted-foreground leading-relaxed">
+                                {ped.weightBasedAdvice}
+                              </p>
+                            </div>
+                          )}
+
+                          {ped.erCriteria && ped.erCriteria.length > 0 && (
+                            <div className="rounded-xl border border-border bg-muted/30 p-4">
+                              <h5 className="text-xs font-bold text-foreground">
+                                Emergency Department (ER) Criteria:
+                              </h5>
+                              <ul className="mt-2 list-inside list-disc space-y-1 text-xs text-muted-foreground">
+                                {ped.erCriteria.map((crit, idx) => (
+                                  <li key={idx}>{crit}</li>
+                                ))}
+                              </ul>
+                            </div>
+                          )}
+
+                          <div className="rounded-xl border border-border/80 bg-card p-4 shadow-2xs">
+                            <h5 className="text-xs font-bold text-foreground">
+                              Pediatric Clinical Cautions:
+                            </h5>
+                            <ul className="mt-2 space-y-1.5 text-xs text-muted-foreground">
+                              {ped.cautions.map((caution, idx) => (
+                                <li key={idx} className="flex items-start gap-2">
+                                  <span className="mt-1 size-1.5 shrink-0 rounded-full bg-rose-500" />
+                                  <span>{caution}</span>
+                                </li>
+                              ))}
+                            </ul>
+                          </div>
+                        </div>
+                      );
+                    }
+
+                    if (vulnerableProfile === "pregnancy") {
+                      const preg = guidance.pregnancy;
+                      if (!preg) {
+                        return (
+                          <p className="text-xs text-muted-foreground">
+                            Standard supportive care applies during pregnancy.
+                          </p>
+                        );
+                      }
+
+                      return (
+                        <div className="space-y-3">
+                          {preg.contraindications && preg.contraindications.length > 0 && (
+                            <div className="rounded-xl border border-destructive/40 bg-destructive/10 p-4">
+                              <h5 className="flex items-center gap-2 text-xs font-bold text-destructive">
+                                <AlertTriangle className="size-4 shrink-0" />
+                                <span>CONTRAINDICATIONS IN PREGNANCY</span>
+                              </h5>
+                              <ul className="mt-1.5 list-inside list-disc space-y-1 text-xs font-medium text-foreground">
+                                {preg.contraindications.map((contra, idx) => (
+                                  <li key={idx}>{contra}</li>
+                                ))}
+                              </ul>
+                            </div>
+                          )}
+
+                          {preg.safeAlternatives && (
+                            <div className="rounded-xl border border-emerald-500/30 bg-emerald-500/10 p-4">
+                              <h5 className="flex items-center gap-2 text-xs font-bold text-emerald-800 dark:text-emerald-300">
+                                <CheckCircle2 className="size-4 shrink-0" />
+                                <span>Safe First-Line Alternatives</span>
+                              </h5>
+                              <p className="mt-1.5 text-xs text-foreground leading-relaxed">
+                                {preg.safeAlternatives}
+                              </p>
+                            </div>
+                          )}
+
+                          {preg.fetalRisks && (
+                            <div className="rounded-xl border border-border bg-card p-4 shadow-2xs">
+                              <h5 className="flex items-center gap-2 text-xs font-bold text-foreground">
+                                <Heart className="size-4 shrink-0 text-purple-600" />
+                                <span>Maternal & Fetal Considerations</span>
+                              </h5>
+                              <p className="mt-1.5 text-xs text-muted-foreground leading-relaxed">
+                                {preg.fetalRisks}
+                              </p>
+                            </div>
+                          )}
+
+                          <div className="rounded-xl border border-border/80 bg-card p-4 shadow-2xs">
+                            <h5 className="text-xs font-bold text-foreground">
+                              Clinical Management Pearls:
+                            </h5>
+                            <ul className="mt-2 space-y-1.5 text-xs text-muted-foreground">
+                              {preg.cautions.map((caution, idx) => (
+                                <li key={idx} className="flex items-start gap-2">
+                                  <span className="mt-1 size-1.5 shrink-0 rounded-full bg-purple-500" />
+                                  <span>{caution}</span>
+                                </li>
+                              ))}
+                            </ul>
+                          </div>
+                        </div>
+                      );
+                    }
+
+                    if (vulnerableProfile === "geriatric") {
+                      const geri = guidance.geriatric;
+                      if (!geri) {
+                        return (
+                          <p className="text-xs text-muted-foreground">
+                            Standard geriatric observation applies.
+                          </p>
+                        );
+                      }
+
+                      return (
+                        <div className="space-y-3">
+                          {geri.beersCriteriaWarning && (
+                            <div className="rounded-xl border border-amber-500/40 bg-amber-500/10 p-4">
+                              <h5 className="flex items-center gap-2 text-xs font-bold text-amber-800 dark:text-amber-300">
+                                <Pill className="size-4 shrink-0" />
+                                <span>BEERS CRITERIA MEDICATION PRECAUTION</span>
+                              </h5>
+                              <p className="mt-1.5 text-xs font-medium text-foreground leading-relaxed">
+                                {geri.beersCriteriaWarning}
+                              </p>
+                            </div>
+                          )}
+
+                          {geri.atypicalPresentation && (
+                            <div className="rounded-xl border border-primary/20 bg-primary/5 p-4">
+                              <h5 className="flex items-center gap-2 text-xs font-bold text-primary">
+                                <Sparkles className="size-4 shrink-0" />
+                                <span>Atypical & Blunted Clinical Presentations</span>
+                              </h5>
+                              <p className="mt-1.5 text-xs text-muted-foreground leading-relaxed">
+                                {geri.atypicalPresentation}
+                              </p>
+                            </div>
+                          )}
+
+                          {geri.sepsisWarningSigns && geri.sepsisWarningSigns.length > 0 && (
+                            <div className="rounded-xl border border-destructive/30 bg-destructive/5 p-4">
+                              <h5 className="flex items-center gap-2 text-xs font-bold text-destructive">
+                                <ShieldAlert className="size-4 shrink-0" />
+                                <span>Sepsis & Secondary Infection Red Flags (qSOFA)</span>
+                              </h5>
+                              <ul className="mt-2 list-inside list-disc space-y-1 text-xs text-foreground">
+                                {geri.sepsisWarningSigns.map((sign, idx) => (
+                                  <li key={idx}>{sign}</li>
+                                ))}
+                              </ul>
+                            </div>
+                          )}
+
+                          <div className="rounded-xl border border-border/80 bg-card p-4 shadow-2xs">
+                            <h5 className="text-xs font-bold text-foreground">
+                              Older Adult Cautions:
+                            </h5>
+                            <ul className="mt-2 space-y-1.5 text-xs text-muted-foreground">
+                              {geri.cautions.map((caution, idx) => (
+                                <li key={idx} className="flex items-start gap-2">
+                                  <span className="mt-1 size-1.5 shrink-0 rounded-full bg-blue-500" />
+                                  <span>{caution}</span>
+                                </li>
+                              ))}
+                            </ul>
+                          </div>
+                        </div>
+                      );
+                    }
+
+                    return null;
+                  })()}
                 </TabsContent>
 
                 {/* TAB 2: DEADLY MYTHS */}

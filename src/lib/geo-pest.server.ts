@@ -42,6 +42,9 @@ export type TriageContext = {
   primarySensation?: string;
 };
 
+import type { VulnerablePopulationGuidance } from "./triage";
+import { VECTOR_URGENCY_MAP, VULNERABLE_GUIDANCE_MAP } from "./vulnerable-guidance.data";
+
 export interface VectorInfo {
   id: string;
   name: string;
@@ -53,10 +56,12 @@ export interface VectorInfo {
   bodyLocationScores?: Record<string, number> | undefined;
   sensationScores: Record<string, number>;
   baseWeight: number;
+  urgency?: "critical" | "urgent" | "non_urgent";
   associatedPathogens: string[];
   delayedRisks: string[];
   firstAidAdvice: string[];
   warningSigns: string[];
+  vulnerableGuidance?: VulnerablePopulationGuidance;
 }
 
 export const VECTOR_DATABASE: Record<string, VectorInfo> = {
@@ -1795,6 +1800,12 @@ export const VECTOR_DATABASE: Record<string, VectorInfo> = {
     ],
   },
 };
+
+// Decorate vector entries with clinical urgency and vulnerable population safety guidance
+for (const [key, vector] of Object.entries(VECTOR_DATABASE)) {
+  vector.urgency = VECTOR_URGENCY_MAP[key] ?? "non_urgent";
+  vector.vulnerableGuidance = VULNERABLE_GUIDANCE_MAP[key];
+}
 
 export const DEFAULT_MCNAIR_VA_COORDINATES = {
   lat: 38.9056,

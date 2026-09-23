@@ -7,10 +7,22 @@ import {
   DialogDescription,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { Printer, X, AlertTriangle, CheckCircle2, FileText, ShieldAlert } from "lucide-react";
+import {
+  Printer,
+  X,
+  AlertTriangle,
+  CheckCircle2,
+  FileText,
+  ShieldAlert,
+  Baby,
+  Heart,
+  Sparkles,
+  Pill,
+} from "lucide-react";
 import {
   type TriageResponse,
   type TriageFormState,
+  type PatientVulnerabilityProfile,
   normalizeResults,
   BODY_LOCATION_OPTIONS,
   SENSATION_OPTIONS,
@@ -20,6 +32,7 @@ import {
 } from "@/lib/triage";
 import { stateLabel } from "@/lib/us-states";
 import { getLookalikeDifferentials } from "@/lib/lookalikes";
+import { PATIENT_PERSONAS } from "./PatientProfileSelector";
 
 type ClinicalSummaryModalProps = {
   open: boolean;
@@ -27,6 +40,7 @@ type ClinicalSummaryModalProps = {
   response: TriageResponse;
   form: TriageFormState;
   isErythemaMigrans: boolean;
+  patientProfile?: PatientVulnerabilityProfile;
 };
 
 export function ClinicalSummaryModal({
@@ -35,6 +49,7 @@ export function ClinicalSummaryModal({
   response,
   form,
   isErythemaMigrans,
+  patientProfile,
 }: ClinicalSummaryModalProps) {
   const [lesionUrl, setLesionUrl] = useState<string | null>(null);
   const [bugUrl, setBugUrl] = useState<string | null>(null);
@@ -323,6 +338,114 @@ export function ClinicalSummaryModal({
               </p>
             </div>
           )}
+
+          {/* Special Populations & Vulnerability Profile */}
+          {(() => {
+            const effectiveProfile = patientProfile ?? form.patientProfile ?? "standard_adult";
+            const personaDef =
+              PATIENT_PERSONAS.find((p) => p.key === effectiveProfile) ?? PATIENT_PERSONAS[0];
+
+            return (
+              <div className="rounded-lg border border-border/80 bg-muted/15 p-3.5 text-xs space-y-2 print:border-neutral-400">
+                <div className="flex items-center justify-between border-b border-border/60 pb-1.5">
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-1.5">
+                    <ShieldAlert className="size-3.5 text-primary" />
+                    Special Populations & Vulnerability Considerations
+                  </span>
+                  <span className="rounded px-2 py-0.5 text-[10px] font-bold bg-primary/10 text-primary border border-primary/20">
+                    Patient Profile: {personaDef.label} ({personaDef.ageRange})
+                  </span>
+                </div>
+
+                <div className="space-y-1.5 leading-relaxed text-foreground text-[11px]">
+                  {effectiveProfile === "infant_toddler" && (
+                    <div className="space-y-1">
+                      <p className="font-semibold text-rose-700 dark:text-rose-400">
+                        • High Venom-to-Body-Mass Ratio: Rapid systemic progression. Initial
+                        antivenom (CroFab / Anascorp) is NOT weight-reduced (neutralizes fixed mass
+                        of circulating venom).
+                      </p>
+                      <p className="text-muted-foreground">
+                        • Pediatric Dosing Safety: Dose fever/analgesic medications strictly by body
+                        weight (kg) via calibrated oral syringe, never household spoons. Never
+                        administer Aspirin or Pepto-Bismol (fatal Reye&apos;s syndrome risk).
+                      </p>
+                      <p className="text-muted-foreground">
+                        • &quot;Do Not Miss&quot; Atypical Presentations: Watch for opsoclonus &
+                        excessive drooling in scorpion stings; board-like rigid abdomen
+                        (appendicitis mimic) in widow bites; scalp, face, and sole burrows in
+                        scabies.
+                      </p>
+                    </div>
+                  )}
+
+                  {effectiveProfile === "child" && (
+                    <div className="space-y-1">
+                      <p className="font-semibold text-amber-800 dark:text-amber-300">
+                        • Aspirin Prohibition: Strictly avoid acetylsalicylic acid and bismuth
+                        subsalicylate (Pepto-Bismol) due to Reye&apos;s syndrome.
+                      </p>
+                      <p className="text-muted-foreground">
+                        • Anaphylaxis Dosing: EpiPen Jr (0.15 mg) for 7.5–30 kg (16.5–66 lbs); adult
+                        auto-injector (0.30 mg) for &gt; 30 kg.
+                      </p>
+                      <p className="text-muted-foreground">
+                        • Tick-Borne Prophylaxis: Short-course Doxycycline (&lt; 21d) is AAP
+                        approved for confirmed Lyme/RMSF. RMSF requires immediate Doxycycline
+                        regardless of age.
+                      </p>
+                    </div>
+                  )}
+
+                  {effectiveProfile === "pregnant_nursing" && (
+                    <div className="space-y-1">
+                      <p className="font-semibold text-purple-700 dark:text-purple-300">
+                        • Pharmacotherapy Contraindications: Doxycycline is CONTRAINDICATED
+                        (Category D: permanent dental staining & bone suppression). Oral Ivermectin
+                        and Lindane are CONTRAINDICATED.
+                      </p>
+                      <p className="text-muted-foreground">
+                        • Safe First-Line Alternatives: Amoxicillin 500 mg PO TID for 14–21 days (or
+                        Cefuroxime axetil 500 mg PO BID) for Lyme disease. Permethrin 5% cream is
+                        Category B and safe for scabies.
+                      </p>
+                      <p className="text-muted-foreground">
+                        • Maternal-Fetal Envenomation: Snakebite/scorpion envenomation risks
+                        placental abruption; requires continuous electronic fetal monitoring and
+                        maternal ICU admission. Antivenom is safe.
+                      </p>
+                    </div>
+                  )}
+
+                  {effectiveProfile === "geriatric_immune" && (
+                    <div className="space-y-1">
+                      <p className="font-semibold text-blue-700 dark:text-blue-300">
+                        • Beers Criteria Warning: Strictly avoid sedating 1st-generation
+                        antihistamines (Diphenhydramine) due to high anticholinergic risk of acute
+                        delirium, urinary retention, and fall fractures. Use 2nd-gen Cetirizine or
+                        Loratadine.
+                      </p>
+                      <p className="text-muted-foreground">
+                        • Blunted Host Response: Atypical faint Erythema Migrans; Norwegian/crusted
+                        scabies presenting as painless hyperkeratosis; blunted fever spikes.
+                      </p>
+                      <p className="text-muted-foreground">
+                        • Sepsis & Secondary Infection Risk: Accelerated cellulitis and bacteremia
+                        in patients with venous stasis or diabetes; qSOFA screening recommended.
+                      </p>
+                    </div>
+                  )}
+
+                  {effectiveProfile === "standard_adult" && (
+                    <p className="text-muted-foreground">
+                      Standard adult toxicological first aid and antimicrobial treatment guidelines
+                      apply.
+                    </p>
+                  )}
+                </div>
+              </div>
+            );
+          })()}
 
           {/* Objective Visual Dermatology Findings */}
           {response.dermatologicalFindings && (

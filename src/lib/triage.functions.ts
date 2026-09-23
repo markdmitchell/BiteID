@@ -1,4 +1,5 @@
 import { createServerFn } from "@tanstack/react-start";
+import type { PatientVulnerabilityProfile } from "./triage";
 
 export type AnalyseIntakeInput = {
   lesionImage: string;
@@ -8,6 +9,7 @@ export type AnalyseIntakeInput = {
   usState: string;
   bodyLocation?: string | null;
   sensation?: string | null;
+  patientProfile?: PatientVulnerabilityProfile;
   monthIndex: number;
   symptoms: string[];
 };
@@ -26,6 +28,7 @@ function validate(input: unknown): AnalyseIntakeInput {
     usState: typeof data.usState === "string" && data.usState ? data.usState : "US-VA",
     bodyLocation: typeof data.bodyLocation === "string" ? data.bodyLocation : "any_unspecified",
     sensation: typeof data.sensation === "string" ? data.sensation : "unsure",
+    patientProfile: data.patientProfile ?? "standard_adult",
     monthIndex:
       typeof data.monthIndex === "number" && data.monthIndex >= 0 && data.monthIndex <= 11
         ? data.monthIndex

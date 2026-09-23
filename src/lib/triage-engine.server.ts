@@ -25,6 +25,8 @@ const MONTHS = [
   "December",
 ];
 
+import type { PatientVulnerabilityProfile, VulnerablePopulationGuidance } from "./triage";
+
 /** Intake as sent by the client. Images are data URLs. */
 export type EngineIntake = {
   lesionImage: string;
@@ -34,6 +36,7 @@ export type EngineIntake = {
   usState: string;
   bodyLocation?: string | null;
   sensation?: string | null;
+  patientProfile?: PatientVulnerabilityProfile;
   monthIndex: number;
   symptoms: string[];
 };
@@ -44,11 +47,13 @@ export type EngineResultItem = {
   scientificName?: string | undefined;
   description?: string | undefined;
   confidence: number;
+  urgency?: "critical" | "urgent" | "non_urgent" | undefined;
   matchedFactors?: string[] | undefined;
   associatedPathogens?: string[] | undefined;
   delayedRisks?: string[] | undefined;
   firstAidAdvice?: string[] | undefined;
   warningSignsToWatch?: string[] | undefined;
+  vulnerableGuidance?: VulnerablePopulationGuidance | undefined;
 };
 
 export type DermatologicalFindings = {
@@ -416,17 +421,44 @@ export async function analyseIntake(intake: EngineIntake): Promise<EngineRespons
       }
     }
 
+    let urgency: "critical" | "urgent" | "non_urgent" = vector?.urgency ?? "non_urgent";
+    if (intake.patientProfile && intake.patientProfile !== "standard_adult") {
+      if (
+        key === "scorpion" ||
+        key === "black_widow" ||
+        key === "pit_viper" ||
+        key === "coral_snake"
+      ) {
+        urgency = "critical";
+      } else if (
+        (intake.patientProfile === "infant_toddler" || intake.patientProfile === "child") &&
+        (key === "dog_tick" ||
+          key === "brown_dog_tick" ||
+          key === "brown_recluse" ||
+          key === "soft_tick")
+      ) {
+        urgency = "critical";
+      } else if (
+        intake.patientProfile === "pregnant_nursing" &&
+        (key === "blacklegged_tick" || key === "soft_tick" || key === "kissing_bug")
+      ) {
+        urgency = "urgent";
+      }
+    }
+
     return {
       id: vector?.id,
       name: vector?.name ?? key,
       scientificName: vector?.scientificName,
       description: vector ? reading?.lesionDescription : undefined,
       confidence: Math.round(probability * 1000) / 10,
+      urgency,
       matchedFactors,
       associatedPathogens: vector?.associatedPathogens,
       delayedRisks: vector?.delayedRisks,
       firstAidAdvice: vector?.firstAidAdvice,
       warningSignsToWatch: vector?.warningSigns,
+      vulnerableGuidance: vector?.vulnerableGuidance,
     };
   });
 
@@ -452,6 +484,25 @@ export async function analyseIntake(intake: EngineIntake): Promise<EngineRespons
   ) {
     guidanceLines.push(
       "An expanding ring-shaped rash in this region is treated as time-sensitive — have a clinician review it promptly.",
+    );
+  }
+
+  // Patient Profile Tailored Guidance
+  if (intake.patientProfile === "infant_toddler") {
+    guidanceLines.push(
+      "Pediatric Safety Alert (< 2 years): High venom-to-body-mass ratio. If envenomation is suspected or systemic signs occur (opsoclonus, excessive drooling, rigid abdomen, vomiting), call 911 immediately. Never use aspirin; dose all fever/allergy medications strictly by weight with an oral calibrated syringe.",
+    );
+  } else if (intake.patientProfile === "child") {
+    guidanceLines.push(
+      "Pediatric Alert (Child 2–12 years): STRICTLY AVOID Aspirin, baby aspirin, or bismuth subsalicylate (Pepto-Bismol) due to fatal Reye's syndrome risk. For severe allergic reactions, EpiPen Jr (0.15 mg) is indicated for children 7.5–30 kg.",
+    );
+  } else if (intake.patientProfile === "pregnant_nursing") {
+    guidanceLines.push(
+      "Pregnancy Safety Alert: Doxycycline and oral Ivermectin are contraindicated due to fetal toxicity. First-line safe alternatives (e.g. Amoxicillin 500mg TID for Lyme or Permethrin 5% for scabies) should be utilized under physician supervision.",
+    );
+  } else if (intake.patientProfile === "geriatric_immune") {
+    guidanceLines.push(
+      "Older Adult & High-Risk Alert: Beers Criteria warns against Diphenhydramine (Benadryl) due to acute confusion, urinary retention, and fall risks; 2nd-generation Cetirizine or Loratadine is preferred. Watch for atypical faint rashes or sudden mental status decline.",
     );
   }
 
