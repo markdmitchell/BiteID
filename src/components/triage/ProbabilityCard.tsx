@@ -45,14 +45,14 @@ export function ProbabilityCard({
   const creatureReference = creatureReferenceOf(item.id);
 
   return (
-    <div className="rounded-2xl border border-border bg-card p-5 transition-shadow">
-      <div className="flex items-start justify-between gap-4">
-        <div className="flex items-start gap-3">
-          <span className="mt-0.5 flex size-6 shrink-0 items-center justify-center rounded-full bg-muted text-xs font-semibold text-muted-foreground">
+    <div className="rounded-lg border border-border bg-card p-4 transition-shadow sm:p-5">
+      <div className="grid grid-cols-[minmax(0,1fr)_auto] items-start gap-3 sm:gap-4">
+        <div className="flex min-w-0 items-start gap-3">
+          <span className="mt-0.5 flex size-6 shrink-0 items-center justify-center rounded-md bg-muted text-xs font-semibold text-muted-foreground">
             {rank + 1}
           </span>
-          <div>
-            <h3 className="font-display text-base font-semibold text-foreground">{nameOf(item)}</h3>
+          <div className="min-w-0">
+            <h3 className="font-display text-base font-semibold leading-snug text-foreground">{nameOf(item)}</h3>
             {item.scientificName && (
               <p className="text-xs italic text-muted-foreground">{item.scientificName}</p>
             )}

@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { Camera, Trash2, Upload } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
 type UploadCardProps = {
@@ -8,12 +9,28 @@ type UploadCardProps = {
   required?: boolean;
   file: File | null;
   onChange: (file: File | null) => void;
+  compact?: boolean;
 };
 
-export function UploadCard({ title, hint, required, file, onChange }: UploadCardProps) {
+export function UploadCard({ title, hint, required, file, onChange, compact = false }: UploadCardProps) {
   const inputRef = useRef<HTMLInputElement>(null);
   const [preview, setPreview] = useState<string | null>(null);
   const [dragging, setDragging] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  function acceptFile(nextFile: File | undefined) {
+    if (!nextFile) return;
+    if (!nextFile.type.startsWith("image/")) {
+      setError("Choose a JPG, PNG, HEIC, or another image file.");
+      return;
+    }
+    if (nextFile.size > 15 * 1024 * 1024) {
+      setError("Choose an image smaller than 15 MB.");
+      return;
+    }
+    setError(null);
+    onChange(nextFile);
+  }
 
   useEffect(() => {
     if (!file) {
@@ -35,11 +52,10 @@ export function UploadCard({ title, hint, required, file, onChange }: UploadCard
       onDrop={(e) => {
         e.preventDefault();
         setDragging(false);
-        const dropped = e.dataTransfer.files?.[0];
-        if (dropped && dropped.type.startsWith("image/")) onChange(dropped);
+        acceptFile(e.dataTransfer.files?.[0]);
       }}
       className={cn(
-        "flex flex-col rounded-2xl border bg-card p-5 transition-colors",
+        "flex flex-col rounded-lg border bg-card p-4 transition-colors sm:p-5",
         dragging ? "border-primary bg-primary/5" : "border-border",
       )}
     >
@@ -60,29 +76,37 @@ export function UploadCard({ title, hint, required, file, onChange }: UploadCard
 
       <div className="mt-4 flex-1">
         {preview ? (
-          <div className="relative overflow-hidden rounded-xl border border-border bg-muted">
-            <img src={preview} alt={`${title} preview`} className="h-48 w-full object-cover" />
-            <button
+          <div className="relative overflow-hidden rounded-md border border-border bg-muted">
+            <img src={preview} alt={`${title} preview`} className={cn("w-full object-cover", compact ? "h-28" : "h-48")} />
+            <Button
               type="button"
+              variant="secondary"
+              size="sm"
               onClick={() => onChange(null)}
-              className="absolute right-2 top-2 inline-flex items-center gap-1.5 rounded-full bg-background/90 px-3 py-1.5 text-xs font-medium text-foreground shadow-sm backdrop-blur transition-colors hover:bg-background"
+              className="absolute right-2 top-2 h-9 bg-background/90 text-foreground shadow-sm backdrop-blur hover:bg-background"
             >
               <Trash2 className="size-3.5" />
               Remove
-            </button>
+            </Button>
           </div>
         ) : (
-          <button
+          <Button
             type="button"
+            variant="outline"
             onClick={() => inputRef.current?.click()}
-            className="flex h-48 w-full flex-col items-center justify-center gap-2 rounded-xl border border-dashed border-border bg-muted/40 text-muted-foreground transition-colors hover:border-primary hover:text-primary"
+            className={cn(
+              "w-full flex-col gap-2 border-dashed bg-muted/30 text-muted-foreground shadow-none hover:border-primary hover:bg-primary/5 hover:text-primary",
+              compact ? "h-24 sm:h-28" : "h-44 sm:h-48",
+            )}
           >
-            <Camera className="size-7" />
+            <Camera className={compact ? "size-5" : "size-7"} />
             <span className="text-sm font-medium">Take or choose a photo</span>
-            <span className="text-xs">or drag an image here</span>
-          </button>
+            {!compact && <span className="text-xs">or drag an image here</span>}
+          </Button>
         )}
       </div>
+
+      {error && <p role="alert" className="mt-3 text-xs font-medium text-destructive">{error}</p>}
 
       {file && (
         <p className="mt-3 truncate text-xs text-muted-foreground">
@@ -91,22 +115,25 @@ export function UploadCard({ title, hint, required, file, onChange }: UploadCard
       )}
 
       {preview && (
-        <button
+        <Button
           type="button"
+          variant="link"
+          size="sm"
           onClick={() => inputRef.current?.click()}
-          className="mt-3 inline-flex items-center gap-1.5 self-start text-xs font-medium text-primary hover:underline"
+          className="mt-2 h-9 self-start px-0 text-xs"
         >
           <Upload className="size-3.5" />
           Replace photo
-        </button>
+        </Button>
       )}
 
       <input
         ref={inputRef}
         type="file"
         accept="image/*"
+        aria-label={`Choose ${title.toLowerCase()} image`}
         className="hidden"
-        onChange={(e) => onChange(e.target.files?.[0] ?? null)}
+        onChange={(e) => acceptFile(e.target.files?.[0])}
       />
     </div>
   );

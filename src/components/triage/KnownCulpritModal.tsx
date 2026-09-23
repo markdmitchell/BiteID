@@ -366,7 +366,7 @@ export function KnownCulpritModal({
 
                 {/* TAB 1: PROTOCOL */}
                 <TabsContent value="protocol" className="mt-5 space-y-4">
-                  <div className="rounded-2xl border border-emerald-500/30 bg-emerald-500/5 p-5">
+                  <div className="rounded-lg border border-primary/30 bg-primary/5 p-5">
                     <h4 className="flex items-center gap-2 font-display text-base font-bold text-emerald-800 dark:text-emerald-300">
                       <ShieldCheck className="size-5 shrink-0 text-emerald-600 dark:text-emerald-400" />
                       Immediate Physical First Aid (DO THIS NOW)
@@ -375,7 +375,7 @@ export function KnownCulpritModal({
                       {selectedVector.firstAidAdvice.map((advice, idx) => (
                         <div
                           key={idx}
-                          className="flex items-start gap-3 rounded-xl border border-emerald-500/20 bg-card p-3 shadow-2xs"
+                          className="flex items-start gap-3 rounded-lg border border-primary/20 bg-card p-3 shadow-2xs"
                         >
                           <span className="flex size-5 shrink-0 items-center justify-center rounded-full bg-emerald-500/20 font-mono text-[11px] font-bold text-emerald-700 dark:text-emerald-300">
                             {idx + 1}
@@ -545,7 +545,7 @@ export function KnownCulpritModal({
 
                 {/* TAB 4: RED FLAGS & ER CRITERIA */}
                 <TabsContent value="risks" className="mt-5 space-y-4">
-                  <div className="rounded-2xl border border-amber-500/30 bg-amber-500/10 p-5 text-xs">
+                  <div className="rounded-lg border border-caution/30 bg-caution/10 p-5 text-xs">
                     <h4 className="flex items-center gap-2 font-display text-base font-bold text-amber-900 dark:text-amber-200">
                       <AlertTriangle className="size-5 shrink-0 text-amber-600 dark:text-amber-400" />
                       When to Go to Urgent Care or Emergency Room
@@ -559,7 +559,7 @@ export function KnownCulpritModal({
                       {selectedVector.warningSigns.map((sign, idx) => (
                         <div
                           key={idx}
-                          className="flex items-start gap-2 rounded-xl border border-amber-500/20 bg-card p-2.5 text-foreground"
+                          className="flex items-start gap-2 rounded-lg border border-caution/20 bg-card p-2.5 text-foreground"
                         >
                           <AlertTriangle className="mt-0.5 size-3.5 shrink-0 text-amber-600 dark:text-amber-400" />
                           <span>{sign}</span>
