@@ -26,6 +26,10 @@ import {
   Stethoscope,
   WifiOff,
   Zap,
+  Calculator,
+  Navigation,
+  Volume2,
+  VolumeX,
 } from "lucide-react";
 import biteIdIcon from "@/assets/biteid-icon.png";
 import { Button } from "@/components/ui/button";
@@ -50,6 +54,10 @@ import { OfflineFieldKitModal } from "@/components/triage/OfflineFieldKitModal";
 import { BackcountryPrintableGuideModal } from "@/components/triage/BackcountryPrintableGuideModal";
 import { SnakebiteSurvivalModal } from "@/components/triage/SnakebiteSurvivalModal";
 import { KnownCulpritModal } from "@/components/triage/KnownCulpritModal";
+import { PwaInstallBanner } from "@/components/triage/PwaInstallBanner";
+import { PediatricDosingModal } from "@/components/triage/PediatricDosingModal";
+import { detectUsStateFromOfflineGps } from "@/lib/geo-offline";
+import { useSpeechGuidance } from "@/hooks/useSpeechGuidance";
 import { startSilentCacheWarming } from "@/lib/offline-cache";
 import {
   PatientProfileSelector,
@@ -101,9 +109,12 @@ function TriagePage() {
   const [modalOpen, setModalOpen] = useState(false);
   const [fieldKitOpen, setFieldKitOpen] = useState(false);
   const [printableGuideOpen, setPrintableGuideOpen] = useState(false);
+  const [dosingModalOpen, setDosingModalOpen] = useState(false);
   const [snakebiteOpen, setSnakebiteOpen] = useState(false);
   const [knownCulpritOpen, setKnownCulpritOpen] = useState(false);
   const [selectedCulpritId, setSelectedCulpritId] = useState<string | null>(null);
+  const [gpsDetecting, setGpsDetecting] = useState(false);
+  const [gpsMessage, setGpsMessage] = useState<string | null>(null);
   const [status, setStatus] = useState<"idle" | "sending" | "done">("idle");
   const [response, setResponse] = useState<TriageResponse | null>(null);
   const resultsHeadingRef = useRef<HTMLHeadingElement>(null);
@@ -112,6 +123,22 @@ function TriagePage() {
   useEffect(() => {
     startSilentCacheWarming();
   }, []);
+
+  async function handleDetectGps() {
+    setGpsDetecting(true);
+    setGpsMessage(null);
+    try {
+      const res = await detectUsStateFromOfflineGps();
+      dispatch({ type: "setUsState", value: res.stateCode });
+      setGpsMessage(`Auto-detected ${res.stateName} via offline satellite GPS`);
+      setTimeout(() => setGpsMessage(null), 4000);
+    } catch (err) {
+      setGpsMessage(err instanceof Error ? err.message : "GPS detection unavailable");
+      setTimeout(() => setGpsMessage(null), 4000);
+    } finally {
+      setGpsDetecting(false);
+    }
+  }
 
   const hasEmergency = form.symptoms.length > 0;
 
@@ -217,6 +244,8 @@ function TriagePage() {
         </div>
       </header>
 
+      <PwaInstallBanner />
+
       <div className="mx-auto max-w-3xl px-5">
         {hasEmergency && (
           <div
@@ -241,6 +270,7 @@ function TriagePage() {
             onOpenFieldKit={() => setFieldKitOpen(true)}
             onOpenPrintableGuide={() => setPrintableGuideOpen(true)}
             onOpenSnakebite={() => setSnakebiteOpen(true)}
+            onOpenDosingModal={() => setDosingModalOpen(true)}
             onOpenKnownCulprit={() => {
               setSelectedCulpritId(null);
               setKnownCulpritOpen(true);
@@ -352,9 +382,27 @@ function TriagePage() {
                         </Select>
                       </div>
                       <div>
-                        <label htmlFor="state" className="text-sm font-medium text-foreground">
-                          Which state were you in?
-                        </label>
+                        <div className="flex items-center justify-between gap-2">
+                          <label htmlFor="state" className="text-sm font-medium text-foreground">
+                            Which state were you in?
+                          </label>
+                          <Button
+                            type="button"
+                            variant="ghost"
+                            size="sm"
+                            disabled={gpsDetecting}
+                            onClick={handleDetectGps}
+                            className="h-7 px-2 text-xs font-medium text-primary hover:bg-primary/10 flex items-center gap-1"
+                          >
+                            <Compass className={`size-3.5 ${gpsDetecting ? "animate-spin" : ""}`} />
+                            <span>{gpsDetecting ? "Locating..." : "Auto-Detect (GPS)"}</span>
+                          </Button>
+                        </div>
+                        {gpsMessage && (
+                          <p className="mt-1 text-xs font-medium text-primary animate-in fade-in duration-200">
+                            {gpsMessage}
+                          </p>
+                        )}
                         <Select
                           value={form.usState}
                           onValueChange={(value) => dispatch({ type: "setUsState", value })}
@@ -372,6 +420,7 @@ function TriagePage() {
                         </Select>
                         <p className="mt-2 text-xs text-muted-foreground">
                           Which insects are active depends on where and when you were bitten.
+                          Satellite GPS works 100% offline without cellular data.
                         </p>
                       </div>
                     </fieldset>
@@ -593,6 +642,7 @@ function TriagePage() {
         open={printableGuideOpen}
         onOpenChange={setPrintableGuideOpen}
       />
+      <PediatricDosingModal open={dosingModalOpen} onOpenChange={setDosingModalOpen} />
     </main>
   );
 }
@@ -641,6 +691,7 @@ function ResultsDashboard({
   onOpenFieldKit,
   onOpenPrintableGuide,
   onOpenSnakebite,
+  onOpenDosingModal,
   onOpenKnownCulprit,
   headingRef,
 }: {
@@ -651,6 +702,7 @@ function ResultsDashboard({
   onOpenFieldKit?: () => void;
   onOpenPrintableGuide?: () => void;
   onOpenSnakebite?: () => void;
+  onOpenDosingModal?: () => void;
   onOpenKnownCulprit?: () => void;
   headingRef: React.RefObject<HTMLHeadingElement | null>;
 }) {
@@ -660,6 +712,7 @@ function ResultsDashboard({
   const [activeProfile, setActiveProfile] = useState<PatientVulnerabilityProfile>(
     form.patientProfile ?? "standard_adult",
   );
+  const { isSpeaking, isSupported: speechSupported, toggleSpeech } = useSpeechGuidance();
 
   if (response.isOfflineQueued) {
     return (
@@ -850,13 +903,27 @@ function ResultsDashboard({
               </p>
             </div>
           </div>
-          <a
-            href="tel:18002221222"
-            className="inline-flex items-center gap-1.5 rounded-full border border-emerald-500/30 bg-emerald-500/10 px-3 py-1 text-xs font-semibold text-emerald-700 dark:text-emerald-300 hover:bg-emerald-500/20 self-start sm:self-auto"
-          >
-            <PhoneCall className="size-3" />
-            <span>Poison Help: 1-800-222-1222</span>
-          </a>
+          <div className="flex flex-wrap items-center gap-2 self-start sm:self-auto">
+            {onOpenDosingModal && (
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={onOpenDosingModal}
+                className="h-7 px-2.5 text-xs font-semibold border-primary/30 text-primary hover:bg-primary/10 flex items-center gap-1.5"
+              >
+                <Calculator className="size-3.5 text-primary" />
+                <span>Pediatric Dosing Calc</span>
+              </Button>
+            )}
+            <a
+              href="tel:18002221222"
+              className="inline-flex items-center gap-1.5 rounded-full border border-emerald-500/30 bg-emerald-500/10 px-3 py-1 text-xs font-semibold text-emerald-700 dark:text-emerald-300 hover:bg-emerald-500/20"
+            >
+              <PhoneCall className="size-3" />
+              <span>Poison Help: 1-800-222-1222</span>
+            </a>
+          </div>
         </div>
 
         <PatientProfileSelector
@@ -945,12 +1012,26 @@ function ResultsDashboard({
                       </div>
                     )}
                     {guidance.pediatric.weightBasedAdvice && (
-                      <div className="rounded-lg border border-border bg-card p-3 text-foreground">
-                        <span className="font-bold flex items-center gap-1.5 text-primary mb-1">
-                          <Pill className="size-4 shrink-0" />
-                          Weight-Based Medication & First Aid:
-                        </span>
-                        {guidance.pediatric.weightBasedAdvice}
+                      <div className="rounded-lg border border-border bg-card p-3 text-foreground space-y-2">
+                        <div>
+                          <span className="font-bold flex items-center gap-1.5 text-primary mb-1">
+                            <Pill className="size-4 shrink-0" />
+                            Weight-Based Medication & First Aid:
+                          </span>
+                          {guidance.pediatric.weightBasedAdvice}
+                        </div>
+                        {onOpenDosingModal && (
+                          <Button
+                            type="button"
+                            size="sm"
+                            variant="outline"
+                            onClick={onOpenDosingModal}
+                            className="h-7 text-xs font-semibold text-primary border-primary/30 hover:bg-primary/10 flex items-center gap-1.5"
+                          >
+                            <Calculator className="size-3.5 text-primary" />
+                            Open Weight-Based Liquid Dosing Calculator
+                          </Button>
+                        )}
                       </div>
                     )}
                   </div>
@@ -1205,9 +1286,41 @@ function ResultsDashboard({
               <div className="mt-4 space-y-4 rounded-xl border border-primary/15 bg-card/80 p-4 sm:p-5 backdrop-blur-xs">
                 {topResult.firstAidAdvice && topResult.firstAidAdvice.length > 0 && (
                   <div>
-                    <h3 className="text-xs font-bold uppercase tracking-wider text-primary">
-                      First aid
-                    </h3>
+                    <div className="flex items-center justify-between gap-2">
+                      <h3 className="text-xs font-bold uppercase tracking-wider text-primary">
+                        First aid
+                      </h3>
+                      {speechSupported && (
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="sm"
+                          onClick={() =>
+                            toggleSpeech(
+                              `First aid instructions for suspected ${topResult.name}. ` +
+                                topResult.firstAidAdvice?.join(". "),
+                            )
+                          }
+                          className={`h-7 px-2 text-xs font-semibold flex items-center gap-1.5 transition-colors ${
+                            isSpeaking
+                              ? "text-destructive bg-destructive/10 hover:bg-destructive/20 animate-pulse"
+                              : "text-primary hover:bg-primary/10"
+                          }`}
+                        >
+                          {isSpeaking ? (
+                            <>
+                              <VolumeX className="size-3.5" />
+                              <span>Stop Audio</span>
+                            </>
+                          ) : (
+                            <>
+                              <Volume2 className="size-3.5" />
+                              <span>Listen (Hands-Free)</span>
+                            </>
+                          )}
+                        </Button>
+                      )}
+                    </div>
                     <ul className="mt-2 space-y-1.5">
                       {topResult.firstAidAdvice.map((advice, i) => (
                         <li key={i} className="flex gap-2 text-sm leading-relaxed text-foreground">

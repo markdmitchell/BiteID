@@ -1,11 +1,5 @@
-import { useState, useEffect } from "react";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogDescription,
-} from "@/components/ui/dialog";
+import { useState, useEffect, useRef } from "react";
+import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -18,22 +12,25 @@ import {
   RotateCcw,
   ShieldCheck,
   TrendingUp,
-  UploadCloud,
   AlertTriangle,
+  Camera,
+  Plus,
+  Trash2,
+  SlidersHorizontal,
+  FileText,
 } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { PhotoComparisonSlider } from "./PhotoComparisonSlider";
 
-type RashJournalEntry = {
-  baselineDate: string;
-  baselineDiameterMm: number;
-  baselinePhotoUrl?: string | undefined;
-  followUpDate?: string;
-  followUpDiameterMm?: number;
-  followUpPhotoUrl?: string;
+export type JournalEntry = {
+  id: string;
+  date: string;
+  dayLabel: string;
+  diameterMm: number;
+  photoUrl?: string;
   notes?: string;
 };
 
-const STORAGE_KEY = "biteid_rash_journal_record";
+const STORAGE_KEY = "biteid_rash_journal_record_v2";
 
 type RashExpansionTrackerProps = {
   open: boolean;
@@ -48,393 +45,553 @@ export function RashExpansionTracker({
   initialLesionFile,
   isErythemaMigrans = false,
 }: RashExpansionTrackerProps) {
-  const [entry, setEntry] = useState<RashJournalEntry | null>(null);
-
-  // Form states for adding / updating
+  const [entries, setEntries] = useState<JournalEntry[]>([]);
   const [diameterInput, setDiameterInput] = useState<string>("");
   const [unit, setUnit] = useState<"mm" | "in">("mm");
-  const [followUpDiameterInput, setFollowUpDiameterInput] = useState<string>("");
   const [notesInput, setNotesInput] = useState<string>("");
+  const [selectedPhoto, setSelectedPhoto] = useState<string | null>(null);
+  const [activeTab, setActiveTab] = useState<"timeline" | "slider" | "guidance">("timeline");
+  const followUpPhotoInputRef = useRef<HTMLInputElement>(null);
 
+  // Load from local storage
   useEffect(() => {
+    if (!open) return;
     try {
       const stored = localStorage.getItem(STORAGE_KEY);
       if (stored) {
-        setEntry(JSON.parse(stored) as RashJournalEntry);
+        setEntries(JSON.parse(stored) as JournalEntry[]);
+      } else {
+        // Check if v1 existed and migrate
+        const v1 = localStorage.getItem("biteid_rash_journal_record");
+        if (v1) {
+          const parsed = JSON.parse(v1);
+          const migrated: JournalEntry[] = [
+            {
+              id: "baseline",
+              date: parsed.baselineDate || new Date().toISOString(),
+              dayLabel: "Day 1 (Baseline)",
+              diameterMm: parsed.baselineDiameterMm,
+              photoUrl: parsed.baselinePhotoUrl,
+              notes: parsed.notes,
+            },
+          ];
+          if (parsed.followUpDate && parsed.followUpDiameterMm) {
+            migrated.push({
+              id: "followup-1",
+              date: parsed.followUpDate,
+              dayLabel: "Follow-Up (Day 2)",
+              diameterMm: parsed.followUpDiameterMm,
+              photoUrl: parsed.followUpPhotoUrl,
+            });
+          }
+          setEntries(migrated);
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(migrated));
+        }
       }
     } catch {
-      // ignore localStorage errors
+      // ignore
     }
   }, [open]);
 
-  // Save Day 1 Baseline
-  const handleSaveBaseline = () => {
+  // Handle Initial Lesion photo preview
+  useEffect(() => {
+    if (initialLesionFile && entries.length === 0) {
+      const url = URL.createObjectURL(initialLesionFile);
+      setSelectedPhoto(url);
+      return () => URL.revokeObjectURL(url);
+    }
+    return undefined;
+  }, [initialLesionFile, entries.length]);
+
+  const handleAddEntry = () => {
     const rawVal = parseFloat(diameterInput);
     if (isNaN(rawVal) || rawVal <= 0) return;
     const mm = unit === "in" ? Math.round(rawVal * 25.4) : Math.round(rawVal);
 
-    let photoUrl: string | undefined = undefined;
-    if (initialLesionFile) {
-      photoUrl = URL.createObjectURL(initialLesionFile);
-    }
+    const dayNumber = entries.length + 1;
+    const dayLabel = dayNumber === 1 ? "Day 1 (Baseline)" : `Day ${dayNumber} Follow-Up`;
 
-    const newRecord: RashJournalEntry = {
-      baselineDate: new Date().toISOString(),
-      baselineDiameterMm: mm,
-      baselinePhotoUrl: photoUrl,
-      notes: notesInput,
+    const newEntry: JournalEntry = {
+      id: `entry-${Date.now()}`,
+      date: new Date().toISOString(),
+      dayLabel,
+      diameterMm: mm,
+      photoUrl: selectedPhoto ?? undefined,
+      notes: notesInput.trim() || undefined,
     };
 
-    setEntry(newRecord);
-    try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(newRecord));
-    } catch {
-      // ignore storage quota error
-    }
-  };
-
-  // Save Follow-Up Check-in
-  const handleSaveFollowUp = () => {
-    if (!entry) return;
-    const rawVal = parseFloat(followUpDiameterInput);
-    if (isNaN(rawVal) || rawVal <= 0) return;
-    const mm = unit === "in" ? Math.round(rawVal * 25.4) : Math.round(rawVal);
-
-    const updated: RashJournalEntry = {
-      ...entry,
-      followUpDate: new Date().toISOString(),
-      followUpDiameterMm: mm,
-    };
-
-    setEntry(updated);
+    const updated = [...entries, newEntry];
+    setEntries(updated);
     try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
     } catch {
       // ignore
     }
-  };
 
-  const handleResetJournal = () => {
-    localStorage.removeItem(STORAGE_KEY);
-    setEntry(null);
     setDiameterInput("");
-    setFollowUpDiameterInput("");
     setNotesInput("");
+    setSelectedPhoto(null);
   };
 
-  // Analysis of expansion
-  const hasFollowUp = Boolean(entry?.followUpDiameterMm && entry?.followUpDate);
-  const deltaMm =
-    hasFollowUp && entry ? (entry.followUpDiameterMm ?? 0) - entry.baselineDiameterMm : null;
+  const handlePhotoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = () => setSelectedPhoto(String(reader.result));
+      reader.readAsDataURL(file);
+    }
+  };
 
-  let expansionStatus: "rapid" | "moderate" | "stable" | "regressing" | null = null;
-  if (deltaMm !== null) {
-    if (deltaMm >= 10) expansionStatus = "rapid";
-    else if (deltaMm >= 4) expansionStatus = "moderate";
-    else if (deltaMm >= -3) expansionStatus = "stable";
-    else expansionStatus = "regressing";
+  const handleReset = () => {
+    localStorage.removeItem(STORAGE_KEY);
+    localStorage.removeItem("biteid_rash_journal_record");
+    setEntries([]);
+    setDiameterInput("");
+    setNotesInput("");
+    setSelectedPhoto(null);
+  };
+
+  // Trajectory analytics
+  const firstEntry = entries[0];
+  const latestEntry = entries[entries.length - 1];
+  const hasMultiple = entries.length >= 2;
+
+  let totalDeltaMm = 0;
+  let expansionRateMmPerDay = 0;
+  let hoursElapsed = 0;
+
+  if (hasMultiple && firstEntry && latestEntry) {
+    totalDeltaMm = latestEntry.diameterMm - firstEntry.diameterMm;
+    const msElapsed = new Date(latestEntry.date).getTime() - new Date(firstEntry.date).getTime();
+    hoursElapsed = Math.max(1, Math.round(msElapsed / (1000 * 60 * 60)));
+    const daysElapsed = Math.max(0.1, hoursElapsed / 24);
+    expansionRateMmPerDay = Math.round((totalDeltaMm / daysElapsed) * 10) / 10;
   }
+
+  // Trajectory classification
+  const isRapidCentrifugal =
+    totalDeltaMm >= 10 ||
+    expansionRateMmPerDay >= 5 ||
+    (latestEntry && latestEntry.diameterMm >= 50);
+  const isRegressing = totalDeltaMm < -2;
+  const isStable = hasMultiple && Math.abs(totalDeltaMm) <= 2;
+
+  // Entries with photos for comparison slider
+  const entriesWithPhotos = entries.filter((e) => Boolean(e.photoUrl));
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-2xl sm:max-w-3xl max-h-[90vh] overflow-y-auto">
-        <DialogHeader>
-          <div className="flex items-center gap-2.5 text-primary">
-            <Activity className="size-5 shrink-0" />
-            <DialogTitle className="font-display text-lg font-bold text-foreground">
-              24–48h Centrifugal Rash Expansion Tracker
-            </DialogTitle>
-          </div>
-          <DialogDescription className="text-xs text-muted-foreground">
-            A clinical tool to track whether an annular rash or bite is expanding outward over time,
-            which is the single most critical diagnostic indicator of Lyme disease (Erythema
-            Migrans) or spreading cellulitis.
-          </DialogDescription>
-        </DialogHeader>
+      <DialogContent className="max-w-3xl max-h-[92vh] overflow-y-auto p-0 gap-0 border-border bg-card rounded-2xl sm:rounded-3xl">
+        <DialogTitle className="sr-only">
+          Multi-Day Rash Expansion & Healing Progression Journal
+        </DialogTitle>
 
-        <div className="space-y-5 py-2">
-          {/* Clinical Pen Tracing Technique Guide */}
-          <div className="rounded-xl border border-primary/20 bg-primary/5 p-4 space-y-2.5">
-            <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-primary">
-              <PenTool className="size-4" />
-              <span>Standard Clinical Pen-Tracing Technique</span>
-            </div>
-            <ol className="list-decimal list-inside space-y-1 text-xs leading-relaxed text-foreground">
-              <li>
-                <strong>Draw a light margin line:</strong> Use a standard pen to trace the outermost
-                visible border of redness.
-              </li>
-              <li>
-                <strong>Include a reference object:</strong> Place a coin (penny/quarter) or small
-                ruler beside the lesion and take a clear photo.
-              </li>
-              <li>
-                <strong>Measure the widest diameter:</strong> Record the measurement below for Day
-                1.
-              </li>
-              <li>
-                <strong>Re-evaluate at 24 and 48 hours:</strong> Check whether the redness has
-                expanded beyond your pen line.
-              </li>
-            </ol>
-          </div>
-
-          {/* Active Record or New Baseline Entry */}
-          {!entry ? (
-            <div className="rounded-xl border border-border bg-card p-5 space-y-4">
-              <h3 className="font-display text-sm font-bold text-foreground">
-                Step 1: Set Your Day 1 Baseline Measurement
-              </h3>
+        {/* Modal Header */}
+        <div className="sticky top-0 z-20 flex items-center justify-between border-b border-border/80 bg-card/95 px-5 py-4 backdrop-blur-md">
+          <div className="flex items-center gap-3">
+            <span className="flex size-9 items-center justify-center rounded-xl bg-primary text-primary-foreground shadow-xs">
+              <Activity className="size-5" />
+            </span>
+            <div>
+              <div className="flex items-center gap-2">
+                <h2 className="font-display text-base sm:text-lg font-bold text-foreground">
+                  Multi-Day Photo Progression & Healing Journal
+                </h2>
+                {entries.length > 0 && (
+                  <span className="rounded-full bg-primary/15 px-2.5 py-0.5 text-[11px] font-bold text-primary">
+                    {entries.length} {entries.length === 1 ? "Log" : "Logs"}
+                  </span>
+                )}
+              </div>
               <p className="text-xs text-muted-foreground">
-                Enter the approximate widest diameter of the redness or rash today.
+                Serial millimeter tracing & visual photo comparisons across 24–96 hours.
               </p>
+            </div>
+          </div>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => onOpenChange(false)}
+            className="rounded-full text-muted-foreground"
+          >
+            Close
+          </Button>
+        </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 items-end">
-                <div className="sm:col-span-2 space-y-1.5">
-                  <label className="text-xs font-semibold text-foreground">Widest Diameter</label>
-                  <div className="flex gap-2">
-                    <Input
-                      type="number"
-                      step="0.1"
-                      placeholder={unit === "mm" ? "e.g. 35" : "e.g. 1.5"}
-                      value={diameterInput}
-                      onChange={(e) => setDiameterInput(e.target.value)}
-                      className="text-sm font-mono"
-                    />
-                    <div className="flex rounded-lg border border-border p-0.5 bg-muted/30 text-xs">
-                      <button
-                        type="button"
-                        onClick={() => setUnit("mm")}
-                        className={cn(
-                          "px-2.5 py-1 rounded font-medium",
-                          unit === "mm"
-                            ? "bg-card text-foreground shadow-xs font-semibold"
-                            : "text-muted-foreground",
-                        )}
-                      >
-                        mm
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => setUnit("in")}
-                        className={cn(
-                          "px-2.5 py-1 rounded font-medium",
-                          unit === "in"
-                            ? "bg-card text-foreground shadow-xs font-semibold"
-                            : "text-muted-foreground",
-                        )}
-                      >
-                        inches
-                      </button>
-                    </div>
+        {/* Navigation Tabs */}
+        <div className="flex border-b border-border/60 bg-muted/30 px-5 pt-2 gap-2 text-xs font-semibold">
+          <button
+            type="button"
+            onClick={() => setActiveTab("timeline")}
+            className={`flex items-center gap-1.5 px-3 py-2 border-b-2 transition-all ${
+              activeTab === "timeline"
+                ? "border-primary text-primary font-bold"
+                : "border-transparent text-muted-foreground hover:text-foreground"
+            }`}
+          >
+            <Clock className="size-4" />
+            <span>Timeline Log ({entries.length})</span>
+          </button>
+          <button
+            type="button"
+            onClick={() => setActiveTab("slider")}
+            disabled={entriesWithPhotos.length < 2}
+            className={`flex items-center gap-1.5 px-3 py-2 border-b-2 transition-all ${
+              activeTab === "slider"
+                ? "border-primary text-primary font-bold"
+                : "border-transparent text-muted-foreground hover:text-foreground disabled:opacity-40"
+            }`}
+          >
+            <SlidersHorizontal className="size-4" />
+            <span>Side-by-Side Comparison</span>
+          </button>
+          <button
+            type="button"
+            onClick={() => setActiveTab("guidance")}
+            className={`flex items-center gap-1.5 px-3 py-2 border-b-2 transition-all ${
+              activeTab === "guidance"
+                ? "border-primary text-primary font-bold"
+                : "border-transparent text-muted-foreground hover:text-foreground"
+            }`}
+          >
+            <PenTool className="size-4" />
+            <span>How to Measure</span>
+          </button>
+        </div>
+
+        <div className="p-5 sm:p-6 space-y-6">
+          {/* Active Trajectory Alert Banner */}
+          {hasMultiple && (
+            <div
+              className={`rounded-xl border p-4 text-xs space-y-1.5 ${
+                isRapidCentrifugal
+                  ? "border-amber-500/40 bg-amber-500/10 text-foreground"
+                  : isRegressing
+                    ? "border-emerald-500/30 bg-emerald-500/5 text-foreground"
+                    : "border-border bg-muted/20 text-foreground"
+              }`}
+            >
+              <div className="flex items-center justify-between font-bold">
+                <span className="flex items-center gap-1.5 uppercase tracking-wide text-xs">
+                  {isRapidCentrifugal ? (
+                    <>
+                      <AlertTriangle className="size-4 text-amber-600 dark:text-amber-400" />
+                      <span className="text-amber-700 dark:text-amber-400">
+                        Active Expansion Detected (+{totalDeltaMm} mm over {hoursElapsed}h)
+                      </span>
+                    </>
+                  ) : isRegressing ? (
+                    <>
+                      <CheckCircle2 className="size-4 text-emerald-600 dark:text-emerald-400" />
+                      <span className="text-emerald-700 dark:text-emerald-400">
+                        Resolving Trajectory ({totalDeltaMm} mm decrease)
+                      </span>
+                    </>
+                  ) : (
+                    <>
+                      <ShieldCheck className="size-4 text-primary" />
+                      <span>Stable Lesion Dimension (Delta: {totalDeltaMm} mm)</span>
+                    </>
+                  )}
+                </span>
+                <span className="font-mono text-[11px] text-muted-foreground">
+                  Rate:{" "}
+                  {expansionRateMmPerDay > 0 ? `+${expansionRateMmPerDay}` : expansionRateMmPerDay}{" "}
+                  mm/day
+                </span>
+              </div>
+              <p className="text-muted-foreground leading-relaxed">
+                {isRapidCentrifugal
+                  ? `Expansion rate is averaging +${expansionRateMmPerDay} mm/day. Expanding erythema >= 50 mm (5 cm) following outdoor exposure is the CDC hallmark diagnostic criteria for Erythema Migrans (Lyme disease) or bacterial cellulitis. Immediate medical evaluation recommended.`
+                  : isRegressing
+                    ? `Lesion boundary has receded by ${Math.abs(totalDeltaMm)} mm since baseline. This pattern reflects normal post-sting histamine resolution.`
+                    : "Lesion diameter has remained unchanged over this observation window. Continue to monitor for delayed target bullseye formation or ulceration."}
+              </p>
+            </div>
+          )}
+
+          {/* TAB 1: TIMELINE & LOG INPUT */}
+          {activeTab === "timeline" && (
+            <div className="space-y-6">
+              {/* Add New Check-in Form */}
+              <div className="rounded-2xl border border-border bg-card p-4 sm:p-5 space-y-4 shadow-xs">
+                <div className="flex items-center justify-between border-b border-border/60 pb-2.5">
+                  <h3 className="font-display text-sm font-bold text-foreground flex items-center gap-1.5">
+                    <Plus className="size-4 text-primary" />
+                    <span>
+                      Log{" "}
+                      {entries.length === 0
+                        ? "Day 1 Baseline"
+                        : `Day ${entries.length + 1} Check-in`}
+                    </span>
+                  </h3>
+                  <div className="flex items-center gap-1 text-[11px]">
+                    <span className="text-muted-foreground">Unit:</span>
+                    <button
+                      type="button"
+                      onClick={() => setUnit("mm")}
+                      className={`px-2 py-0.5 rounded font-bold ${
+                        unit === "mm"
+                          ? "bg-primary text-primary-foreground"
+                          : "text-muted-foreground"
+                      }`}
+                    >
+                      mm
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setUnit("in")}
+                      className={`px-2 py-0.5 rounded font-bold ${
+                        unit === "in"
+                          ? "bg-primary text-primary-foreground"
+                          : "text-muted-foreground"
+                      }`}
+                    >
+                      inches
+                    </button>
                   </div>
                 </div>
 
-                <div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div className="space-y-1.5">
+                    <label className="text-xs font-semibold text-foreground block">
+                      Greatest Outer Diameter ({unit}):
+                    </label>
+                    <Input
+                      type="number"
+                      step={unit === "in" ? "0.1" : "1"}
+                      placeholder={unit === "in" ? "e.g. 1.5" : "e.g. 35"}
+                      value={diameterInput}
+                      onChange={(e) => setDiameterInput(e.target.value)}
+                      className="text-xs"
+                    />
+                    <p className="text-[10px] text-muted-foreground">
+                      Measure across the widest point of redness/swelling using a ruler or coin.
+                    </p>
+                  </div>
+
+                  <div className="space-y-1.5">
+                    <label className="text-xs font-semibold text-foreground block">
+                      Attach Photo:
+                    </label>
+                    <div className="flex items-center gap-2">
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        onClick={() => followUpPhotoInputRef.current?.click()}
+                        className="text-xs gap-1.5 w-full justify-center"
+                      >
+                        <Camera className="size-3.5" />
+                        <span>{selectedPhoto ? "Photo Attached" : "Take / Choose Photo"}</span>
+                      </Button>
+                      <input
+                        ref={followUpPhotoInputRef}
+                        type="file"
+                        accept="image/*"
+                        className="hidden"
+                        onChange={handlePhotoUpload}
+                      />
+                    </div>
+                    {selectedPhoto && (
+                      <p className="text-[10px] text-emerald-600 dark:text-emerald-400 font-medium">
+                        ✓ Photo ready for side-by-side comparison
+                      </p>
+                    )}
+                  </div>
+
+                  <div className="sm:col-span-2 space-y-1.5">
+                    <label className="text-xs font-semibold text-foreground block">
+                      Observations / Symptoms (Optional):
+                    </label>
+                    <Input
+                      type="text"
+                      placeholder="e.g. Mild itch, central clearing forming, less tender today"
+                      value={notesInput}
+                      onChange={(e) => setNotesInput(e.target.value)}
+                      className="text-xs"
+                    />
+                  </div>
+                </div>
+
+                <div className="flex justify-end pt-1">
                   <Button
-                    type="button"
-                    onClick={handleSaveBaseline}
+                    size="sm"
+                    onClick={handleAddEntry}
                     disabled={!diameterInput || parseFloat(diameterInput) <= 0}
-                    className="w-full"
+                    className="text-xs font-semibold"
                   >
-                    Save Baseline
+                    Save Entry
                   </Button>
                 </div>
               </div>
 
-              {initialLesionFile && (
-                <div className="flex items-center gap-2 text-xs text-muted-foreground pt-1">
-                  <CheckCircle2 className="size-3.5 text-primary" />
-                  <span>
-                    Your current intake photo will be linked as the Day 1 baseline reference.
-                  </span>
-                </div>
-              )}
-            </div>
-          ) : (
-            <div className="rounded-xl border border-border bg-card p-5 space-y-5">
-              {/* Baseline Summary */}
-              <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border/60 pb-3">
-                <div>
-                  <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground block">
-                    Day 1 Baseline
-                  </span>
-                  <p className="font-mono text-base font-bold text-foreground">
-                    {entry.baselineDiameterMm} mm{" "}
-                    <span className="text-xs font-normal text-muted-foreground">
-                      ({(entry.baselineDiameterMm / 25.4).toFixed(1)} in)
-                    </span>
-                  </p>
-                  <p className="text-[11px] text-muted-foreground">
-                    Recorded: {new Date(entry.baselineDate).toLocaleDateString()} at{" "}
-                    {new Date(entry.baselineDate).toLocaleTimeString([], {
-                      hour: "2-digit",
-                      minute: "2-digit",
-                    })}
-                  </p>
-                </div>
-
-                <Button
-                  type="button"
-                  variant="ghost"
-                  size="sm"
-                  onClick={handleResetJournal}
-                  className="text-xs text-muted-foreground hover:text-destructive"
-                >
-                  <RotateCcw className="size-3 mr-1" />
-                  Reset Journal
-                </Button>
-              </div>
-
-              {/* Follow-up Section */}
-              {!hasFollowUp ? (
-                <div className="space-y-3 rounded-lg border border-border/80 bg-muted/20 p-4">
-                  <h4 className="font-display text-sm font-bold text-foreground">
-                    Step 2: 24–48 Hour Check-in
+              {/* Recorded Timeline Cards */}
+              <div className="space-y-3">
+                <div className="flex items-center justify-between">
+                  <h4 className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
+                    Progress Timeline
                   </h4>
-                  <p className="text-xs text-muted-foreground leading-relaxed">
-                    When you inspect the bite tomorrow or the day after, re-measure the widest
-                    diameter beyond your initial pen boundary line and record it here.
-                  </p>
-
-                  <div className="flex flex-wrap items-end gap-3 pt-1">
-                    <div className="space-y-1">
-                      <label className="text-xs font-semibold text-foreground">
-                        New Diameter (mm)
-                      </label>
-                      <Input
-                        type="number"
-                        placeholder="e.g. 50"
-                        value={followUpDiameterInput}
-                        onChange={(e) => setFollowUpDiameterInput(e.target.value)}
-                        className="w-36 text-sm font-mono"
-                      />
-                    </div>
+                  {entries.length > 0 && (
                     <Button
-                      type="button"
-                      onClick={handleSaveFollowUp}
-                      disabled={!followUpDiameterInput || parseFloat(followUpDiameterInput) <= 0}
+                      variant="ghost"
+                      size="sm"
+                      onClick={handleReset}
+                      className="text-destructive hover:bg-destructive/10 text-xs h-7 px-2"
                     >
-                      Calculate Expansion
+                      <Trash2 className="size-3 mr-1" />
+                      Reset Journal
                     </Button>
-                  </div>
+                  )}
                 </div>
-              ) : (
-                /* Follow-up Results Display */
-                <div className="space-y-4">
-                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 text-xs">
-                    <div className="rounded-lg border border-border/80 bg-muted/20 p-3">
-                      <span className="text-[10px] uppercase font-bold text-muted-foreground block">
-                        Day 1 Baseline
-                      </span>
-                      <span className="font-mono text-base font-bold text-foreground">
-                        {entry.baselineDiameterMm} mm
-                      </span>
-                    </div>
 
-                    <div className="rounded-lg border border-border/80 bg-muted/20 p-3">
-                      <span className="text-[10px] uppercase font-bold text-muted-foreground block">
-                        Follow-Up Size
-                      </span>
-                      <span className="font-mono text-base font-bold text-foreground">
-                        {entry.followUpDiameterMm} mm
-                      </span>
-                    </div>
-
-                    <div className="col-span-2 sm:col-span-1 rounded-lg border border-border/80 bg-muted/20 p-3">
-                      <span className="text-[10px] uppercase font-bold text-muted-foreground block">
-                        Expansion Delta
-                      </span>
-                      <span
-                        className={cn(
-                          "font-mono text-base font-bold",
-                          deltaMm && deltaMm > 0 ? "text-caution-foreground" : "text-primary",
-                        )}
-                      >
-                        {deltaMm && deltaMm > 0 ? `+${deltaMm} mm` : `${deltaMm} mm`}
-                      </span>
-                    </div>
+                {entries.length === 0 ? (
+                  <div className="rounded-xl border border-dashed border-border p-6 text-center text-xs text-muted-foreground space-y-1">
+                    <Clock className="size-6 mx-auto text-muted-foreground/60 mb-2" />
+                    <p className="font-semibold text-foreground">No Journal Entries Logged Yet</p>
+                    <p>
+                      Log your baseline diameter above to track whether your bite expands or heals.
+                    </p>
                   </div>
+                ) : (
+                  <div className="space-y-2.5">
+                    {entries.map((item, idx) => {
+                      const prev = idx > 0 ? entries[idx - 1] : undefined;
+                      const delta = prev ? item.diameterMm - prev.diameterMm : 0;
+                      return (
+                        <div
+                          key={item.id}
+                          className="rounded-xl border border-border bg-card p-3.5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 shadow-xs"
+                        >
+                          <div className="flex items-center gap-3">
+                            {item.photoUrl ? (
+                              <img
+                                src={item.photoUrl}
+                                alt="Lesion check-in"
+                                className="size-14 rounded-lg object-cover border border-border shrink-0"
+                              />
+                            ) : (
+                              <div className="size-14 rounded-lg bg-muted flex items-center justify-center text-[10px] text-muted-foreground shrink-0">
+                                No photo
+                              </div>
+                            )}
+                            <div className="space-y-0.5 text-xs">
+                              <div className="flex items-center gap-2">
+                                <span className="font-bold text-foreground">{item.dayLabel}</span>
+                                <span className="text-[10px] text-muted-foreground">
+                                  {new Date(item.date).toLocaleString([], {
+                                    dateStyle: "short",
+                                    timeStyle: "short",
+                                  })}
+                                </span>
+                              </div>
+                              <p className="text-muted-foreground font-mono">
+                                Diameter:{" "}
+                                <strong className="text-foreground">{item.diameterMm} mm</strong> (~
+                                {(item.diameterMm / 25.4).toFixed(1)} in)
+                                {idx > 0 && (
+                                  <span
+                                    className={`ml-2 text-[11px] font-bold ${
+                                      delta > 0
+                                        ? "text-amber-600 dark:text-amber-400"
+                                        : delta < 0
+                                          ? "text-emerald-600 dark:text-emerald-400"
+                                          : "text-muted-foreground"
+                                    }`}
+                                  >
+                                    ({delta > 0 ? `+${delta}` : delta} mm)
+                                  </span>
+                                )}
+                              </p>
+                              {item.notes && (
+                                <p className="text-[11px] text-muted-foreground italic truncate max-w-sm">
+                                  &quot;{item.notes}&quot;
+                                </p>
+                              )}
+                            </div>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
 
-                  {/* Clinical Interpretation Callout */}
-                  {expansionStatus === "rapid" && (
-                    <div className="rounded-xl border-2 border-caution/50 bg-caution/10 p-4 text-xs space-y-2">
-                      <div className="flex items-center gap-2 font-bold text-caution-foreground text-sm">
-                        <AlertTriangle className="size-4 shrink-0" />
-                        <span>Significant Centrifugal Expansion Detected (+{deltaMm} mm)</span>
-                      </div>
-                      <p className="text-foreground leading-relaxed">
-                        An expansion of <strong>{deltaMm} mm outward</strong> past the initial
-                        border within 24–48 hours is a key clinical characteristic of{" "}
-                        <strong>Erythema Migrans (Lyme disease)</strong> or rapidly spreading
-                        bacterial cellulitis. Local allergic bite reactions typically peak within 24
-                        hours and do not continuously expand outward.
-                      </p>
-                      <p className="font-semibold text-foreground">
-                        Recommended Action: Present these measurements to a healthcare clinician
-                        promptly.
-                      </p>
-                    </div>
-                  )}
-
-                  {expansionStatus === "moderate" && (
-                    <div className="rounded-xl border border-caution/40 bg-caution/10 p-4 text-xs space-y-1.5">
-                      <div className="flex items-center gap-2 font-bold text-caution-foreground">
-                        <TrendingUp className="size-4 shrink-0" />
-                        <span>Moderate Expansion (+{deltaMm} mm)</span>
-                      </div>
-                      <p className="text-foreground leading-relaxed">
-                        The lesion has enlarged by {deltaMm} mm. Continue careful observation over
-                        the next 24 hours. If it continues expanding or reaches &gt; 50 mm (2
-                        inches) in diameter, seek clinical evaluation for suspected Erythema
-                        Migrans.
-                      </p>
-                    </div>
-                  )}
-
-                  {expansionStatus === "stable" && (
-                    <div className="rounded-xl border border-border bg-card p-4 text-xs space-y-1.5">
-                      <div className="flex items-center gap-2 font-bold text-primary">
-                        <CheckCircle2 className="size-4 shrink-0 text-primary" />
-                        <span>Stable Margin (No Substantial Centrifugal Expansion)</span>
-                      </div>
-                      <p className="text-muted-foreground leading-relaxed">
-                        The margin has remained within {deltaMm} mm of baseline. Stable boundaries
-                        are characteristic of localized arthropod hypersensitivity wheals rather
-                        than expanding Erythema Migrans.
-                      </p>
-                    </div>
-                  )}
-
-                  {expansionStatus === "regressing" && (
-                    <div className="rounded-xl border border-border bg-card p-4 text-xs space-y-1.5">
-                      <div className="flex items-center gap-2 font-bold text-primary">
-                        <CheckCircle2 className="size-4 shrink-0 text-primary" />
-                        <span>Lesion Regressing / Decreasing in Size</span>
-                      </div>
-                      <p className="text-muted-foreground leading-relaxed">
-                        The lesion diameter decreased by {Math.abs(deltaMm ?? 0)} mm from baseline,
-                        indicating resolution of the inflammatory reaction.
-                      </p>
-                    </div>
-                  )}
+          {/* TAB 2: SIDE-BY-SIDE PHOTO SLIDER */}
+          {activeTab === "slider" && (
+            <div className="space-y-4">
+              <div className="flex items-center justify-between text-xs text-muted-foreground">
+                <span>Drag the handle horizontally to compare changes:</span>
+                <span className="font-semibold text-primary">
+                  {entriesWithPhotos[0]?.dayLabel} vs{" "}
+                  {entriesWithPhotos[entriesWithPhotos.length - 1]?.dayLabel}
+                </span>
+              </div>
+              {entriesWithPhotos.length >= 2 &&
+              entriesWithPhotos[0]?.photoUrl &&
+              entriesWithPhotos[entriesWithPhotos.length - 1]?.photoUrl ? (
+                <PhotoComparisonSlider
+                  beforeUrl={entriesWithPhotos[0].photoUrl!}
+                  afterUrl={entriesWithPhotos[entriesWithPhotos.length - 1].photoUrl!}
+                  beforeLabel={entriesWithPhotos[0].dayLabel}
+                  afterLabel={entriesWithPhotos[entriesWithPhotos.length - 1].dayLabel}
+                />
+              ) : (
+                <div className="rounded-xl border border-dashed border-border p-8 text-center text-xs text-muted-foreground">
+                  Attach at least two photos with your check-ins to unlock the interactive
+                  comparison slider.
                 </div>
               )}
             </div>
           )}
 
-          <div className="rounded-xl border border-border/60 bg-muted/30 p-3.5 text-[11px] text-muted-foreground space-y-1">
-            <div className="flex items-center gap-1.5 font-semibold text-foreground">
-              <ShieldCheck className="size-3.5 text-primary" />
-              <span>Clinical Reference Note</span>
+          {/* TAB 3: CLINICAL MEASUREMENT INSTRUCTIONS */}
+          {activeTab === "guidance" && (
+            <div className="space-y-4 text-xs leading-relaxed text-muted-foreground">
+              <div className="rounded-xl border border-border bg-card p-4 space-y-2">
+                <h4 className="font-bold text-foreground text-xs uppercase tracking-wide flex items-center gap-1.5">
+                  <PenTool className="size-4 text-primary" />
+                  How to Trace & Measure a Changing Bite
+                </h4>
+                <ol className="list-decimal list-inside space-y-1.5 pt-1">
+                  <li>
+                    <strong>Lightly Ink the Border:</strong> Use a ballpoint pen to trace the
+                    outermost edge of the redness/swelling. Do not press firmly.
+                  </li>
+                  <li>
+                    <strong>Note the Time:</strong> Write the time or date next to your ink line.
+                  </li>
+                  <li>
+                    <strong>Place a Standard Reference:</strong> Snap a photo with a standard US
+                    quarter (24.3 mm diameter) or ruler next to the lesion.
+                  </li>
+                  <li>
+                    <strong>Check in 24 Hours:</strong> If redness spreads significantly past your
+                    pen line (&gt; 5 mm/day), contact a physician.
+                  </li>
+                </ol>
+              </div>
+
+              <div className="rounded-xl border border-border bg-card p-4 space-y-2">
+                <h4 className="font-bold text-foreground text-xs uppercase tracking-wide">
+                  When to Seek Immediate Medical Evaluation
+                </h4>
+                <ul className="list-disc list-inside space-y-1">
+                  <li>Rash diameter exceeds 50 mm (2 inches) following a tick bite.</li>
+                  <li>
+                    Central blistering, purpura, or dark sinking discoloration (spider necrotic
+                    hazard).
+                  </li>
+                  <li>Red streaks spreading toward the heart (lymphangitis / cellulitis).</li>
+                  <li>
+                    Systemic symptoms develop: fever, chills, joint swelling, or facial droop.
+                  </li>
+                </ul>
+              </div>
             </div>
-            <p className="leading-relaxed">
-              Per CDC guidelines, acute Erythema Migrans typically expands over several days, often
-              reaching up to 30 cm (12 inches) across with or without central clearing. In contrast,
-              immediate hypersensitivity reactions to tick saliva or insect stings usually measure
-              &lt; 5 cm (&lt; 2 inches), do not actively expand after 24–48 hours, and fade rapidly.
-            </p>
-          </div>
+          )}
         </div>
       </DialogContent>
     </Dialog>

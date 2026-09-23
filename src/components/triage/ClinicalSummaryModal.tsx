@@ -1,6 +1,7 @@
-import { useEffect, useState, useId } from "react";
+import { useEffect, useState, useId, useCallback } from "react";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
+import QRCode from "qrcode";
 import {
   Printer,
   X,
@@ -11,6 +12,7 @@ import {
   Copy,
   Check,
   Smartphone,
+  QrCode,
   Eye,
   Activity,
   Waves,
@@ -51,7 +53,8 @@ export function ClinicalSummaryModal({
   const [bugUrl, setBugUrl] = useState<string | null>(null);
   const [nowDate, setNowDate] = useState<string>("");
   const [isCopied, setIsCopied] = useState<boolean>(false);
-  const [viewMode, setViewMode] = useState<"document" | "er_triage">("document");
+  const [viewMode, setViewMode] = useState<"document" | "er_triage" | "qr_code">("document");
+  const [qrCodeDataUrl, setQrCodeDataUrl] = useState<string | null>(null);
   const [rashJournal, setRashJournal] = useState<{
     baselineDiameterMm: number;
     baselineDate: string;
@@ -130,7 +133,7 @@ export function ClinicalSummaryModal({
     window.print();
   };
 
-  const generateSbarText = (): string => {
+  const generateSbarText = useCallback((): string => {
     return `=== BITEID CLINICAL TRIAGE MEMO (SBAR FORMAT) ===
 Ref ID: BID-${uniqueId}
 Date/Time: ${nowDate || new Date().toLocaleString()}
@@ -169,7 +172,40 @@ ${
 - Evaluate need for antivenom (CroFab, Anascorp) if pit viper or scorpion envenomation with progressive swelling or neurotoxicity.
 - Non-diagnostic algorithm: Clinical judgment supersedes this intake report.
 ==================================================`;
-  };
+  }, [
+    uniqueId,
+    nowDate,
+    locationLabel,
+    sensationLabel,
+    durationName,
+    reportedEmergencies,
+    stateName,
+    envName,
+    personaDef,
+    effectiveProfile,
+    topResult,
+    isErythemaMigrans,
+    response.dermatologicalFindings,
+    secondaryResults,
+    lookalikes,
+  ]);
+
+  useEffect(() => {
+    if (open) {
+      const sbar = generateSbarText();
+      QRCode.toDataURL(sbar, {
+        errorCorrectionLevel: "M",
+        margin: 2,
+        width: 320,
+        color: {
+          dark: "#0f172a",
+          light: "#ffffff",
+        },
+      })
+        .then(setQrCodeDataUrl)
+        .catch(() => {});
+    }
+  }, [open, generateSbarText]);
 
   const handleCopySbar = async () => {
     const text = generateSbarText();
@@ -211,6 +247,15 @@ ${
             </Button>
             <Button
               size="sm"
+              variant={viewMode === "qr_code" ? "default" : "outline"}
+              onClick={() => setViewMode(viewMode === "qr_code" ? "document" : "qr_code")}
+              className="text-xs font-semibold gap-1.5"
+            >
+              <QrCode className="size-3.5" />
+              <span>{viewMode === "qr_code" ? "Document View" : "Clinician QR"}</span>
+            </Button>
+            <Button
+              size="sm"
               variant="outline"
               onClick={handleCopySbar}
               className="text-xs font-semibold gap-1.5"
@@ -242,6 +287,68 @@ ${
             </Button>
           </div>
         </div>
+
+        {/* CLINICIAN SCANNABLE QR CODE VIEW */}
+        {viewMode === "qr_code" && (
+          <div className="space-y-4 pt-3 text-foreground no-print">
+            <div className="rounded-2xl border-2 border-primary/40 bg-card p-6 text-center space-y-4 shadow-md">
+              <div className="space-y-1">
+                <span className="inline-flex items-center gap-1.5 rounded-full bg-primary/10 px-3 py-1 text-xs font-bold uppercase text-primary">
+                  <QrCode className="size-3.5" />
+                  Clinician Fast-Handoff QR Matrix
+                </span>
+                <h3 className="font-display text-lg font-bold text-foreground">
+                  Scan to Ingest SBAR Note into EHR
+                </h3>
+                <p className="text-xs text-muted-foreground max-w-md mx-auto">
+                  Hospital staff & triage nurses: Scan this high-density code with any tablet,
+                  barcode scanner, or camera to import the patient&apos;s structured triage
+                  assessment without manual data entry.
+                </p>
+              </div>
+
+              {qrCodeDataUrl ? (
+                <div className="inline-block rounded-2xl bg-white p-4 shadow-md border-2 border-slate-200">
+                  <img
+                    src={qrCodeDataUrl}
+                    alt="Clinician SBAR QR Code"
+                    className="size-60 sm:size-72 mx-auto"
+                  />
+                  <span className="text-[10px] font-mono text-slate-600 block mt-2">
+                    Ref ID: BID-{uniqueId} • SBAR Standard
+                  </span>
+                </div>
+              ) : (
+                <div className="size-60 sm:size-72 rounded-2xl bg-muted flex items-center justify-center text-xs text-muted-foreground mx-auto">
+                  Generating QR Code…
+                </div>
+              )}
+
+              <div className="flex flex-wrap justify-center gap-2 pt-2">
+                <Button onClick={handleCopySbar} className="gap-1.5 text-xs font-semibold">
+                  {isCopied ? (
+                    <>
+                      <Check className="size-4 text-emerald-400" />
+                      <span>Copied EHR SBAR Note</span>
+                    </>
+                  ) : (
+                    <>
+                      <Copy className="size-4" />
+                      <span>Copy Full EHR Clinical Note (SBAR)</span>
+                    </>
+                  )}
+                </Button>
+                <Button
+                  variant="outline"
+                  onClick={() => setViewMode("document")}
+                  className="text-xs"
+                >
+                  Return to Document View
+                </Button>
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* ER TRIAGE RAPID PRESENTATION MODE */}
         {viewMode === "er_triage" && (

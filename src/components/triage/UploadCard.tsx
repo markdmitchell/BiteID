@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { Camera, Trash2, Upload } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { CameraGuidanceModal } from "./CameraGuidanceModal";
 
 type UploadCardProps = {
   title: string;
@@ -24,6 +25,7 @@ export function UploadCard({
   const [preview, setPreview] = useState<string | null>(null);
   const [dragging, setDragging] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [cameraModalOpen, setCameraModalOpen] = useState(false);
 
   function acceptFile(nextFile: File | undefined) {
     if (!nextFile) return;
@@ -101,21 +103,47 @@ export function UploadCard({
             </Button>
           </div>
         ) : (
-          <Button
-            type="button"
-            variant="outline"
-            onClick={() => inputRef.current?.click()}
-            className={cn(
-              "w-full flex-col gap-2 border-dashed bg-muted/30 text-muted-foreground shadow-none hover:border-primary hover:bg-primary/5 hover:text-primary",
-              compact ? "h-24 sm:h-28" : "h-44 sm:h-48",
-            )}
-          >
-            <Camera className={compact ? "size-5" : "size-7"} />
-            <span className="text-sm font-medium">Take or choose a photo</span>
-            {!compact && <span className="text-xs">or drag an image here</span>}
-          </Button>
+          <div className="flex flex-col sm:flex-row gap-2.5">
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => setCameraModalOpen(true)}
+              className={cn(
+                "flex-1 flex-col gap-1.5 border-dashed border-primary/40 bg-primary/5 text-primary shadow-none hover:border-primary hover:bg-primary/10",
+                compact ? "h-24 sm:h-28" : "h-36 sm:h-40",
+              )}
+            >
+              <Camera className={compact ? "size-5" : "size-6"} />
+              <span className="text-xs sm:text-sm font-semibold">Camera with Coin Reticle</span>
+              <span className="text-[11px] text-muted-foreground hidden sm:inline">
+                Guides distance & lighting
+              </span>
+            </Button>
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => inputRef.current?.click()}
+              className={cn(
+                "flex-1 flex-col gap-1.5 border-dashed bg-muted/30 text-muted-foreground shadow-none hover:border-primary hover:bg-primary/5 hover:text-primary",
+                compact ? "h-24 sm:h-28" : "h-36 sm:h-40",
+              )}
+            >
+              <Upload className={compact ? "size-5" : "size-6"} />
+              <span className="text-xs sm:text-sm font-medium">Choose Existing File</span>
+              <span className="text-[11px] text-muted-foreground hidden sm:inline">
+                or drag image here
+              </span>
+            </Button>
+          </div>
         )}
       </div>
+
+      <CameraGuidanceModal
+        open={cameraModalOpen}
+        onOpenChange={setCameraModalOpen}
+        onCapture={(capturedFile) => acceptFile(capturedFile)}
+        title={title}
+      />
 
       {error && (
         <p role="alert" className="mt-3 text-xs font-medium text-destructive">
