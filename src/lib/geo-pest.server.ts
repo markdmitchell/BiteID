@@ -1126,6 +1126,421 @@ export const VECTOR_DATABASE: Record<string, VectorInfo> = {
       "Characteristic 'grid-like' or 'tire-tread' hemorrhagic track pattern accompanied by severe throbbing pain radiating up the limb, nausea, or breathing distress.",
     ],
   },
+
+  jellyfish: {
+    id: "jellyfish",
+    name: "Jellyfish / Man O' War",
+    scientificName: "Physalia physalis / Chrysaora",
+    endemicStates: [
+      "US-FL",
+      "US-TX",
+      "US-CA",
+      "US-NC",
+      "US-SC",
+      "US-GA",
+      "US-AL",
+      "US-MS",
+      "US-LA",
+      "US-VA",
+      "US-MD",
+      "US-NJ",
+      "US-NY",
+      "US-MA",
+      "US-RI",
+      "US-CT",
+      "US-DE",
+      "US-HI",
+      "US-WA",
+      "US-OR",
+    ],
+    nonEndemicStates: [
+      "US-CO",
+      "US-WY",
+      "US-MT",
+      "US-ID",
+      "US-UT",
+      "US-NV",
+      "US-AZ",
+      "US-NM",
+      "US-ND",
+      "US-SD",
+      "US-NE",
+      "US-KS",
+      "US-OK",
+      "US-IA",
+      "US-MO",
+      "US-AR",
+      "US-MN",
+      "US-WI",
+      "US-IL",
+      "US-IN",
+      "US-KY",
+      "US-TN",
+      "US-WV",
+      "US-OH",
+      "US-PA",
+      "US-VT",
+    ],
+    seasonalMultiplier: [0.3, 0.4, 0.6, 0.8, 1.0, 1.3, 1.5, 1.5, 1.3, 0.9, 0.6, 0.4],
+    habitatScores: {
+      beach_coastal: 2.5,
+      open_water_lake: 0.1,
+      woods_trail: 0.0,
+      yard_garden: 0.0,
+      indoor_home: 0.0,
+      other_outdoor: 0.2,
+    },
+    bodyLocationScores: {
+      lower_leg_ankle: 1.4,
+      arms_hands: 1.4,
+      trunk_chest_back: 1.1,
+      face_head: 0.5,
+      feet: 1.3,
+      waist_groin_axilla: 0.8,
+      any_unspecified: 1.0,
+    },
+    sensationScores: {
+      severe_pain: 1.5,
+      moderate_pain: 1.2,
+      burning: 1.5,
+      intense_itch: 0.8,
+      mild_itch: 0.2,
+      painless: 0.0,
+    },
+    baseWeight: 0.9,
+    associatedPathogens: [
+      "Nematocyst envenomation (hypnotoxin)",
+      "Secondary marine Vibrio infection",
+    ],
+    delayedRisks: [
+      "Recurrent contact dermatitis",
+      "Anaphylaxis in sensitized individuals",
+      "Scarring hyperpigmentation",
+    ],
+    firstAidAdvice: [
+      "Immediately rinse area thoroughly with SEA WATER to flush away unfired stinging cells. NEVER use fresh water (osmotic shift causes nematocysts to fire).",
+      "Do NOT rub with sand or towels, and do NOT apply urine (myth; triggers mass nematocyst discharge).",
+      "Carefully lift off remaining tentacle fragments using tweezers, a stick, or a credit card edge.",
+      "Immerse the affected area in non-scalding HOT water (110°F–113°F / 43°C–45°C) or apply hot packs for 20–45 minutes to denature heat-sensitive toxins.",
+      "Seek emergency care immediately if experiencing shortness of breath, chest tightness, throat swelling, dizziness, or widespread blistering.",
+    ],
+    warningSigns: [
+      "Linear, whip-like urticarial tracks with beaded sting marks, accompanied by systemic nausea, breathing difficulty, or confusion.",
+    ],
+  },
+
+  stingray: {
+    id: "stingray",
+    name: "Stingray",
+    scientificName: "Dasyatidae (Hypanus americanus / sabina)",
+    endemicStates: [
+      "US-FL",
+      "US-TX",
+      "US-CA",
+      "US-NC",
+      "US-SC",
+      "US-GA",
+      "US-AL",
+      "US-MS",
+      "US-LA",
+      "US-VA",
+      "US-MD",
+      "US-DE",
+      "US-NJ",
+      "US-HI",
+    ],
+    nonEndemicStates: [
+      "US-CO",
+      "US-WY",
+      "US-MT",
+      "US-ID",
+      "US-UT",
+      "US-NV",
+      "US-AZ",
+      "US-NM",
+      "US-ND",
+      "US-SD",
+      "US-NE",
+      "US-KS",
+      "US-OK",
+      "US-IA",
+      "US-MO",
+      "US-AR",
+      "US-MN",
+      "US-WI",
+      "US-IL",
+      "US-IN",
+      "US-KY",
+      "US-TN",
+      "US-WV",
+      "US-OH",
+      "US-PA",
+      "US-VT",
+    ],
+    seasonalMultiplier: [0.3, 0.4, 0.6, 0.9, 1.2, 1.5, 1.5, 1.4, 1.2, 0.8, 0.5, 0.3],
+    habitatScores: {
+      beach_coastal: 2.5,
+      open_water_lake: 0.0,
+      woods_trail: 0.0,
+      yard_garden: 0.0,
+      indoor_home: 0.0,
+      other_outdoor: 0.1,
+    },
+    bodyLocationScores: {
+      feet: 1.8,
+      lower_leg_ankle: 1.5,
+      arms_hands: 0.3,
+      trunk_chest_back: 0.1,
+      face_head: 0.0,
+      waist_groin_axilla: 0.0,
+      any_unspecified: 1.0,
+    },
+    sensationScores: {
+      severe_pain: 2.0,
+      moderate_pain: 1.2,
+      burning: 1.4,
+      intense_itch: 0.1,
+      mild_itch: 0.0,
+      painless: 0.0,
+    },
+    baseWeight: 0.8,
+    associatedPathogens: [
+      "Proteinaceous cardiotoxic / myotoxic venom",
+      "Vibrio vulnificus",
+      "Aeromonas hydrophila",
+    ],
+    delayedRisks: [
+      "Retained radiopaque serrated spine barb fragments",
+      "Secondary marine soft-tissue necrosis",
+      "Reflex sympathetic dystrophy / osteomyelitis",
+    ],
+    firstAidAdvice: [
+      "IMMEDIATELY immerse the wounded foot or leg in non-scalding HOT water (110°F–115°F / 43°C–46°C) for 30–90 minutes. Stingray venom proteins are heat-labile and break down in hot water, providing rapid dramatic pain relief.",
+      "Cleanse the wound thoroughly with clean water and mild soap after heat immersion.",
+      "Do NOT attempt deep surgical extraction of embedded barbs yourself; have a medical clinician inspect the puncture for retained venomous spine fragments.",
+      "Tetanus prophylaxis is mandatory if not current within 5 years.",
+      "Obtain prescription empiric oral antibiotic coverage for marine pathogens (e.g., doxycycline, ciprofloxacin, or levofloxacin) if wound is deep or signs of infection appear.",
+    ],
+    warningSigns: [
+      "Excruciating throbbing pain out of proportion to puncture size, grayish-ashen ischemic tissue around wound, retained barb, or expanding redness/heat.",
+    ],
+  },
+
+  velvet_ant: {
+    id: "velvet_ant",
+    name: "Velvet Ant ('Cow Killer')",
+    scientificName: "Dasymutilla occidentalis",
+    endemicStates: [
+      "US-TX",
+      "US-FL",
+      "US-NC",
+      "US-SC",
+      "US-GA",
+      "US-VA",
+      "US-MD",
+      "US-AL",
+      "US-MS",
+      "US-TN",
+      "US-KY",
+      "US-MO",
+      "US-AR",
+      "US-LA",
+      "US-OK",
+      "US-KS",
+      "US-IN",
+      "US-IL",
+      "US-OH",
+      "US-WV",
+      "US-NM",
+      "US-AZ",
+    ],
+    nonEndemicStates: ["US-AK", "US-HI", "US-VT", "US-NH", "US-ME", "US-WA", "US-OR"],
+    seasonalMultiplier: [0.1, 0.1, 0.3, 0.6, 1.1, 1.4, 1.5, 1.4, 1.1, 0.6, 0.2, 0.1],
+    habitatScores: {
+      woods_trail: 1.4,
+      yard_garden: 1.4,
+      other_outdoor: 1.3,
+      beach_coastal: 0.8,
+      open_water_lake: 0.2,
+      indoor_home: 0.2,
+    },
+    bodyLocationScores: {
+      feet: 1.5,
+      lower_leg_ankle: 1.4,
+      arms_hands: 1.2,
+      trunk_chest_back: 0.5,
+      face_head: 0.3,
+      waist_groin_axilla: 0.4,
+      any_unspecified: 1.0,
+    },
+    sensationScores: {
+      severe_pain: 2.0,
+      moderate_pain: 1.3,
+      burning: 1.5,
+      intense_itch: 0.3,
+      mild_itch: 0.1,
+      painless: 0.0,
+    },
+    baseWeight: 0.7,
+    associatedPathogens: [
+      "Sterile hymenopteran polypeptide venom (non-lethal but Schmidt Index 3.0)",
+    ],
+    delayedRisks: [
+      "Severe local inflammatory induration",
+      "Secondary excoriation infection",
+      "Rare systemic allergic anaphylaxis",
+    ],
+    firstAidAdvice: [
+      "Wash the sting area thoroughly with soap and water.",
+      "Apply a cold pack or ice wrapped in cloth for 15–20 minutes at a time to reduce acute swelling and blunt sharp throbbing pain.",
+      "Take an oral analgesic (ibuprofen 400 mg or acetaminophen) and oral antihistamine to calm intense local histamine flare.",
+      "Apply 1% hydrocortisone cream or calamine lotion to the raised wheal.",
+      "Seek immediate emergency evaluation if signs of generalized allergic reaction (hives, lip/facial swelling, wheezing, dizziness) develop.",
+    ],
+    warningSigns: [
+      "Solitary bright fiery red wheal with sudden excruciating sharp burning pain (often on bare feet or ankles in pastures or yards), resolving over 24 hours unless allergic.",
+    ],
+  },
+
+  wheel_bug: {
+    id: "wheel_bug",
+    name: "Wheel Bug / Assassin Bug",
+    scientificName: "Arilus cristatus",
+    endemicStates: [
+      "US-TX",
+      "US-FL",
+      "US-NC",
+      "US-SC",
+      "US-GA",
+      "US-VA",
+      "US-MD",
+      "US-PA",
+      "US-NJ",
+      "US-DE",
+      "US-WV",
+      "US-OH",
+      "US-IN",
+      "US-IL",
+      "US-KY",
+      "US-TN",
+      "US-MO",
+      "US-AR",
+      "US-LA",
+      "US-MS",
+      "US-AL",
+      "US-OK",
+      "US-KS",
+    ],
+    nonEndemicStates: [
+      "US-AK",
+      "US-HI",
+      "US-WA",
+      "US-OR",
+      "US-ID",
+      "US-MT",
+      "US-WY",
+      "US-ND",
+      "US-ME",
+    ],
+    seasonalMultiplier: [0.1, 0.1, 0.2, 0.5, 0.9, 1.2, 1.4, 1.5, 1.4, 0.9, 0.4, 0.1],
+    habitatScores: {
+      yard_garden: 1.5,
+      woods_trail: 1.3,
+      other_outdoor: 1.2,
+      indoor_home: 0.3,
+      beach_coastal: 0.4,
+      open_water_lake: 0.1,
+    },
+    bodyLocationScores: {
+      arms_hands: 1.6,
+      face_head: 0.8,
+      trunk_chest_back: 0.7,
+      lower_leg_ankle: 0.9,
+      feet: 0.6,
+      waist_groin_axilla: 0.3,
+      any_unspecified: 1.0,
+    },
+    sensationScores: {
+      severe_pain: 1.8,
+      moderate_pain: 1.4,
+      burning: 1.5,
+      intense_itch: 0.3,
+      mild_itch: 0.1,
+      painless: 0.0,
+    },
+    baseWeight: 0.7,
+    associatedPathogens: [
+      "Cytotoxic digestive salivary enzymes (proteinases/hyaluronidase); NOT a vector of Chagas disease",
+    ],
+    delayedRisks: [
+      "Tender indurated cutaneous nodule lasting weeks",
+      "Local numbness / sensory paresthesia",
+      "Superficial dermal necrosis",
+    ],
+    firstAidAdvice: [
+      "Wash the puncture site thoroughly with soap and water to clear insect salivary enzymes.",
+      "Apply a cold compress or ice pack for 15 minutes to reduce acute tissue swelling and dull the intense burning sensation.",
+      "Take oral over-the-counter NSAIDs (ibuprofen or naproxen) for local throbbing pain and inflammation.",
+      "Keep clean and dry; a hard nodule may persist at the puncture site for 1–3 weeks before fully remodeling.",
+      "Seek medical attention if red streaking (lymphangitis), fever, or spreading fluctuant purulence develops.",
+    ],
+    warningSigns: [
+      "Single deep puncture wound with intense immediate pain (often rated worse than a hornet sting), followed by a firm, persistent, tender red nodule with localized numbness.",
+    ],
+  },
+
+  yellow_sac_spider: {
+    id: "yellow_sac_spider",
+    name: "Yellow Sac Spider",
+    scientificName: "Cheiracanthium inclusum / mildei",
+    endemicStates: "ALL",
+    nonEndemicStates: [],
+    seasonalMultiplier: [0.6, 0.6, 0.8, 1.0, 1.2, 1.3, 1.4, 1.4, 1.3, 1.1, 0.8, 0.7],
+    habitatScores: {
+      indoor_home: 1.6,
+      yard_garden: 1.2,
+      woods_trail: 1.0,
+      other_outdoor: 1.0,
+      beach_coastal: 0.4,
+      open_water_lake: 0.2,
+    },
+    bodyLocationScores: {
+      arms_hands: 1.3,
+      lower_leg_ankle: 1.3,
+      trunk_chest_back: 1.2,
+      face_head: 0.9,
+      feet: 1.0,
+      waist_groin_axilla: 0.8,
+      any_unspecified: 1.0,
+    },
+    sensationScores: {
+      moderate_pain: 1.4,
+      burning: 1.3,
+      intense_itch: 1.1,
+      mild_itch: 0.8,
+      severe_pain: 0.9,
+      painless: 0.2,
+    },
+    baseWeight: 1.0,
+    associatedPathogens: [
+      "Mild cytotoxic polypeptide venom",
+      "Secondary Staphylococcus / Streptococcus entry",
+    ],
+    delayedRisks: [
+      "Small superficial crust / pustule mistaken for Brown Recluse",
+      "Local mild excoriation infection",
+    ],
+    firstAidAdvice: [
+      "Wash the bite area with antiseptic soap and water.",
+      "Apply a cool compress to calm mild swelling and stinging.",
+      "Reassurance: Yellow sac spider venom causes minor localized discomfort and does NOT cause severe deep tissue ulceration or systemic loxoscelism.",
+      "Avoid scratching to protect the central vesicle or small scab from secondary bacterial infection.",
+      "Consult a physician if erythema spreads progressively beyond 5 cm or if purulence/fever arises.",
+    ],
+    warningSigns: [
+      "Sharp stinging sensation followed by a small, raised red papule with a tiny central pustular vesicle; heals cleanly in 7–10 days without progressive sinking necrosis.",
+    ],
+  },
 };
 
 export const DEFAULT_MCNAIR_VA_COORDINATES = {
@@ -1386,11 +1801,60 @@ export function evaluateRegionalLikelihood(
       ) {
         score *= 100.0;
       }
+      if (
+        (lower.includes("physalia") ||
+          lower.includes("chrysaora") ||
+          lower.includes("cyanea") ||
+          lower.includes("jellyfish") ||
+          lower.includes("man o war") ||
+          lower.includes("man-of-war") ||
+          lower.includes("sea nettle")) &&
+        key === "jellyfish"
+      ) {
+        score *= 100.0;
+      }
+      if (
+        (lower.includes("dasyatis") ||
+          lower.includes("hypanus") ||
+          lower.includes("urobatis") ||
+          lower.includes("myliobatis") ||
+          lower.includes("stingray") ||
+          lower.includes("skate")) &&
+        key === "stingray"
+      ) {
+        score *= 100.0;
+      }
+      if (
+        (lower.includes("dasymutilla") ||
+          lower.includes("velvet ant") ||
+          lower.includes("cow killer") ||
+          lower.includes("mutillid")) &&
+        key === "velvet_ant"
+      ) {
+        score *= 100.0;
+      }
+      if (
+        (lower.includes("arilus") ||
+          lower.includes("wheel bug") ||
+          lower.includes("assassin bug")) &&
+        key === "wheel_bug"
+      ) {
+        score *= 100.0;
+      }
+      if (
+        (lower.includes("cheiracanthium") ||
+          lower.includes("yellow sac") ||
+          lower.includes("sac spider")) &&
+        key === "yellow_sac_spider"
+      ) {
+        score *= 100.0;
+      }
     }
 
     // 5. Morphological Overrides & Multipliers
     if (morphObj) {
       if (morphObj.pattern === "linear_grouped") {
+        if (key === "jellyfish") score *= 25.0;
         if (key === "bed_bug") score *= 15.0;
         if (key === "flea") score *= 4.0;
         if (key === "chigger") score *= 4.0;
@@ -1407,6 +1871,11 @@ export function evaluateRegionalLikelihood(
           score *= 9.0;
         if (key === "wasp" && (sensation === "severe_pain" || sensation === "moderate_pain"))
           score *= 9.0;
+        if (key === "velvet_ant" && (sensation === "severe_pain" || sensation === "burning"))
+          score *= 12.0;
+        if (key === "wheel_bug" && (sensation === "severe_pain" || sensation === "moderate_pain"))
+          score *= 10.0;
+        if (key === "stingray" && sensation === "severe_pain") score *= 15.0;
         if (key === "scorpion" && sensation === "severe_pain") score *= 9.0;
         if (key === "horse_fly" && (sensation === "severe_pain" || sensation === "moderate_pain"))
           score *= 9.0;
@@ -1422,6 +1891,7 @@ export function evaluateRegionalLikelihood(
           score *= 10.0;
       }
       if (morphObj.pattern === "linear_grouped") {
+        if (key === "jellyfish") score *= 25.0;
         if (key === "asp_caterpillar") score *= 20.0;
         if (key === "bed_bug") score *= 6.0;
         if (key === "flea") score *= 5.0;

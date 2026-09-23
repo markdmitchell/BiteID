@@ -73,6 +73,21 @@ import giantCentipedeVvi from "@/assets/bite-patterns/giant-centipede-v-vi.jpg";
 import aspCaterpillarIii from "@/assets/bite-patterns/asp-caterpillar-i-ii.jpg";
 import aspCaterpillarIiiIv from "@/assets/bite-patterns/asp-caterpillar-iii-iv.jpg";
 import aspCaterpillarVvi from "@/assets/bite-patterns/asp-caterpillar-v-vi.jpg";
+import jellyfishIii from "@/assets/bite-patterns/jellyfish-i-ii.jpg";
+import jellyfishIiiIv from "@/assets/bite-patterns/jellyfish-iii-iv.jpg";
+import jellyfishVvi from "@/assets/bite-patterns/jellyfish-v-vi.jpg";
+import stingrayIii from "@/assets/bite-patterns/stingray-i-ii.jpg";
+import stingrayIiiIv from "@/assets/bite-patterns/stingray-iii-iv.jpg";
+import stingrayVvi from "@/assets/bite-patterns/stingray-v-vi.jpg";
+import velvetAntIii from "@/assets/bite-patterns/velvet-ant-i-ii.jpg";
+import velvetAntIiiIv from "@/assets/bite-patterns/velvet-ant-iii-iv.jpg";
+import velvetAntVvi from "@/assets/bite-patterns/velvet-ant-v-vi.jpg";
+import wheelBugIii from "@/assets/bite-patterns/wheel-bug-i-ii.jpg";
+import wheelBugIiiIv from "@/assets/bite-patterns/wheel-bug-iii-iv.jpg";
+import wheelBugVvi from "@/assets/bite-patterns/wheel-bug-v-vi.jpg";
+import yellowSacSpiderIii from "@/assets/bite-patterns/yellow-sac-spider-i-ii.jpg";
+import yellowSacSpiderIiiIv from "@/assets/bite-patterns/yellow-sac-spider-iii-iv.jpg";
+import yellowSacSpiderVvi from "@/assets/bite-patterns/yellow-sac-spider-v-vi.jpg";
 
 // Temporal Evolution Progression Images
 import brownRecluseEarlyIii from "@/assets/bite-patterns/brown-recluse-early-i-ii.jpg";
@@ -409,6 +424,40 @@ const BITE_PATTERNS: Record<string, BitePatternSet> = {
     pattern:
       "characteristic linear or grid-like track of erythematous petechial papules and severe radiating pain",
     images: { "i-ii": aspCaterpillarIii, "iii-iv": aspCaterpillarIiiIv, "v-vi": aspCaterpillarVvi },
+  },
+  jellyfish: {
+    label: "Jellyfish / Man o' war",
+    pattern:
+      "linear whip-like erythematous tracks with vesiculation, intense burning urticarial wheals, and radiating agony",
+    images: { "i-ii": jellyfishIii, "iii-iv": jellyfishIiiIv, "v-vi": jellyfishVvi },
+  },
+  stingray: {
+    label: "Stingray envenomation",
+    pattern:
+      "jagged lacerating puncture wound with dusky violaceous ischemic edges, severe local tissue edema, and throbbing pain",
+    images: { "i-ii": stingrayIii, "iii-iv": stingrayIiiIv, "v-vi": stingrayVvi },
+  },
+  velvet_ant: {
+    label: "Velvet ant (Cow killer)",
+    pattern:
+      "solitary bright erythematous wheal with central micro-punctum and excruciating immediate burning pain",
+    images: { "i-ii": velvetAntIii, "iii-iv": velvetAntIiiIv, "v-vi": velvetAntVvi },
+  },
+  wheel_bug: {
+    label: "Wheel bug / Assassin bug",
+    pattern:
+      "single deep puncture surrounded by acute inflammatory induration, immediate stinging, and a lingering tender nodule",
+    images: { "i-ii": wheelBugIii, "iii-iv": wheelBugIiiIv, "v-vi": wheelBugVvi },
+  },
+  yellow_sac_spider: {
+    label: "Yellow sac spider",
+    pattern:
+      "small erythematous papule with a tiny central pustular vesicle and surrounding mild induration",
+    images: {
+      "i-ii": yellowSacSpiderIii,
+      "iii-iv": yellowSacSpiderIiiIv,
+      "v-vi": yellowSacSpiderVvi,
+    },
   },
 };
 

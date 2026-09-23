@@ -55,6 +55,13 @@ const HAZARD_CATEGORIES: HazardCategory[] = [
     ],
   },
   {
+    id: "marine_hazards",
+    label: "Marine Envenomations",
+    icon: "🌊",
+    badgeClass: "bg-cyan-500/15 text-cyan-700 dark:text-cyan-300 border-cyan-500/30",
+    speciesIds: ["jellyfish", "stingray"],
+  },
+  {
     id: "disease_vectors",
     label: "Disease Vectors & Parasites",
     icon: "🦠",
@@ -66,7 +73,7 @@ const HAZARD_CATEGORIES: HazardCategory[] = [
     label: "Stings & Severe Allergens",
     icon: "🐝",
     badgeClass: "bg-orange-500/15 text-orange-700 dark:text-orange-300 border-orange-500/30",
-    speciesIds: ["wasp", "honey_bee", "fire_ant", "asp_caterpillar"],
+    speciesIds: ["wasp", "honey_bee", "fire_ant", "asp_caterpillar", "velvet_ant"],
   },
   {
     id: "nuisance_blister",
@@ -74,6 +81,8 @@ const HAZARD_CATEGORIES: HazardCategory[] = [
     icon: "🦟",
     badgeClass: "bg-primary/10 text-primary border-primary/20",
     speciesIds: [
+      "yellow_sac_spider",
+      "wheel_bug",
       "blister_beetle",
       "mosquito",
       "no_see_um",
@@ -219,6 +228,44 @@ const CREATURE_MYTH_BUSTERS: Record<string, { myth: string; fact: string }[]> = 
     {
       myth: "The sting is just an annoying minor fuzzy bug itch.",
       fact: "Puss caterpillar envenomation is among the most painful stings in North America, frequently causing radiating neuropathic pain to the torso, nausea, and lymphadenopathy.",
+    },
+  ],
+  jellyfish: [
+    {
+      myth: "Urinate on a jellyfish sting to neutralize the venom.",
+      fact: "Human urine has erratic pH and osmolarity that triggers massive osmotic firing of undischarged nematocysts, injecting more venom. Rinse with seawater, then immerse in non-scalding hot water (110°F–115°F / 45°C) to denature heat-sensitive venom proteins.",
+    },
+    {
+      myth: "Rinse with cold bottled fresh water immediately.",
+      fact: "Fresh water is hypotonic relative to seawater and triggers explosive osmotic discharge of thousands of nematocysts, drastically worsening envenomation. Use only saline or ocean seawater for the initial rinse.",
+    },
+  ],
+  stingray: [
+    {
+      myth: "Just elevate the foot, take an ibuprofen, and let it rest.",
+      fact: "Stingray venom proteins are heat-labile. Immediately immersing the foot or leg in non-scalding hot water (110°F–115°F / 43°C–46°C) for 30–90 minutes dramatically neutralizes venom and terminates excruciating pain. Always seek medical inspection for retained radiopaque barb fragments and empiric marine antibiotic coverage.",
+    },
+    {
+      myth: "Urinate on the stingray puncture or pour household vinegar.",
+      fact: "Neither urine nor vinegar neutralizes stingray proteinaceous venom. Non-scalding hot water immersion is the clinically proven emergency standard of care.",
+    },
+  ],
+  velvet_ant: [
+    {
+      myth: "A velvet ant sting is deadly enough to kill a full-grown cow ('Cow Killer').",
+      fact: "While the Schmidt Sting Pain Index rates it an excruciating 3.0 (described as 'like hot frying oil spilled on skin'), the venom has low mammalian lethality. It will not kill a cow or healthy human; pain intensely flares for 30–60 minutes and then subsides.",
+    },
+  ],
+  wheel_bug: [
+    {
+      myth: "Wheel bugs transmit deadly Chagas disease like kissing bugs.",
+      fact: "Wheel bugs (Arilus cristatus) are predatory beneficial assassin bugs that feed on garden caterpillars, not blood feeders. They do NOT transmit Trypanosoma cruzi. Their painful bite is caused by acidic digestive salivary enzymes.",
+    },
+  ],
+  yellow_sac_spider: [
+    {
+      myth: "Yellow sac spiders cause severe rotting dermonecrotic ulcers like Brown Recluse spiders.",
+      fact: "Arachnological clinical trials have debunked necrotic loxoscelism in Cheiracanthium. Bites produce minor localized stinging and a small pustular papule that heals within 7–10 days without tissue sloughing.",
     },
   ],
 };
@@ -710,7 +757,7 @@ export function KnownCulpritModal({
                   onClick={() => setSelectedId(null)}
                   className="text-xs"
                 >
-                  ← Back to Bug List
+                  ← Back to Critter List
                 </Button>
                 <Button
                   variant="outline"
@@ -736,8 +783,8 @@ export function KnownCulpritModal({
                 I Know What Bit Me
               </DialogTitle>
               <p className="text-xs text-muted-foreground">
-                Select your insect, spider, or viper to see immediate, definitive first-aid steps,
-                dangerous folklore myths, and emergency red flags.
+                Select your insect, spider, marine creature, or viper to see immediate, definitive
+                first-aid steps, dangerous folklore myths, and emergency red flags.
               </p>
 
               {/* Search & Category Filter */}
@@ -746,7 +793,7 @@ export function KnownCulpritModal({
                   <Search className="absolute top-2.5 left-3 size-4 text-muted-foreground" />
                   <input
                     type="text"
-                    placeholder="Search by bug or sting (e.g. 'deer tick', 'recluse', 'bee', 'rattlesnake')..."
+                    placeholder="Search by critter or sting (e.g. 'deer tick', 'jellyfish', 'stingray', 'recluse', 'rattlesnake')..."
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                     className="w-full rounded-xl border border-input bg-background py-2 pr-4 pl-9 text-xs focus:outline-hidden focus:ring-2 focus:ring-ring"
@@ -763,7 +810,7 @@ export function KnownCulpritModal({
                         : "bg-muted text-muted-foreground hover:text-foreground"
                     }`}
                   >
-                    All (20)
+                    All ({HAZARD_CATEGORIES.reduce((acc, c) => acc + c.speciesIds.length, 0)})
                   </button>
                   {HAZARD_CATEGORIES.map((cat) => (
                     <button

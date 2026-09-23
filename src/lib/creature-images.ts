@@ -21,6 +21,11 @@ import waspYellowJacket from "@/assets/creatures/wasp-yellow-jacket.jpg";
 import coralSnake from "@/assets/creatures/coral-snake.jpg";
 import giantCentipede from "@/assets/creatures/giant-centipede.jpg";
 import aspCaterpillar from "@/assets/creatures/asp-caterpillar.jpg";
+import jellyfish from "@/assets/creatures/jellyfish.jpg";
+import stingray from "@/assets/creatures/stingray.jpg";
+import velvetAnt from "@/assets/creatures/velvet-ant.jpg";
+import wheelBug from "@/assets/creatures/wheel-bug.jpg";
+import yellowSacSpider from "@/assets/creatures/yellow-sac-spider.jpg";
 
 type CreatureReference = {
   src: string;
@@ -119,6 +124,26 @@ const CREATURE_REFERENCES: Record<string, CreatureReference> = {
   asp_caterpillar: {
     src: aspCaterpillar,
     alt: "AI-generated field-guide reference of a puss caterpillar / asp (Megalopyge opercularis)",
+  },
+  jellyfish: {
+    src: jellyfish,
+    alt: "AI-generated field-guide reference of an Atlantic jellyfish / Portuguese man o' war (Physalia physalis)",
+  },
+  stingray: {
+    src: stingray,
+    alt: "AI-generated field-guide reference of a stingray (Dasyatidae)",
+  },
+  velvet_ant: {
+    src: velvetAnt,
+    alt: "AI-generated field-guide reference of a velvet ant / cow killer (Dasymutilla occidentalis)",
+  },
+  wheel_bug: {
+    src: wheelBug,
+    alt: "AI-generated field-guide reference of a North American wheel bug (Arilus cristatus)",
+  },
+  yellow_sac_spider: {
+    src: yellowSacSpider,
+    alt: "AI-generated field-guide reference of a yellow sac spider (Cheiracanthium inclusum)",
   },
 };
 
