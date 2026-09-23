@@ -1,5 +1,15 @@
 import { useEffect, useState } from "react";
-import { ChevronDown, ChevronUp, Sparkles, CheckCircle, HelpCircle } from "lucide-react";
+import {
+  ChevronDown,
+  ChevronUp,
+  Sparkles,
+  CheckCircle,
+  HelpCircle,
+  AlertTriangle,
+  CheckCircle2,
+  Clock,
+  ShieldAlert,
+} from "lucide-react";
 import { cn } from "@/lib/utils";
 import { creatureReferenceOf } from "@/lib/creature-images";
 import { confidenceOf, nameOf, type TriageResultItem } from "@/lib/triage";
@@ -10,15 +20,41 @@ type ProbabilityCardProps = {
   defaultExpanded?: boolean;
 };
 
-function DetailList({ title, items }: { title: string; items?: string[] | undefined }) {
+function DetailList({
+  title,
+  items,
+  variant = "default",
+}: {
+  title: string;
+  items?: string[] | undefined;
+  variant?: "default" | "warning" | "success" | "risk";
+}) {
   if (!items || items.length === 0) return null;
   return (
-    <div className="mt-4">
-      <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">{title}</p>
+    <div className="mt-3.5 pt-2.5 border-t border-border/50">
+      <p className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-1.5">
+        {variant === "warning" && <AlertTriangle className="size-3 text-destructive" />}
+        {variant === "risk" && <Clock className="size-3 text-amber-600 dark:text-amber-400" />}
+        {variant === "success" && (
+          <CheckCircle2 className="size-3 text-emerald-600 dark:text-emerald-400" />
+        )}
+        <span>{title}</span>
+      </p>
       <ul className="mt-1.5 space-y-1">
         {items.map((entry, i) => (
-          <li key={i} className="flex gap-2 text-sm leading-relaxed text-foreground">
-            <span className="mt-1.5 size-1.5 shrink-0 rounded-full bg-primary" />
+          <li key={i} className="flex gap-2 text-xs leading-relaxed text-foreground">
+            <span
+              className={cn(
+                "mt-1.5 size-1.5 shrink-0 rounded-full",
+                variant === "warning"
+                  ? "bg-destructive"
+                  : variant === "risk"
+                    ? "bg-amber-500"
+                    : variant === "success"
+                      ? "bg-emerald-500"
+                      : "bg-primary",
+              )}
+            />
             <span>{entry}</span>
           </li>
         ))}
@@ -182,8 +218,24 @@ export function ProbabilityCard({
 
           <DetailList title="Diagnostic Concordance Factors" items={item.matchedFactors} />
           <DetailList
-            title="Associated Pathogens & Clinical Risks"
+            title="Associated Pathogens & Vector Transmission"
             items={item.associatedPathogens}
+            variant="risk"
+          />
+          <DetailList
+            title="Delayed Sequelae to Monitor (24h–4w)"
+            items={item.delayedRisks}
+            variant="risk"
+          />
+          <DetailList
+            title="Targeted Clinical First-Aid Protocol"
+            items={item.firstAidAdvice}
+            variant="success"
+          />
+          <DetailList
+            title="Clinical Red Flags (Seek In-Person Care)"
+            items={item.warningSignsToWatch}
+            variant="warning"
           />
         </div>
       )}

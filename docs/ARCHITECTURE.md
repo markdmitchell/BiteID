@@ -86,10 +86,17 @@ done    ResultsDashboard (ranked cards, guidance, top-result reaction references
    of alpha.
 9. Reaction images are non-diagnostic visual references selected from the top result's
    stable ID. Keep the general `fitz-*.jpg` set as the fallback for unknown or absent IDs.
-10. **Legal Safe Harbor Posture**: BiteID is an Educational Visual Reference Guide, Triage Gate,
-    and Doctor-Ready Clinical Scribe. It does not provide medical diagnoses, clinical treatment
-    plans, or individualized pharmaceutical drug dosages. Pediatric medication information is
-    restricted to official FDA manufacturer packaging tables with mandatory physician consultation
-    rules. Never re-introduce automated algorithmic prescribing or claim diagnostic certainty.
+10. **AI Diagnoser Architecture & Clinical Safety Gates**: BiteID operates as an
+    advanced **AI Diagnoser** delivering calibrated clinical differential diagnoses (DDx)
+    with 95% Confidence Intervals, precision weight-based pediatric dosing engines, and
+    multi-day serial photo progression monitoring. To protect human life and adhere to
+    rigid clinical standards:
+    - We provide assistive diagnostic intelligence, but explicitly state that software
+      cannot substitute for in-person physician palpation, vital sign assessment, or formal
+      medical evaluation.
+    - Life-safety gates are absolute: mandatory emergency alerts for spreading red streaks
+      (lymphangitis), airway compromise, rabies bat exposures, and progressive envenomations.
+    - Pediatric safety locks are immutable: strict `< 6 Months` Ibuprofen renal block,
+      `< 2 Years` antihistamine respiratory depression block, and Aspirin/Reye's syndrome black-box contraindications.
 
 See [BACKEND_CONTRACT.md](./BACKEND_CONTRACT.md) for the request/response shape.
