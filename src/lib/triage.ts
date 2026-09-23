@@ -87,6 +87,9 @@ export type TriageFormState = {
   patientProfile: PatientVulnerabilityProfile;
   symptoms: string[];
   noneOfThese: boolean;
+  batOrAnimalExposure: boolean;
+  secondaryInfectionSymptoms: string[];
+  recentTravel: "none" | "us_southwest" | "tropical_intl";
 };
 
 export const initialFormState: TriageFormState = {
@@ -100,6 +103,9 @@ export const initialFormState: TriageFormState = {
   patientProfile: "standard_adult",
   symptoms: [],
   noneOfThese: false,
+  batOrAnimalExposure: false,
+  secondaryInfectionSymptoms: [],
+  recentTravel: "none",
 };
 
 export type TriageAction =
@@ -113,6 +119,9 @@ export type TriageAction =
   | { type: "setPatientProfile"; value: PatientVulnerabilityProfile }
   | { type: "toggleSymptom"; value: string }
   | { type: "setNoneOfThese"; value: boolean }
+  | { type: "setBatExposure"; value: boolean }
+  | { type: "toggleSecondaryInfectionSymptom"; value: string }
+  | { type: "setRecentTravel"; value: "none" | "us_southwest" | "tropical_intl" }
   | { type: "reset" };
 
 export function triageReducer(state: TriageFormState, action: TriageAction): TriageFormState {
@@ -133,6 +142,17 @@ export function triageReducer(state: TriageFormState, action: TriageAction): Tri
       return { ...state, sensation: action.value };
     case "setPatientProfile":
       return { ...state, patientProfile: action.value };
+    case "setBatExposure":
+      return { ...state, batOrAnimalExposure: action.value };
+    case "setRecentTravel":
+      return { ...state, recentTravel: action.value };
+    case "toggleSecondaryInfectionSymptom": {
+      const has = state.secondaryInfectionSymptoms.includes(action.value);
+      const secondaryInfectionSymptoms = has
+        ? state.secondaryInfectionSymptoms.filter((s) => s !== action.value)
+        : [...state.secondaryInfectionSymptoms, action.value];
+      return { ...state, secondaryInfectionSymptoms };
+    }
     case "toggleSymptom": {
       const has = state.symptoms.includes(action.value);
       const symptoms = has
@@ -141,7 +161,13 @@ export function triageReducer(state: TriageFormState, action: TriageAction): Tri
       return { ...state, symptoms, noneOfThese: symptoms.length > 0 ? false : state.noneOfThese };
     }
     case "setNoneOfThese":
-      return { ...state, noneOfThese: action.value, symptoms: action.value ? [] : state.symptoms };
+      return {
+        ...state,
+        noneOfThese: action.value,
+        symptoms: action.value ? [] : state.symptoms,
+        batOrAnimalExposure: action.value ? false : state.batOrAnimalExposure,
+        secondaryInfectionSymptoms: action.value ? [] : state.secondaryInfectionSymptoms,
+      };
     case "reset":
       return initialFormState;
     default:
@@ -198,6 +224,10 @@ export type TriageResponse = {
   dermatologicalFindings?: DermatologicalFindings;
   mimickerAlert?: MimickerAlert | null;
   isOfflineQueued?: boolean;
+  isRejectedImage?: boolean;
+  rejectionReason?: string;
+  hasRabiesAlert?: boolean;
+  hasCellulitisAlert?: boolean;
   [key: string]: unknown;
 };
 
@@ -261,8 +291,12 @@ export async function submitTriage(state: TriageFormState): Promise<TriageRespon
         patientProfile: state.patientProfile,
         monthIndex: new Date().getMonth(),
         symptoms: state.symptoms,
+        batOrAnimalExposure: state.batOrAnimalExposure,
+        secondaryInfectionSymptoms: state.secondaryInfectionSymptoms,
+        recentTravel: state.recentTravel,
       },
     });
+    return (result as unknown as TriageResponse) ?? FALLBACK_RESPONSE;
   } catch {
     // If the network call failed (e.g. signal dropped out mid-request), auto-stash and route to offline field kit
     try {
@@ -308,4 +342,66 @@ export function confidenceOf(item: TriageResultItem): number {
 
 export function nameOf(item: TriageResultItem): string {
   return item.name ?? item.condition ?? item.label ?? "Unnamed finding";
+}
+
+/** 1-click full privacy sanitization: wipes all local stored health data, journals, and cached photos */
+export function clearAllBiteIdLocalData(): void {
+  if (typeof window === "undefined") return;
+  try {
+    const keysToRemove: string[] = [];
+    for (let i = 0; i < localStorage.length; i++) {
+      const key = localStorage.key(i);
+      if (key && (key.startsWith("biteid_") || key.includes("rash") || key.includes("intake"))) {
+        keysToRemove.push(key);
+      }
+    }
+    keysToRemove.forEach((k) => localStorage.removeItem(k));
+  } catch (err) {
+    console.error("Failed to clear local health data", err);
+  }
+}
+
+/** Auto-retention purge: cleans up any journal entries or stashed data older than maxDays */
+export function purgeExpiredHealthData(maxDays = 30): {
+  purgedJournals: number;
+  purgedOffline: number;
+} {
+  if (typeof window === "undefined") return { purgedJournals: 0, purgedOffline: 0 };
+  let purgedJournals = 0;
+  let purgedOffline = 0;
+  const cutoffTime = Date.now() - maxDays * 24 * 60 * 60 * 1000;
+
+  try {
+    // 1. Check rash tracker entries
+    const trackerRaw = localStorage.getItem("biteid_rash_entries_v2");
+    if (trackerRaw) {
+      const parsed = JSON.parse(trackerRaw) as Array<{ timestamp: string }>;
+      const valid = parsed.filter((item) => {
+        const itemTime = new Date(item.timestamp).getTime();
+        return !isNaN(itemTime) && itemTime >= cutoffTime;
+      });
+      purgedJournals = parsed.length - valid.length;
+      if (purgedJournals > 0) {
+        localStorage.setItem("biteid_rash_entries_v2", JSON.stringify(valid));
+      }
+    }
+
+    // 2. Check offline queue
+    const queueRaw = localStorage.getItem("biteid_offline_intake_queue");
+    if (queueRaw) {
+      const parsed = JSON.parse(queueRaw) as Array<{ timestamp: string }>;
+      const valid = parsed.filter((item) => {
+        const itemTime = new Date(item.timestamp).getTime();
+        return !isNaN(itemTime) && itemTime >= cutoffTime;
+      });
+      purgedOffline = parsed.length - valid.length;
+      if (purgedOffline > 0) {
+        localStorage.setItem("biteid_offline_intake_queue", JSON.stringify(valid));
+      }
+    }
+  } catch {
+    // Ignore retention check errors
+  }
+
+  return { purgedJournals, purgedOffline };
 }

@@ -39,6 +39,9 @@ export type EngineIntake = {
   patientProfile?: PatientVulnerabilityProfile;
   monthIndex: number;
   symptoms: string[];
+  batOrAnimalExposure?: boolean;
+  secondaryInfectionSymptoms?: string[];
+  recentTravel?: "none" | "us_southwest" | "tropical_intl";
 };
 
 export type EngineResultItem = {
@@ -83,6 +86,10 @@ export type EngineResponse = {
   hasErythemaMigrans?: boolean;
   dermatologicalFindings?: DermatologicalFindings;
   mimickerAlert?: MimickerAlert | null;
+  isRejectedImage?: boolean;
+  rejectionReason?: string;
+  hasRabiesAlert?: boolean;
+  hasCellulitisAlert?: boolean;
 };
 
 const DISCLAIMER =
@@ -109,6 +116,29 @@ export function emergencyResponse(): EngineResponse {
   };
 }
 
+export function rabiesEmergencyResponse(): EngineResponse {
+  return {
+    results: [],
+    isEmergencyRedirect: true,
+    hasRabiesAlert: true,
+    guidance:
+      "CRITICAL: POTENTIAL BAT OR MAMMALIAN RABIES EXPOSURE REPORTED.\n\nBat teeth are microscopic and can leave virtually painless, barely perceptible punctures that mimic insect bites. Waking up in a room, cabin, or tent where a bat was present constitutes a high-priority rabies exposure.\n\nSeek immediate emergency medical evaluation or contact your local health department for Rabies Post-Exposure Prophylaxis (PEP). Once clinical rabies symptoms appear, the virus is nearly 100% fatal; however, PEP administered promptly is 100% effective at preventing the disease.",
+    disclaimer:
+      "EMERGENCY CLINICAL NOTICE: Immediate medical evaluation required for mammalian exposure.",
+  };
+}
+
+export function rejectedImageResponse(reason: string): EngineResponse {
+  return {
+    results: [],
+    isRejectedImage: true,
+    rejectionReason: reason,
+    guidance:
+      "The uploaded photo could not be safely assessed because it does not appear to show clear human skin or an identifiable arthropod.\n\nTo prevent medical misinformation and AI visual hallucinations, BiteID only evaluates authentic skin reactions. Please retake the photo in bright, even lighting using our guided camera reticle.",
+    disclaimer: DISCLAIMER,
+  };
+}
+
 export function unavailableResponse(): EngineResponse {
   return {
     results: [],
@@ -119,6 +149,9 @@ export function unavailableResponse(): EngineResponse {
 }
 
 type VisionReading = {
+  isSkinLesionOrArthropod: boolean;
+  imageQuality: "acceptable" | "too_blurry" | "too_dark" | "non_dermatological";
+  rejectionReason: string | null;
   bugTaxonomy: string | null;
   bugCommonName: string | null;
   fitzpatrickTone: "type_i_ii" | "type_iii_iv" | "type_v_vi" | "indeterminate";
@@ -216,6 +249,13 @@ async function readPhotos(
   const instructions = `You are an expert dermatological and entomological visual analysis node in an arthropod bite triage pipeline.
 Methodically evaluate the images:
 
+- Part 0 (Authenticity & Quality Gate):
+  Determine whether the primary image actually shows human skin with an identifiable lesion/bite/rash, OR a captured insect/arthropod specimen.
+  * If the image is non-dermatological (household object, clothing without skin, animal/pet, vehicle, food, document, room), set "isSkinLesionOrArthropod": false, "imageQuality": "non_dermatological", and provide "rejectionReason".
+  * If the image is too blurry, out-of-focus, or motion-smeared to see lesion morphology, set "isSkinLesionOrArthropod": false, "imageQuality": "too_blurry", and provide "rejectionReason".
+  * If the image is pitch black or bleached by glare, set "isSkinLesionOrArthropod": false, "imageQuality": "too_dark", and provide "rejectionReason".
+  * If the image shows acceptable human skin or arthropod specimen, set "isSkinLesionOrArthropod": true, "imageQuality": "acceptable", and "rejectionReason": null.
+
 - Part 1 (entomology): If ANY image contains a captured arthropod, insect, spider, tick, mite, or bug, identify it as precisely as possible (genus/species if visible, plus common name). Set "bugTaxonomy" and "bugCommonName". If no arthropod is shown in any image, set both to null.
 
 - Part 2 (dermatology & tone calibration):
@@ -233,6 +273,9 @@ Methodically evaluate the images:
 
 Return a single JSON object, no prose, no markdown fences:
 {
+  "isSkinLesionOrArthropod": boolean,
+  "imageQuality": "acceptable" | "too_blurry" | "too_dark" | "non_dermatological",
+  "rejectionReason": string | null,
   "bugTaxonomy": string|null,
   "bugCommonName": string|null,
   "fitzpatrickTone": one of ${FITZPATRICK_TONES.join(" | ")},
@@ -288,6 +331,14 @@ Return a single JSON object, no prose, no markdown fences:
   if (!parsed) return null;
 
   return {
+    isSkinLesionOrArthropod: parsed["isSkinLesionOrArthropod"] !== false,
+    imageQuality: pick(
+      parsed["imageQuality"],
+      ["acceptable", "too_blurry", "too_dark", "non_dermatological"],
+      "acceptable",
+    ),
+    rejectionReason:
+      typeof parsed["rejectionReason"] === "string" ? parsed["rejectionReason"] : null,
     bugTaxonomy: typeof parsed["bugTaxonomy"] === "string" ? parsed["bugTaxonomy"] : null,
     bugCommonName: typeof parsed["bugCommonName"] === "string" ? parsed["bugCommonName"] : null,
     fitzpatrickTone: pick(parsed["fitzpatrickTone"], FITZPATRICK_TONES, "indeterminate"),
@@ -310,6 +361,7 @@ Return a single JSON object, no prose, no markdown fences:
 
 export async function analyseIntake(intake: EngineIntake): Promise<EngineResponse> {
   if (intake.symptoms.length > 0) return emergencyResponse();
+  if (intake.batOrAnimalExposure) return rabiesEmergencyResponse();
 
   const provider = resolveVisionProvider();
   let reading: VisionReading | null = null;
@@ -321,7 +373,23 @@ export async function analyseIntake(intake: EngineIntake): Promise<EngineRespons
     }
   }
 
+  // P0 Non-Skin & Unusable Photo Rejection Gate:
+  // Never hallucinate arthropod ranks or probabilities on household objects, blurry images, or pets
+  if (reading && (!reading.isSkinLesionOrArthropod || reading.imageQuality !== "acceptable")) {
+    return rejectedImageResponse(
+      reading.rejectionReason ||
+        (reading.imageQuality === "too_blurry"
+          ? "The photo is too blurry or out of focus to identify skin borders or lesion morphology."
+          : reading.imageQuality === "too_dark"
+            ? "The photo lighting is too dim or obscured by direct flash glare."
+            : "The uploaded photo does not appear to contain human skin or an identifiable arthropod."),
+    );
+  }
+
   const effectiveReading: VisionReading = reading ?? {
+    isSkinLesionOrArthropod: true,
+    imageQuality: "acceptable",
+    rejectionReason: null,
     bugTaxonomy: null,
     bugCommonName: null,
     fitzpatrickTone: "indeterminate",
@@ -469,7 +537,28 @@ export async function analyseIntake(intake: EngineIntake): Promise<EngineRespons
     (top?.id === "blacklegged_tick" && effectiveReading.primaryReaction === "expanding_erythema") ||
     /erythema migrans|bull'?s?[- ]?eye|annular target/i.test(effectiveReading.lesionDescription);
 
+  const hasCellulitisAlert =
+    Boolean(intake.secondaryInfectionSymptoms?.includes("red_streaks")) ||
+    Boolean(intake.secondaryInfectionSymptoms?.includes("spreading_warmth")) ||
+    Boolean(intake.secondaryInfectionSymptoms?.includes("pus_drainage"));
+
   const guidanceLines: string[] = [];
+  if (hasCellulitisAlert) {
+    guidanceLines.push(
+      "URGENT CLINICAL WARNING: Signs of Secondary Bacterial Infection (Cellulitis / Lymphangitis) Reported.\nSpreading red streaks, progressive hot induration, or purulent exudate indicate a secondary bacterial superinfection (e.g. Streptococcus pyogenes or Staphylococcus aureus) introduced by fingernail scratching. Seek medical evaluation promptly for prescription antibiotic therapy.",
+    );
+  }
+
+  if (intake.recentTravel === "us_southwest") {
+    guidanceLines.push(
+      "Recent Travel Notice: Travel to the US Southwest / Sonoran desert within 14 days increases baseline suspicion for desert envenomations (such as Bark Scorpions or Brown Recluse spiders) regardless of your current location.",
+    );
+  } else if (intake.recentTravel === "tropical_intl") {
+    guidanceLines.push(
+      "Recent Travel Notice: International or tropical travel within 14 days warrants clinical screening for travel-associated vector pathogens (such as Dengue, Chikungunya, Zika, or Sandfly cutaneous leishmaniasis).",
+    );
+  }
+
   if (top) {
     guidanceLines.push(top.firstAidAdvice.join(" "));
     guidanceLines.push(`Watch for: ${top.warningSigns.join(" ")}`);
@@ -534,6 +623,7 @@ export async function analyseIntake(intake: EngineIntake): Promise<EngineRespons
     culpritDetectedFromPhoto: Boolean(reading?.bugTaxonomy),
     lesionReading: effectiveReading.lesionDescription,
     hasErythemaMigrans: isErythemaMigrans,
+    hasCellulitisAlert,
     dermatologicalFindings,
     mimickerAlert,
   };

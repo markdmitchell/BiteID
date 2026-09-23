@@ -27,13 +27,16 @@ import {
   WifiOff,
   Zap,
   Calculator,
+  Camera,
   Navigation,
   Volume2,
   VolumeX,
+  Sun,
 } from "lucide-react";
 import biteIdIcon from "@/assets/biteid-icon.png";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
+import { cn } from "@/lib/utils";
 import {
   Select,
   SelectContent,
@@ -56,9 +59,13 @@ import { SnakebiteSurvivalModal } from "@/components/triage/SnakebiteSurvivalMod
 import { KnownCulpritModal } from "@/components/triage/KnownCulpritModal";
 import { PwaInstallBanner } from "@/components/triage/PwaInstallBanner";
 import { PediatricDosingModal } from "@/components/triage/PediatricDosingModal";
+import { ReconnectionSyncBanner } from "@/components/triage/ReconnectionSyncBanner";
+import { PrivacySanitizationModal } from "@/components/triage/PrivacySanitizationModal";
 import { detectUsStateFromOfflineGps } from "@/lib/geo-offline";
 import { useSpeechGuidance } from "@/hooks/useSpeechGuidance";
 import { startSilentCacheWarming } from "@/lib/offline-cache";
+import { removeOfflineIntake, type StashedIntake } from "@/lib/offline-manager";
+import { analyseIntakeFn } from "@/lib/triage.functions";
 import {
   PatientProfileSelector,
   PATIENT_PERSONAS,
@@ -73,6 +80,7 @@ import {
   SENSATION_OPTIONS,
   initialFormState,
   normalizeResults,
+  purgeExpiredHealthData,
   submitTriage,
   triageReducer,
   type TriageFormState,
@@ -117,12 +125,43 @@ function TriagePage() {
   const [gpsMessage, setGpsMessage] = useState<string | null>(null);
   const [status, setStatus] = useState<"idle" | "sending" | "done">("idle");
   const [response, setResponse] = useState<TriageResponse | null>(null);
+  const [privacyModalOpen, setPrivacyModalOpen] = useState(false);
+  const [highContrastMode, setHighContrastMode] = useState<boolean>(() => {
+    if (typeof window === "undefined") return false;
+    return localStorage.getItem("biteid_high_contrast") === "true";
+  });
   const resultsHeadingRef = useRef<HTMLHeadingElement>(null);
 
-  // Silently warm offline cache on mount during idle time (all 32 species + UI)
+  // Silently warm offline cache and run auto-retention purge for data > 30 days
   useEffect(() => {
     startSilentCacheWarming();
+    purgeExpiredHealthData(30);
   }, []);
+
+  async function handleSyncQueuedIntake(intake: StashedIntake) {
+    setStatus("sending");
+    window.scrollTo({ top: 0, behavior: "smooth" });
+    try {
+      const data = await analyseIntakeFn({
+        data: {
+          lesionImage: intake.lesionPreviewUrl || "",
+          bugImage: intake.bugPreviewUrl || null,
+          environment: intake.environment,
+          duration: intake.duration,
+          usState: intake.usState,
+          bodyLocation: intake.bodyLocation,
+          sensation: intake.sensation,
+          monthIndex: new Date().getMonth(),
+          symptoms: intake.symptoms,
+        },
+      });
+      removeOfflineIntake(intake.id);
+      setResponse(data as unknown as TriageResponse);
+      setStatus("done");
+    } catch {
+      setStatus("idle");
+    }
+  }
 
   async function handleDetectGps() {
     setGpsDetecting(true);
@@ -140,11 +179,14 @@ function TriagePage() {
     }
   }
 
-  const hasEmergency = form.symptoms.length > 0;
+  const hasEmergency =
+    form.symptoms.length > 0 ||
+    form.batOrAnimalExposure ||
+    form.secondaryInfectionSymptoms.includes("red_streaks");
 
   useEffect(() => {
     if (hasEmergency) setModalOpen(true);
-  }, [form.symptoms, hasEmergency]);
+  }, [form.symptoms, form.batOrAnimalExposure, form.secondaryInfectionSymptoms, hasEmergency]);
 
   useEffect(() => {
     if (status === "done") resultsHeadingRef.current?.focus();
@@ -171,7 +213,14 @@ function TriagePage() {
   }
 
   return (
-    <main className="min-h-screen bg-background pb-20 font-sans">
+    <main
+      className={cn(
+        "min-h-screen pb-20 font-sans transition-colors duration-200",
+        highContrastMode
+          ? "bg-black text-amber-300 contrast-125 selection:bg-amber-400 selection:text-black"
+          : "bg-background text-foreground",
+      )}
+    >
       <header className="border-b border-border bg-card/90 backdrop-blur">
         <div className="mx-auto grid max-w-3xl grid-cols-[minmax(0,1fr)_auto] items-center gap-3 px-5 py-3.5">
           <div className="flex min-w-0 items-center gap-3">
@@ -193,6 +242,28 @@ function TriagePage() {
             </p>
           </div>
           <div className="flex items-center gap-2">
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              aria-label="Toggle trail sunlight high contrast mode"
+              onClick={() => {
+                const next = !highContrastMode;
+                setHighContrastMode(next);
+                localStorage.setItem("biteid_high_contrast", String(next));
+              }}
+              className={cn(
+                "flex items-center gap-1.5 border-primary/30 text-xs font-semibold",
+                highContrastMode
+                  ? "border-amber-400 bg-amber-400 text-black hover:bg-amber-300"
+                  : "text-primary hover:bg-primary/10",
+              )}
+            >
+              <Sun className="size-3.5" />
+              <span className="hidden md:inline">
+                {highContrastMode ? "Trail Contrast: ON" : "Sun Mode"}
+              </span>
+            </Button>
             <Button
               type="button"
               variant="outline"
@@ -244,6 +315,7 @@ function TriagePage() {
         </div>
       </header>
 
+      <ReconnectionSyncBanner onSyncIntake={handleSyncQueuedIntake} />
       <PwaInstallBanner />
 
       <div className="mx-auto max-w-3xl px-5">
@@ -423,6 +495,58 @@ function TriagePage() {
                           Satellite GPS works 100% offline without cellular data.
                         </p>
                       </div>
+
+                      {/* 14-Day Travel History */}
+                      <div className="pt-2">
+                        <label className="text-sm font-medium text-foreground block">
+                          Travel outside your home state in the past 14 days?
+                        </label>
+                        <p className="mt-1 text-xs text-muted-foreground">
+                          Accounts for incubation times of desert or tropical vectors.
+                        </p>
+                        <div className="mt-2 grid grid-cols-1 sm:grid-cols-3 gap-2 text-xs">
+                          {[
+                            { id: "none", label: "No Travel", sub: "Local to state only" },
+                            {
+                              id: "us_southwest",
+                              label: "US Southwest / Desert",
+                              sub: "AZ, NM, NV, TX, SoCal",
+                            },
+                            {
+                              id: "tropical_intl",
+                              label: "Tropical / International",
+                              sub: "Caribbean, LatAm, Asia",
+                            },
+                          ].map((t) => {
+                            const isSelected = form.recentTravel === t.id;
+                            return (
+                              <button
+                                key={t.id}
+                                type="button"
+                                onClick={() =>
+                                  dispatch({
+                                    type: "setRecentTravel",
+                                    value: t.id as "none" | "us_southwest" | "tropical_intl",
+                                  })
+                                }
+                                className={cn(
+                                  "p-2.5 rounded-xl border text-left transition-all",
+                                  isSelected
+                                    ? "border-primary bg-primary/10 text-primary font-bold shadow-xs ring-1 ring-primary/40"
+                                    : "border-border bg-card text-muted-foreground hover:text-foreground",
+                                )}
+                              >
+                                <span className="block font-semibold text-xs text-foreground">
+                                  {t.label}
+                                </span>
+                                <span className="text-[10px] text-muted-foreground block">
+                                  {t.sub}
+                                </span>
+                              </button>
+                            );
+                          })}
+                        </div>
+                      </div>
                     </fieldset>
                     <fieldset className="space-y-5 border-t border-border pt-6">
                       <legend className="font-display text-base font-semibold text-foreground">
@@ -530,43 +654,162 @@ function TriagePage() {
                   <p className="mt-2 text-sm text-muted-foreground">
                     Tick anything you are experiencing right now.
                   </p>
-                  <div className="mt-5 space-y-2">
-                    {EMERGENCY_SYMPTOMS.map((symptom) => {
-                      const checked = form.symptoms.includes(symptom.value);
-                      return (
-                        <label
-                          key={symptom.value}
-                          className={`flex min-h-12 cursor-pointer items-center gap-3 rounded-lg border p-4 transition-colors ${
-                            checked
-                              ? "border-destructive bg-destructive/5"
-                              : "border-border bg-card hover:border-primary/40"
-                          }`}
-                        >
+
+                  {/* P0: Mammalian / Bat Rabies Exposure Screener */}
+                  <div className="mt-5 rounded-lg border border-destructive/40 bg-destructive/5 p-4 sm:p-5">
+                    <div className="flex items-start gap-3">
+                      <div className="rounded-md bg-destructive/10 p-2 text-destructive shrink-0">
+                        <AlertTriangle className="size-5" />
+                      </div>
+                      <div className="space-y-1.5 flex-1 min-w-0">
+                        <div className="flex items-center gap-2">
+                          <span className="text-xs font-bold uppercase tracking-wide text-destructive">
+                            Critical Rabies Safeguard
+                          </span>
+                          <span className="rounded bg-destructive/20 px-1.5 py-0.5 text-[10px] font-semibold text-destructive">
+                            Fatal Risk
+                          </span>
+                        </div>
+                        <h3 className="font-display text-base font-bold text-foreground">
+                          Bat or Wild Mammal Direct Contact?
+                        </h3>
+                        <p className="text-xs text-muted-foreground leading-relaxed">
+                          Did you wake up with a bat in the room, touch a bat with bare skin, or
+                          suffer an unprovoked bite/scratch from a raccoon, skunk, fox, or stray
+                          dog? Bat teeth are microscopic and punctures can be painless and
+                          invisible.
+                        </p>
+                        <label className="mt-3 flex cursor-pointer items-center gap-3 rounded-md border border-destructive/40 bg-background/80 p-3 transition-colors hover:bg-destructive/10">
                           <Checkbox
-                            checked={checked}
-                            onCheckedChange={() =>
-                              dispatch({ type: "toggleSymptom", value: symptom.value })
+                            checked={form.batOrAnimalExposure}
+                            onCheckedChange={(checked) =>
+                              dispatch({ type: "setBatExposure", value: checked === true })
                             }
                           />
-                          <span className="text-sm font-medium text-foreground">
-                            {symptom.label}
+                          <span className="text-xs font-semibold text-destructive">
+                            Yes — Potential bat or wild mammal exposure (Immediate Emergency Rabies
+                            PEP required)
                           </span>
                         </label>
-                      );
-                    })}
+                      </div>
+                    </div>
+                  </div>
 
-                    <label className="flex min-h-12 cursor-pointer items-center gap-3 rounded-lg border border-border bg-muted/40 p-4">
-                      <Checkbox
-                        checked={form.noneOfThese}
-                        onCheckedChange={(value) =>
-                          dispatch({ type: "setNoneOfThese", value: value === true })
-                        }
-                      />
-                      <span className="flex items-center gap-2 text-sm font-medium text-foreground">
-                        <ShieldCheck className="size-4 text-primary" />
-                        None of these apply to me
-                      </span>
-                    </label>
+                  <div className="mt-6">
+                    <h2 className="text-sm font-semibold text-foreground mb-1">
+                      Systemic Red Flag Symptoms
+                    </h2>
+                    <p className="text-xs text-muted-foreground mb-3">
+                      Select if you are currently experiencing any of these critical symptoms:
+                    </p>
+                    <div className="space-y-2">
+                      {EMERGENCY_SYMPTOMS.map((symptom) => {
+                        const checked = form.symptoms.includes(symptom.value);
+                        return (
+                          <label
+                            key={symptom.value}
+                            className={`flex min-h-12 cursor-pointer items-center gap-3 rounded-lg border p-4 transition-colors ${
+                              checked
+                                ? "border-destructive bg-destructive/5"
+                                : "border-border bg-card hover:border-primary/40"
+                            }`}
+                          >
+                            <Checkbox
+                              checked={checked}
+                              onCheckedChange={() =>
+                                dispatch({ type: "toggleSymptom", value: symptom.value })
+                              }
+                            />
+                            <span className="text-sm font-medium text-foreground">
+                              {symptom.label}
+                            </span>
+                          </label>
+                        );
+                      })}
+
+                      <label className="flex min-h-12 cursor-pointer items-center gap-3 rounded-lg border border-border bg-muted/40 p-4">
+                        <Checkbox
+                          checked={form.noneOfThese}
+                          onCheckedChange={(value) =>
+                            dispatch({ type: "setNoneOfThese", value: value === true })
+                          }
+                        />
+                        <span className="flex items-center gap-2 text-sm font-medium text-foreground">
+                          <ShieldCheck className="size-4 text-primary" />
+                          None of these systemic symptoms apply to me
+                        </span>
+                      </label>
+                    </div>
+                  </div>
+
+                  {/* P1: Secondary Bacterial Infection Screener */}
+                  <div className="mt-6 rounded-lg border border-border bg-card p-4 sm:p-5">
+                    <div className="space-y-1 mb-3">
+                      <h3 className="font-display text-base font-bold text-foreground flex items-center gap-2">
+                        <ShieldAlert className="size-4 text-primary" />
+                        Secondary Infection Screener (Cellulitis & MRSA)
+                      </h3>
+                      <p className="text-xs text-muted-foreground leading-relaxed">
+                        Scratching insect bites introduces skin bacteria (Staph/Strep). Check any
+                        signs of expanding infection:
+                      </p>
+                    </div>
+                    <div className="grid gap-2 sm:grid-cols-2">
+                      {[
+                        {
+                          id: "expanding_erythema",
+                          label: "Expanding Redness",
+                          desc: "Border expanding > 1 cm/hr or noticeable daily growth",
+                        },
+                        {
+                          id: "red_streaks",
+                          label: "Spreading Red Streaks",
+                          desc: "Streaks tracking toward torso or lymph nodes (Emergency)",
+                        },
+                        {
+                          id: "warmth_edema",
+                          label: "Marked Heat & Swelling",
+                          desc: "Skin feels hot, tight, indurated (hardened), or tender",
+                        },
+                        {
+                          id: "purulence",
+                          label: "Pus / Honey Crusts",
+                          desc: "Cloudy yellow/green discharge, pustule, or golden crusting",
+                        },
+                      ].map((item) => {
+                        const checked = form.secondaryInfectionSymptoms.includes(item.id);
+                        return (
+                          <label
+                            key={item.id}
+                            className={cn(
+                              "flex cursor-pointer items-start gap-2.5 rounded-lg border p-3 transition-colors",
+                              checked
+                                ? "border-primary bg-primary/5"
+                                : "border-border bg-card hover:border-primary/40",
+                            )}
+                          >
+                            <Checkbox
+                              checked={checked}
+                              onCheckedChange={() =>
+                                dispatch({
+                                  type: "toggleSecondaryInfectionSymptom",
+                                  value: item.id,
+                                })
+                              }
+                              className="mt-0.5"
+                            />
+                            <div className="min-w-0">
+                              <span className="block text-xs font-semibold text-foreground">
+                                {item.label}
+                              </span>
+                              <span className="block text-[11px] text-muted-foreground">
+                                {item.desc}
+                              </span>
+                            </div>
+                          </label>
+                        );
+                      })}
+                    </div>
                   </div>
                 </div>
               )}
@@ -617,15 +860,32 @@ function TriagePage() {
           </section>
         )}
 
-        <p className="mt-8 border-t border-border pt-5 text-xs leading-relaxed text-muted-foreground">
-          <span className="font-semibold text-foreground">Alpha version — for testing only.</span>{" "}
-          BiteID is an unfinished prototype and is not a medical service. This tool provides general
-          information only and is not a diagnosis. Always consult a qualified clinician about a
-          bite, sting or changing skin lesion.
-        </p>
+        <div className="mt-8 border-t border-border pt-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <p className="text-xs leading-relaxed text-muted-foreground flex-1">
+            <span className="font-semibold text-foreground">Alpha version — for testing only.</span>{" "}
+            BiteID is an unfinished prototype and is not a medical service. This tool provides
+            general information only and is not a diagnosis. Always consult a qualified clinician
+            about a bite, sting or changing skin lesion.
+          </p>
+          <Button
+            type="button"
+            variant="ghost"
+            size="sm"
+            onClick={() => setPrivacyModalOpen(true)}
+            className="shrink-0 text-xs text-muted-foreground hover:text-foreground flex items-center gap-1.5 self-start sm:self-auto"
+          >
+            <ShieldCheck className="size-3.5 text-primary" />
+            <span>Device Privacy & Eraser</span>
+          </Button>
+        </div>
       </div>
 
-      <EmergencyModal open={modalOpen} onDismiss={() => setModalOpen(false)} />
+      <EmergencyModal
+        open={modalOpen}
+        onDismiss={() => setModalOpen(false)}
+        isBatExposure={form.batOrAnimalExposure}
+        isSecondaryInfection={form.secondaryInfectionSymptoms.includes("red_streaks")}
+      />
       <OfflineFieldKitModal
         open={fieldKitOpen}
         onOpenChange={setFieldKitOpen}
@@ -643,6 +903,7 @@ function TriagePage() {
         onOpenChange={setPrintableGuideOpen}
       />
       <PediatricDosingModal open={dosingModalOpen} onOpenChange={setDosingModalOpen} />
+      <PrivacySanitizationModal open={privacyModalOpen} onOpenChange={setPrivacyModalOpen} />
     </main>
   );
 }
@@ -933,6 +1194,148 @@ function ResultsDashboard({
           showSummary={true}
         />
       </div>
+
+      {/* P0: Non-Skin / Degraded Photo Rejection Gate Banner */}
+      {response.isRejectedImage && (
+        <div className="rounded-xl border-2 border-destructive/60 bg-destructive/10 p-5 shadow-xs">
+          <div className="flex items-start gap-3.5">
+            <div className="rounded-lg bg-destructive/20 p-2.5 text-destructive shrink-0">
+              <Camera className="size-6" />
+            </div>
+            <div className="space-y-2 flex-1 min-w-0">
+              <div className="flex items-center gap-2">
+                <span className="rounded-full bg-destructive/25 px-2.5 py-0.5 text-xs font-bold uppercase tracking-wider text-destructive">
+                  Photo Rejection Gate
+                </span>
+                <span className="text-xs text-destructive font-medium">
+                  Non-Skin or Degraded Quality
+                </span>
+              </div>
+              <h2 className="font-display text-lg font-bold text-destructive">
+                Unable to Analyze Image
+              </h2>
+              <p className="text-sm text-foreground/90 leading-relaxed">
+                {response.rejectionReason ||
+                  "The uploaded photo does not appear to show human skin, an identifiable lesion, or clear specimen details."}
+              </p>
+              <div className="rounded-lg border border-destructive/20 bg-background/60 p-3 text-xs text-muted-foreground space-y-1.5">
+                <p className="font-semibold text-foreground">Diagnostic Integrity Rule:</p>
+                <p>
+                  To prevent dangerous false confidence, BiteID strictly halts evaluation and
+                  refuses to generate speculative diagnostic rankings on non-dermatological objects
+                  (furniture, floors, pets, documents) or unreadable images.
+                </p>
+              </div>
+              <div className="pt-1 flex gap-2">
+                <Button size="sm" variant="default" onClick={onReset} className="gap-1.5 text-xs">
+                  <RotateCcw className="size-3.5" />
+                  Retake / Upload Clear Photo
+                </Button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* P0: Mammalian / Bat Rabies PEP Protocol Banner */}
+      {response.hasRabiesAlert && (
+        <div className="rounded-xl border-2 border-destructive bg-destructive/15 p-5 shadow-sm">
+          <div className="flex items-start gap-3.5">
+            <div className="rounded-lg bg-destructive p-2 text-destructive-foreground shrink-0 animate-pulse">
+              <ShieldAlert className="size-6" />
+            </div>
+            <div className="space-y-2 flex-1 min-w-0">
+              <div className="flex items-center gap-2">
+                <span className="rounded-full bg-destructive px-2.5 py-0.5 text-xs font-bold uppercase tracking-wider text-destructive-foreground">
+                  Fatal Pathogen Warning
+                </span>
+                <span className="text-xs font-bold text-destructive">
+                  Emergency Rabies PEP Indicated
+                </span>
+              </div>
+              <h2 className="font-display text-lg font-bold text-destructive">
+                Bat or Wild Mammalian Rabies Exposure Alert
+              </h2>
+              <p className="text-sm text-foreground leading-relaxed font-medium">
+                Rabies virus is nearly 100% fatal once clinical neurological symptoms appear, but
+                100% preventable with timely Post-Exposure Prophylaxis (PEP).
+              </p>
+              <div className="rounded-lg border border-destructive/30 bg-card p-3 text-xs space-y-2">
+                <p className="font-bold text-destructive">Mandatory Clinical Protocol:</p>
+                <ol className="list-decimal list-inside space-y-1 text-foreground/90">
+                  <li>
+                    <strong>Immediate Wound Cleansing:</strong> Wash the contact area vigorously
+                    with soap and warm running water for at least 15 continuous minutes.
+                  </li>
+                  <li>
+                    <strong>Do Not Wait for Symptoms:</strong> Go directly to an Emergency
+                    Department or call your local Department of Public Health immediately.
+                  </li>
+                  <li>
+                    <strong>Post-Exposure Prophylaxis (PEP):</strong> Consists of Human Rabies
+                    Immune Globulin (HRIG) infiltrated at the wound site, plus a 4-dose rabies
+                    vaccine series (Days 0, 3, 7, and 14).
+                  </li>
+                  <li>
+                    <strong>Bat Quarantine / Testing:</strong> If the bat was safely captured
+                    without brain damage, contact animal control for PCR testing. Never handle a
+                    live or dead bat barehanded.
+                  </li>
+                </ol>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* P1: Secondary Bacterial Infection (Cellulitis / MRSA) Banner */}
+      {response.hasCellulitisAlert && (
+        <div className="rounded-xl border border-destructive/40 bg-destructive/10 p-5 shadow-xs">
+          <div className="flex items-start gap-3.5">
+            <div className="rounded-lg bg-destructive/20 p-2 text-destructive shrink-0">
+              <AlertTriangle className="size-6" />
+            </div>
+            <div className="space-y-2 flex-1 min-w-0">
+              <div className="flex items-center gap-2">
+                <span className="rounded-full bg-destructive/20 px-2.5 py-0.5 text-xs font-bold uppercase tracking-wider text-destructive">
+                  Bacterial Superinfection Alert
+                </span>
+                <span className="text-xs font-medium text-destructive">
+                  Suspected Cellulitis / Lymphangitis / MRSA
+                </span>
+              </div>
+              <h2 className="font-display text-lg font-bold text-destructive">
+                Secondary Bacterial Infection Suspected
+              </h2>
+              <p className="text-sm text-foreground/90 leading-relaxed">
+                Scratching insect bites breaches the epidermal barrier, introducing opportunistic
+                bacteria (<em>Staphylococcus aureus</em> including MRSA, or{" "}
+                <em>Streptococcus pyogenes</em>). Your reported symptoms indicate active bacterial
+                invasion beyond simple bite histaminic response.
+              </p>
+              <div className="rounded-lg border border-border bg-card p-3 text-xs space-y-2">
+                <p className="font-bold text-foreground">Urgent Care Instructions:</p>
+                <ul className="list-disc list-inside space-y-1 text-muted-foreground">
+                  <li>
+                    <strong>Pen Border Marking:</strong> Take an ink pen and outline the visible
+                    edge of the red border right now with the current timestamp. If redness expands
+                    beyond this line, prescription oral or IV antibiotics are required.
+                  </li>
+                  <li>
+                    <strong>Spreading Red Streaks (Lymphangitis):</strong> Streaks tracking toward
+                    armpits or groin signal lymphatic invasion and high risk of bacteremia/sepsis.
+                    Proceed to urgent care or the ER immediately.
+                  </li>
+                  <li>
+                    <strong>Never Lance or Squeeze:</strong> Squeezing furuncles or pustules forces
+                    MRSA bacteria into deep subcutaneous tissue and muscular fascia.
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
       {topResult ? (
         <div className="space-y-6">

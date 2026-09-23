@@ -12,6 +12,9 @@ export type AnalyseIntakeInput = {
   patientProfile?: PatientVulnerabilityProfile;
   monthIndex: number;
   symptoms: string[];
+  batOrAnimalExposure?: boolean;
+  secondaryInfectionSymptoms?: string[];
+  recentTravel?: "none" | "us_southwest" | "tropical_intl";
 };
 
 function validate(input: unknown): AnalyseIntakeInput {
@@ -36,6 +39,11 @@ function validate(input: unknown): AnalyseIntakeInput {
     symptoms: Array.isArray(data.symptoms)
       ? data.symptoms.filter((s): s is string => typeof s === "string")
       : [],
+    batOrAnimalExposure: Boolean(data.batOrAnimalExposure),
+    secondaryInfectionSymptoms: Array.isArray(data.secondaryInfectionSymptoms)
+      ? data.secondaryInfectionSymptoms.filter((s): s is string => typeof s === "string")
+      : [],
+    recentTravel: data.recentTravel ?? "none",
   };
 }
 

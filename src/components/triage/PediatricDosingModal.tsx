@@ -18,11 +18,14 @@ type PediatricDosingModalProps = {
   initialWeightKg?: number;
 };
 
+export type AgeTier = "under_6mo" | "6_to_23mo" | "2_to_11yr" | "12_plus";
+
 export function PediatricDosingModal({
   open,
   onOpenChange,
   initialWeightKg = 14,
 }: PediatricDosingModalProps) {
+  const [ageTier, setAgeTier] = useState<AgeTier>("2_to_11yr");
   const [unit, setUnit] = useState<"lbs" | "kg">("lbs");
   const [weightValue, setWeightValue] = useState<number>(() =>
     unit === "lbs" ? Math.round(initialWeightKg * 2.20462) : initialWeightKg,
@@ -60,6 +63,9 @@ export function PediatricDosingModal({
   // Clinical dosing: 1 - 1.25 mg/kg
   const benadrylMg = Math.min(50, Math.round(effectiveWeightKg * 1.1));
   const benadrylMl = (benadrylMg / 2.5).toFixed(1);
+
+  const isUnder6Mo = ageTier === "under_6mo";
+  const isUnder2Yr = ageTier === "under_6mo" || ageTier === "6_to_23mo";
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -109,11 +115,63 @@ export function PediatricDosingModal({
             </p>
           </div>
 
+          {/* AGE TIER SELECTOR */}
+          <div className="rounded-2xl border border-border bg-muted/20 p-3.5 sm:p-4 space-y-2.5">
+            <div className="flex items-center justify-between">
+              <span className="font-bold text-foreground uppercase tracking-wider text-[11px] flex items-center gap-1.5">
+                <Baby className="size-4 text-primary" />
+                Child&apos;s Age Group:
+              </span>
+              <span className="text-[10px] text-muted-foreground">Enforces FDA age minimums</span>
+            </div>
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-1.5">
+              {[
+                { id: "under_6mo", label: "< 6 Months", sub: "Infant" },
+                { id: "6_to_23mo", label: "6–23 Months", sub: "Toddler" },
+                { id: "2_to_11yr", label: "2–11 Years", sub: "Child" },
+                { id: "12_plus", label: "12+ Years", sub: "Adolescent" },
+              ].map((tier) => (
+                <button
+                  key={tier.id}
+                  type="button"
+                  onClick={() => {
+                    setAgeTier(tier.id as AgeTier);
+                    if (tier.id === "under_6mo" && effectiveWeightKg > 8) {
+                      setWeightValue(unit === "lbs" ? 13 : 6);
+                    }
+                  }}
+                  className={`p-2 rounded-xl border text-center transition-all ${
+                    ageTier === tier.id
+                      ? "border-primary bg-primary/10 text-primary font-bold shadow-xs ring-1 ring-primary/40"
+                      : "border-border bg-card text-muted-foreground hover:text-foreground"
+                  }`}
+                >
+                  <span className="block text-xs font-semibold">{tier.label}</span>
+                  <span className="text-[10px] text-muted-foreground block">{tier.sub}</span>
+                </button>
+              ))}
+            </div>
+
+            {isUnder6Mo && (
+              <div className="rounded-xl border border-destructive/40 bg-destructive/10 p-3 text-destructive space-y-1">
+                <div className="flex items-center gap-1.5 font-bold text-xs uppercase">
+                  <AlertTriangle className="size-4 shrink-0" />
+                  <span>Neonatal Sepsis Warning (&lt; 12 Weeks)</span>
+                </div>
+                <p className="text-[11px] leading-relaxed text-foreground">
+                  Fever &ge; 100.4&deg;F (38.0&deg;C) in an infant under 3 months is a medical
+                  emergency. Do not self-treat with antipyretics without direct emergency physician
+                  or pediatrician evaluation.
+                </p>
+              </div>
+            )}
+          </div>
+
           {/* WEIGHT SELECTOR CONTROL */}
           <div className="rounded-2xl border border-border bg-muted/20 p-4 sm:p-5 space-y-3">
             <div className="flex items-center justify-between">
               <span className="font-bold text-foreground uppercase tracking-wider text-[11px] flex items-center gap-1.5">
-                <Baby className="size-4 text-primary" />
+                <Calculator className="size-4 text-primary" />
                 Child&apos;s Body Weight:
               </span>
               <div className="flex items-center gap-1 bg-card rounded-lg p-0.5 border border-border">
@@ -176,7 +234,12 @@ export function PediatricDosingModal({
                   : `${effectiveWeightLbs.toFixed(0)} lbs`}
               </span>
               <span>
-                Typical Age: ~{Math.min(12, Math.max(1, Math.round(effectiveWeightKg / 3.5)))} yrs
+                Typical Weight For:{" "}
+                {isUnder6Mo
+                  ? "0–5 months"
+                  : isUnder2Yr
+                    ? "6–23 months"
+                    : `~${Math.min(12, Math.max(2, Math.round(effectiveWeightKg / 3.5)))} yrs`}
               </span>
             </div>
           </div>
@@ -194,6 +257,7 @@ export function PediatricDosingModal({
               </div>
               <p className="text-[11px] text-muted-foreground">
                 Dosing: <strong>10–15 mg/kg</strong> every 4–6 hours (Max 5 doses per 24 hours).
+                {isUnder6Mo && " Use strictly under pediatrician supervision."}
               </p>
               <div className="rounded-lg bg-primary/10 border border-primary/20 p-2.5 text-center space-y-0.5">
                 <span className="text-[10px] text-muted-foreground uppercase font-bold block">
@@ -209,69 +273,134 @@ export function PediatricDosingModal({
             </div>
 
             {/* Ibuprofen / Motrin */}
-            <div className="rounded-xl border border-border bg-card p-4 space-y-2 shadow-xs">
-              <div className="flex items-center justify-between border-b border-border/60 pb-1.5">
-                <span className="font-bold text-foreground text-xs uppercase flex items-center gap-1.5">
-                  <Pill className="size-3.5 text-emerald-600 dark:text-emerald-400" />
-                  Ibuprofen (Motrin / Advil)
-                </span>
-                <span className="text-[10px] text-muted-foreground font-mono">100 mg / 5 mL</span>
+            {isUnder6Mo ? (
+              <div className="rounded-xl border-2 border-destructive/40 bg-destructive/5 p-4 space-y-2 shadow-xs">
+                <div className="flex items-center justify-between border-b border-destructive/20 pb-1.5">
+                  <span className="font-bold text-destructive text-xs uppercase flex items-center gap-1.5">
+                    <AlertOctagon className="size-3.5 text-destructive" />
+                    Ibuprofen (Motrin) — LOCKED
+                  </span>
+                  <span className="text-[10px] font-bold text-destructive uppercase">
+                    Contraindicated
+                  </span>
+                </div>
+                <div className="rounded-lg bg-destructive/10 p-2.5 text-xs text-foreground space-y-1">
+                  <p className="font-bold text-destructive text-[11px]">
+                    DO NOT USE UNDER 6 MONTHS
+                  </p>
+                  <p className="text-[10px] text-muted-foreground leading-relaxed">
+                    Infant kidneys under 6 months cannot excrete ibuprofen safely, creating risk of
+                    acute renal toxicity. Use Acetaminophen instead.
+                  </p>
+                </div>
               </div>
-              <p className="text-[11px] text-muted-foreground">
-                Dosing: <strong>10 mg/kg</strong> every 6–8 hours.{" "}
-                <em>Only for infants &gt; 6 months.</em>
-              </p>
-              <div className="rounded-lg bg-emerald-500/10 border border-emerald-500/20 p-2.5 text-center space-y-0.5">
-                <span className="text-[10px] text-muted-foreground uppercase font-bold block">
-                  Recommended Single Oral Dose:
-                </span>
-                <p className="font-display text-lg font-black text-emerald-700 dark:text-emerald-400 font-mono">
-                  {motrinMl} mL
+            ) : (
+              <div className="rounded-xl border border-border bg-card p-4 space-y-2 shadow-xs">
+                <div className="flex items-center justify-between border-b border-border/60 pb-1.5">
+                  <span className="font-bold text-foreground text-xs uppercase flex items-center gap-1.5">
+                    <Pill className="size-3.5 text-emerald-600 dark:text-emerald-400" />
+                    Ibuprofen (Motrin / Advil)
+                  </span>
+                  <span className="text-[10px] text-muted-foreground font-mono">100 mg / 5 mL</span>
+                </div>
+                <p className="text-[11px] text-muted-foreground">
+                  Dosing: <strong>10 mg/kg</strong> every 6–8 hours. Only for infants &ge; 6 months.
                 </p>
-                <span className="text-[10px] text-emerald-700 dark:text-emerald-400 font-medium block">
-                  ({motrinMg} mg)
-                </span>
+                <div className="rounded-lg bg-emerald-500/10 border border-emerald-500/20 p-2.5 text-center space-y-0.5">
+                  <span className="text-[10px] text-muted-foreground uppercase font-bold block">
+                    Recommended Single Oral Dose:
+                  </span>
+                  <p className="font-display text-lg font-black text-emerald-700 dark:text-emerald-400 font-mono">
+                    {motrinMl} mL
+                  </p>
+                  <span className="text-[10px] text-emerald-700 dark:text-emerald-400 font-medium block">
+                    ({motrinMg} mg)
+                  </span>
+                </div>
               </div>
-            </div>
+            )}
 
             {/* Cetirizine / Zyrtec */}
-            <div className="rounded-xl border border-border bg-card p-4 space-y-2 shadow-xs">
-              <div className="flex items-center justify-between border-b border-border/60 pb-1.5">
-                <span className="font-bold text-foreground text-xs uppercase flex items-center gap-1.5">
-                  <Pill className="size-3.5 text-purple-600 dark:text-purple-400" />
-                  Cetirizine (Zyrtec)
-                </span>
-                <span className="text-[10px] text-muted-foreground font-mono">5 mg / 5 mL</span>
-              </div>
-              <p className="text-[11px] text-muted-foreground">
-                Non-sedating 2nd-gen antihistamine for localized itch & wheals (
-                {cetirizineDose.label}).
-              </p>
-              <div className="rounded-lg bg-purple-500/10 border border-purple-500/20 p-2 text-center">
-                <p className="font-display text-base font-bold text-purple-700 dark:text-purple-300 font-mono">
-                  {cetirizineDose.ml} mL ({cetirizineDose.mg} mg) once daily
+            {isUnder6Mo ? (
+              <div className="rounded-xl border border-border/60 bg-muted/30 p-4 space-y-2 shadow-xs">
+                <div className="flex items-center justify-between border-b border-border/60 pb-1.5">
+                  <span className="font-bold text-muted-foreground text-xs uppercase flex items-center gap-1.5">
+                    <Pill className="size-3.5 text-muted-foreground" />
+                    Cetirizine (Zyrtec) — LOCKED
+                  </span>
+                  <span className="text-[10px] text-muted-foreground font-mono">Under 6 Mo</span>
+                </div>
+                <p className="text-[11px] text-muted-foreground leading-relaxed">
+                  Cetirizine is not approved for OTC self-administration in infants under 6 months.
+                  Consult your pediatrician.
                 </p>
               </div>
-            </div>
+            ) : (
+              <div className="rounded-xl border border-border bg-card p-4 space-y-2 shadow-xs">
+                <div className="flex items-center justify-between border-b border-border/60 pb-1.5">
+                  <span className="font-bold text-foreground text-xs uppercase flex items-center gap-1.5">
+                    <Pill className="size-3.5 text-purple-600 dark:text-purple-400" />
+                    Cetirizine (Zyrtec)
+                  </span>
+                  <span className="text-[10px] text-muted-foreground font-mono">5 mg / 5 mL</span>
+                </div>
+                <p className="text-[11px] text-muted-foreground">
+                  Non-sedating 2nd-gen antihistamine for localized itch & wheals (
+                  {cetirizineDose.label}).
+                </p>
+                <div className="rounded-lg bg-purple-500/10 border border-purple-500/20 p-2 text-center">
+                  <p className="font-display text-base font-bold text-purple-700 dark:text-purple-300 font-mono">
+                    {cetirizineDose.ml} mL ({cetirizineDose.mg} mg) once daily
+                  </p>
+                </div>
+              </div>
+            )}
 
             {/* Diphenhydramine / Benadryl */}
-            <div className="rounded-xl border border-border bg-card p-4 space-y-2 shadow-xs">
-              <div className="flex items-center justify-between border-b border-border/60 pb-1.5">
-                <span className="font-bold text-foreground text-xs uppercase flex items-center gap-1.5">
-                  <Pill className="size-3.5 text-blue-600 dark:text-blue-400" />
-                  Diphenhydramine (Benadryl)
-                </span>
-                <span className="text-[10px] text-muted-foreground font-mono">12.5 mg / 5 mL</span>
+            {isUnder2Yr ? (
+              <div className="rounded-xl border-2 border-amber-500/40 bg-amber-500/5 p-4 space-y-2 shadow-xs">
+                <div className="flex items-center justify-between border-b border-amber-500/20 pb-1.5">
+                  <span className="font-bold text-amber-900 dark:text-amber-200 text-xs uppercase flex items-center gap-1.5">
+                    <AlertOctagon className="size-3.5 text-amber-600" />
+                    Diphenhydramine — LOCKED
+                  </span>
+                  <span className="text-[10px] font-bold text-amber-700 dark:text-amber-300 uppercase">
+                    &lt; 2 Years
+                  </span>
+                </div>
+                <div className="rounded-lg bg-amber-500/10 p-2.5 text-xs text-foreground space-y-1">
+                  <p className="font-bold text-amber-800 dark:text-amber-200 text-[11px]">
+                    CONTRAINDICATED UNDER 2 YEARS
+                  </p>
+                  <p className="text-[10px] text-muted-foreground leading-relaxed">
+                    FDA and AAP black-box guidelines strongly warn against OTC first-gen
+                    antihistamines in toddlers under 2 due to risks of fatal respiratory depression
+                    and severe CNS toxicity.
+                  </p>
+                </div>
               </div>
-              <p className="text-[11px] text-muted-foreground">
-                Sedating 1st-gen antihistamine for acute stings/hives (1–1.25 mg/kg every 6 hours).
-              </p>
-              <div className="rounded-lg bg-blue-500/10 border border-blue-500/20 p-2 text-center">
-                <p className="font-display text-base font-bold text-blue-700 dark:text-blue-300 font-mono">
-                  {benadrylMl} mL ({benadrylMg} mg)
+            ) : (
+              <div className="rounded-xl border border-border bg-card p-4 space-y-2 shadow-xs">
+                <div className="flex items-center justify-between border-b border-border/60 pb-1.5">
+                  <span className="font-bold text-foreground text-xs uppercase flex items-center gap-1.5">
+                    <Pill className="size-3.5 text-blue-600 dark:text-blue-400" />
+                    Diphenhydramine (Benadryl)
+                  </span>
+                  <span className="text-[10px] text-muted-foreground font-mono">
+                    12.5 mg / 5 mL
+                  </span>
+                </div>
+                <p className="text-[11px] text-muted-foreground">
+                  Sedating 1st-gen antihistamine for acute stings/hives (1–1.25 mg/kg every 6
+                  hours).
                 </p>
+                <div className="rounded-lg bg-blue-500/10 border border-blue-500/20 p-2 text-center">
+                  <p className="font-display text-base font-bold text-blue-700 dark:text-blue-300 font-mono">
+                    {benadrylMl} mL ({benadrylMg} mg)
+                  </p>
+                </div>
               </div>
-            </div>
+            )}
           </div>
 
           {/* MEASUREMENT SYRINGE SAFEGUARD */}
