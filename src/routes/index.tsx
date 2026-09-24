@@ -230,62 +230,28 @@ function TriagePage() {
       )}
     >
       <header className="border-b border-border bg-card/90 backdrop-blur">
-        <div className="mx-auto grid max-w-3xl grid-cols-[minmax(0,1fr)_auto] items-center gap-3 px-5 py-3.5">
+        <div className="mx-auto flex max-w-3xl items-center justify-between gap-3 px-5 py-3.5">
           <div className="flex min-w-0 items-center gap-3">
             <Link
               to="/"
-              className="flex min-w-0 items-center gap-3 transition-opacity hover:opacity-90"
+              className="flex items-center gap-2.5 transition-opacity hover:opacity-90"
               aria-label="BiteID home"
             >
               <img src={biteIdIcon} alt="BiteID" className="size-9 shrink-0 object-contain" />
-              <div className="min-w-0">
-                <p className="font-display text-base font-semibold text-foreground">BiteID</p>
-                <span className="block text-[10px] font-semibold uppercase text-caution-foreground">
-                  Alpha · testing only
-                </span>
+              <div>
+                <div className="flex items-center gap-2">
+                  <span className="font-display text-base font-bold text-foreground">BiteID</span>
+                  <span className="rounded-sm bg-caution/20 px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-caution-foreground">
+                    Alpha
+                  </span>
+                </div>
+                <p className="text-[11px] text-muted-foreground whitespace-nowrap">
+                  Bites, stings & skin reactions
+                </p>
               </div>
             </Link>
-            <p className="hidden text-xs text-muted-foreground sm:inline">
-              Bites, stings and skin reactions
-            </p>
           </div>
           <div className="flex items-center gap-2">
-            <Button
-              type="button"
-              variant="outline"
-              size="sm"
-              aria-label="Toggle trail sunlight high contrast mode"
-              onClick={() => {
-                const next = !highContrastMode;
-                setHighContrastMode(next);
-                localStorage.setItem("biteid_high_contrast", String(next));
-              }}
-              className={cn(
-                "flex items-center gap-1.5 border-primary/30 text-xs font-semibold",
-                highContrastMode
-                  ? "border-amber-400 bg-amber-400 text-black hover:bg-amber-300"
-                  : "text-primary hover:bg-primary/10",
-              )}
-            >
-              <Sun className="size-3.5" />
-              <span className="hidden md:inline">
-                {highContrastMode ? "Trail Contrast: ON" : "Sun Mode"}
-              </span>
-            </Button>
-            <Button
-              type="button"
-              variant="outline"
-              size="sm"
-              aria-label="Identify a known bug"
-              onClick={() => {
-                setSelectedCulpritId(null);
-                setKnownCulpritOpen(true);
-              }}
-              className="flex items-center gap-1.5 border-primary/30 text-xs font-semibold text-primary hover:bg-primary/10"
-            >
-              <Zap className="size-3.5 text-primary" />
-              <span className="hidden md:inline">Known Bug</span>
-            </Button>
             <Button
               type="button"
               variant="outline"
@@ -295,7 +261,7 @@ function TriagePage() {
               className="flex items-center gap-1.5 border-destructive/40 text-xs font-semibold text-destructive hover:bg-destructive/10"
             >
               <ShieldAlert className="size-3.5 text-destructive" />
-              <span className="hidden md:inline">Snakebite SOS</span>
+              <span>Snakebite SOS</span>
             </Button>
             <Button
               type="button"
@@ -306,18 +272,7 @@ function TriagePage() {
               className="flex items-center gap-1.5 border-primary/30 text-xs font-semibold text-primary hover:bg-primary/10"
             >
               <Compass className="size-3.5 text-primary" />
-              <span className="hidden md:inline">Field Kit</span>
-            </Button>
-            <Button
-              type="button"
-              variant="outline"
-              size="sm"
-              aria-label="Open printable backcountry pocket guide"
-              onClick={() => setPrintableGuideOpen(true)}
-              className="hidden sm:inline-flex items-center gap-1.5 border-primary/30 text-xs font-semibold text-primary hover:bg-primary/10"
-            >
-              <Printer className="size-3.5 text-primary" />
-              <span className="hidden md:inline">Pocket Guide</span>
+              <span>Field Kit</span>
             </Button>
           </div>
         </div>
