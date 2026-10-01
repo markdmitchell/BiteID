@@ -35,6 +35,8 @@ import brownWidow from "@/assets/creatures/brown-widow.jpg";
 import gulfCoastTick from "@/assets/creatures/gulf-coast-tick.jpg";
 import woodTick from "@/assets/creatures/wood-tick.jpg";
 import saddlebackCaterpillar from "@/assets/creatures/saddleback-caterpillar.jpg";
+import birdRodentMite from "@/assets/creatures/bird-rodent-mite.jpg";
+import pacificCoastTick from "@/assets/creatures/pacific-coast-tick.jpg";
 
 type CreatureReference = {
   src: string;
@@ -189,6 +191,14 @@ export const CREATURE_REFERENCES: Record<string, CreatureReference> = {
   saddleback_caterpillar: {
     src: saddlebackCaterpillar,
     alt: "Field-guide reference of a stinging saddleback caterpillar (Acharia stimulea)",
+  },
+  bird_rodent_mite: {
+    src: birdRodentMite,
+    alt: "Field-guide reference of bird and rodent mites (Ornithonyssus / Dermanyssus)",
+  },
+  pacific_coast_tick: {
+    src: pacificCoastTick,
+    alt: "Field-guide reference of a Pacific Coast tick (Dermacentor occidentalis)",
   },
 };
 

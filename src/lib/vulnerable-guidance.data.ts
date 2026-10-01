@@ -38,6 +38,8 @@ export const VECTOR_URGENCY_MAP: Record<string, "critical" | "urgent" | "non_urg
   gulf_coast_tick: "urgent",
   wood_tick: "urgent",
   saddleback_caterpillar: "urgent",
+  bird_rodent_mite: "non_urgent",
+  pacific_coast_tick: "urgent",
 };
 
 export const VULNERABLE_GUIDANCE_MAP: Record<string, VulnerablePopulationGuidance> = {
@@ -1109,6 +1111,78 @@ export const VULNERABLE_GUIDANCE_MAP: Record<string, VulnerablePopulationGuidanc
     geriatric: {
       cautions: ["Reassurance; no treatment required."],
       sepsisWarningSigns: ["None."],
+    },
+  },
+
+  bird_rodent_mite: {
+    pediatric: {
+      cautions: [
+        "Infants and toddlers present with extensive excoriated papules on covered trunk and extremities.",
+        "Crucial: Do NOT repeatedly apply neurotoxic permethrin 5% cream — bird/rodent mites do not burrow in human tissue like scabies.",
+        "Primary resolution is environmental: identify and remove bird nests in roof eaves, chimneys, or window AC units, or exterminate rodents.",
+      ],
+      blackBoxWarning:
+        "Avoid continuous application of high-potency fluorinated topical steroids on pediatric skin to prevent dermal atrophy and systemic hypothalamic-pituitary-adrenal (HPA) axis suppression.",
+      weightBasedAdvice:
+        "Cetirizine: 6mo–2yr: 2.5 mg once daily; 2–5yr: 2.5–5 mg once daily; 6yr+: 5–10 mg daily for intense nocturnal pruritus.",
+      erCriteria: [
+        "Spreading cellulitis with warmth, tender lymphadenopathy, or high fever from secondary excoriation.",
+      ],
+    },
+    pregnancy: {
+      cautions: [
+        "Intense itching can cause significant sleep deprivation and emotional distress.",
+        "Reassurance: bird and rodent mites cannot establish ongoing human infestation.",
+      ],
+      safeAlternatives:
+        "Topical pramoxine 1% lotion or mild hydrocortisone 1% sparingly. Oral second-generation antihistamines (cetirizine/loratadine - Category B) after consulting prenatal care provider.",
+      fetalRisks:
+        "No direct teratogenicity or fetal transmission; primary risk is maternal secondary skin infection.",
+    },
+    geriatric: {
+      cautions: [
+        "Elderly individuals often suffer severe pruritus with prominent excoriations due to senile xerosis and thinning epidermis.",
+        "High risk of secondary Staphylococcus aureus impetiginization.",
+      ],
+      sepsisWarningSigns: [
+        "Spreading cellulitis, purulent crusts, chills, altered mental status, or hypotension.",
+      ],
+    },
+  },
+
+  pacific_coast_tick: {
+    pediatric: {
+      cautions: [
+        "Pacific Coast tick fever (caused by Rickettsia 364D / Rickettsia philipii) produces a pathognomonic black crusted necrotic eschar ('tache noire') with regional lymphadenopathy and fever.",
+        "Immediate full pediatric body exam: inspect scalp, groin, and ears for attached Dermacentor occidentalis ticks.",
+      ],
+      blackBoxWarning:
+        "DO NOT withhold doxycycline in pediatric patients with suspected rickettsial infection. The AAP Red Book affirms that short courses of doxycycline (<21 days) do NOT cause significant tooth staining in children of any age.",
+      weightBasedAdvice:
+        "Doxycycline oral or IV: 2.2 mg/kg per dose twice daily (maximum 100 mg per dose) for 7–10 days.",
+      erCriteria: [
+        "Ascending limb weakness or ataxia (tick paralysis warning sign; requires immediate full body search and tick removal).",
+        "High fever with expanding necrotic eschar or petechial purpura.",
+      ],
+    },
+    pregnancy: {
+      cautions: [
+        "Rickettsial infections can precipitate preterm labor and maternal morbidity.",
+        "Prompt infectious disease consultation required upon appearance of an inoculation eschar and systemic fever.",
+      ],
+      safeAlternatives:
+        "Doxycycline is generally contraindicated in 2nd/3rd trimesters due to potential bone growth effects; maternal-fetal medicine consultation is mandatory to evaluate risk/benefit or alternative therapies.",
+      fetalRisks:
+        "Maternal systemic rickettsial fever poses risks of placental insufficiency and fetal distress.",
+    },
+    geriatric: {
+      cautions: [
+        "Older adults have increased vulnerability to severe rickettsial vasculitis and delayed eschar healing.",
+        "Assess for concurrent tularemia or Colorado tick fever co-infections.",
+      ],
+      sepsisWarningSigns: [
+        "Hypotension, acute kidney injury, confusion, spreading cellulitis around the eschar, or rigors.",
+      ],
     },
   },
 };

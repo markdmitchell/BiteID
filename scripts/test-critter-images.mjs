@@ -66,8 +66,8 @@ console.log(
   `Found \x1b[36m${vectorIds.length}\x1b[0m registered species vectors in VECTOR_DATABASE.\n`,
 );
 assert(
-  vectorIds.length === 37,
-  "Vector count in database equals 37 expected species",
+  vectorIds.length === 39,
+  "Vector count in database equals 39 expected species",
   `Found ${vectorIds.length}`,
 );
 

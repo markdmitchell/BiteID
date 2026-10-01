@@ -121,6 +121,14 @@ import saddlebackCaterpillarIii from "@/assets/bite-patterns/saddleback-caterpil
 import saddlebackCaterpillarIiiIv from "@/assets/bite-patterns/saddleback-caterpillar-iii-iv.jpg";
 import saddlebackCaterpillarVvi from "@/assets/bite-patterns/saddleback-caterpillar-v-vi.jpg";
 
+import birdRodentMiteIii from "@/assets/bite-patterns/bird-rodent-mite-i-ii.jpg";
+import birdRodentMiteIiiIv from "@/assets/bite-patterns/bird-rodent-mite-iii-iv.jpg";
+import birdRodentMiteVvi from "@/assets/bite-patterns/bird-rodent-mite-v-vi.jpg";
+
+import pacificCoastTickIii from "@/assets/bite-patterns/pacific-coast-tick-i-ii.jpg";
+import pacificCoastTickIiiIv from "@/assets/bite-patterns/pacific-coast-tick-iii-iv.jpg";
+import pacificCoastTickVvi from "@/assets/bite-patterns/pacific-coast-tick-v-vi.jpg";
+
 // Temporal Evolution Progression Images
 import brownRecluseEarlyIii from "@/assets/bite-patterns/brown-recluse-early-i-ii.jpg";
 import brownRecluseEarlyIiiIv from "@/assets/bite-patterns/brown-recluse-early-iii-iv.jpg";
@@ -624,6 +632,26 @@ const BITE_PATTERNS: Record<string, BitePatternSet> = {
       "i-ii": saddlebackCaterpillarIii,
       "iii-iv": saddlebackCaterpillarIiiIv,
       "v-vi": saddlebackCaterpillarVvi,
+    },
+  },
+  bird_rodent_mite: {
+    label: "Bird & rodent mites",
+    pattern:
+      "clusters of intensely pruritic pinpoint erythematous papules with micro-excoriations, secondary crusting, and post-inflammatory pigment changes",
+    images: {
+      "i-ii": birdRodentMiteIii,
+      "iii-iv": birdRodentMiteIiiIv,
+      "v-vi": birdRodentMiteVvi,
+    },
+  },
+  pacific_coast_tick: {
+    label: "Pacific Coast tick",
+    pattern:
+      "pathognomonic necrotic black inoculation eschar (tache noire) with surrounding indurated inflammatory halo and regional lymphadenopathy",
+    images: {
+      "i-ii": pacificCoastTickIii,
+      "iii-iv": pacificCoastTickIiiIv,
+      "v-vi": pacificCoastTickVvi,
     },
   },
 };

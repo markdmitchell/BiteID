@@ -64,6 +64,7 @@ import { PediatricDosingModal } from "@/components/triage/PediatricDosingModal";
 import { SafeHarborModal } from "@/components/triage/SafeHarborModal";
 import { ReconnectionSyncBanner } from "@/components/triage/ReconnectionSyncBanner";
 import { PrivacySanitizationModal } from "@/components/triage/PrivacySanitizationModal";
+import { ReleaseNotesModal } from "@/components/triage/ReleaseNotesModal";
 import { detectUsStateFromOfflineGps } from "@/lib/geo-offline";
 import { useSpeechGuidance } from "@/hooks/useSpeechGuidance";
 import { startSilentCacheWarming } from "@/lib/offline-cache";
@@ -129,6 +130,7 @@ function TriagePage() {
   const [status, setStatus] = useState<"idle" | "sending" | "done">("idle");
   const [response, setResponse] = useState<TriageResponse | null>(null);
   const [privacyModalOpen, setPrivacyModalOpen] = useState(false);
+  const [releaseNotesOpen, setReleaseNotesOpen] = useState(false);
   const [safeHarborOpen, setSafeHarborOpen] = useState(false);
   const [highContrastMode, setHighContrastMode] = useState<boolean>(() => {
     if (typeof window === "undefined") return false;
@@ -831,18 +833,32 @@ function TriagePage() {
             general information only and is not a diagnosis. Always consult a qualified clinician
             about a bite, sting or changing skin lesion.
           </p>
-          <Button
-            type="button"
-            variant="ghost"
-            size="sm"
-            onClick={() => setPrivacyModalOpen(true)}
-            className="shrink-0 text-xs text-muted-foreground hover:text-foreground flex items-center gap-1.5 self-start sm:self-auto"
-          >
-            <ShieldCheck className="size-3.5 text-primary" />
-            <span>Device Privacy & Eraser</span>
-          </Button>
+          <div className="flex flex-wrap items-center gap-2 shrink-0 self-start sm:self-auto">
+            <Button
+              type="button"
+              variant="ghost"
+              size="sm"
+              onClick={() => setReleaseNotesOpen(true)}
+              className="text-xs text-muted-foreground hover:text-foreground flex items-center gap-1.5"
+            >
+              <Sparkles className="size-3.5 text-primary" />
+              <span>Release Notes (v1.2)</span>
+            </Button>
+            <Button
+              type="button"
+              variant="ghost"
+              size="sm"
+              onClick={() => setPrivacyModalOpen(true)}
+              className="text-xs text-muted-foreground hover:text-foreground flex items-center gap-1.5"
+            >
+              <ShieldCheck className="size-3.5 text-primary" />
+              <span>Device Privacy & Eraser</span>
+            </Button>
+          </div>
         </div>
       </div>
+
+      <ReleaseNotesModal open={releaseNotesOpen} onOpenChange={setReleaseNotesOpen} />
 
       <EmergencyModal
         open={modalOpen}
