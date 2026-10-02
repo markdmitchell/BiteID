@@ -65,8 +65,9 @@ export type VulnerablePopulationGuidance = {
   pregnancy?: {
     cautions: string[];
     safeAlternatives?: string;
-    contraindications: string[];
+    contraindications?: string[];
     fetalRisks?: string;
+    blackBoxWarning?: string;
   };
   geriatric?: {
     cautions: string[];

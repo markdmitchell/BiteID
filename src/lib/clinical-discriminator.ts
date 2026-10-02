@@ -1,4 +1,4 @@
-import { VECTOR_DATABASE, type VectorItem } from "./geo-pest.server";
+import { VECTOR_DATABASE, type VectorInfo } from "./geo-pest.server";
 import { type TriageResponse, type TriageFormState, type TriageResultItem } from "./triage";
 
 export type DiscriminatorComparison = {
@@ -263,8 +263,8 @@ export function generateClinicalDiscriminator(
   const pairKey2 = `${runnerUpId}-${topId}`;
   const curated = CLINICAL_PAIR_DISCRIMINATORS[pairKey1] || CLINICAL_PAIR_DISCRIMINATORS[pairKey2];
 
-  const topVector: VectorItem | undefined = VECTOR_DATABASE[topId];
-  const runnerUpVector: VectorItem | undefined = VECTOR_DATABASE[runnerUpId];
+  const topVector: VectorInfo | undefined = VECTOR_DATABASE[topId];
+  const runnerUpVector: VectorInfo | undefined = VECTOR_DATABASE[runnerUpId];
 
   let differentiator = "";
   let ruleInReasons: string[] = [];

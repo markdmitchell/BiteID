@@ -46,6 +46,7 @@ import type { VulnerablePopulationGuidance } from "./triage";
 import { VECTOR_URGENCY_MAP, VULNERABLE_GUIDANCE_MAP } from "./vulnerable-guidance.data";
 
 export interface VectorInfo {
+  dermatologicalMorphology?: { pattern?: string } | undefined;
   id: string;
   name: string;
   scientificName: string;
