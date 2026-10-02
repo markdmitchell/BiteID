@@ -962,7 +962,7 @@ function ResultsDashboard({
   const [activeProfile, setActiveProfile] = useState<PatientVulnerabilityProfile>(
     form.patientProfile ?? "standard_adult",
   );
-  const { isSpeaking, isSupported: speechSupported, toggleSpeech } = useSpeechGuidance();
+  const { isSpeaking, isSupported: speechSupported, toggle: toggleSpeech } = useSpeechGuidance();
 
   if (response.isOfflineQueued) {
     return (
