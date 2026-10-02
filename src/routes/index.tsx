@@ -92,6 +92,7 @@ import {
   type PatientVulnerabilityProfile,
 } from "@/lib/triage";
 import { US_STATE_OPTIONS } from "@/lib/us-states";
+import { TriageErrorFallback } from "@/components/triage/TriageErrorFallback";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -113,6 +114,7 @@ export const Route = createFileRoute("/")({
     ],
   }),
   component: TriagePage,
+  errorComponent: TriageErrorFallback,
 });
 
 function TriagePage() {
