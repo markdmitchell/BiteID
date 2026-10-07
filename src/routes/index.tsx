@@ -1083,7 +1083,7 @@ function ResultsDashboard({
           <h1
             ref={headingRef}
             tabIndex={-1}
-            className="font-display text-2xl sm:text-3xl font-bold leading-tight text-foreground outline-none"
+            className="font-display text-2xl sm:text-3xl font-bold leading-tight text-[oklch(0.22_0.03_155)] outline-none"
           >
             Diagnostic Assessment &amp; Clinical Differential
           </h1>
