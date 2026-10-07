@@ -355,10 +355,10 @@ function TriagePage() {
             <div className={step === 0 ? "" : "mt-7"}>
               {step === 0 && (
                 <div>
-                  <h1 className="font-display text-3xl font-bold leading-tight text-foreground">
+                  <h1 className="font-display text-3xl font-bold leading-tight text-[oklch(0.22_0.03_155)]">
                     Not sure? Upload a photo.
                   </h1>
-                  <p className="mt-2 text-sm text-muted-foreground">
+                  <p className="mt-2 text-sm text-[oklch(0.4_0.02_155)]">
                     A close, well-lit photo works best. If you caught the insect, a second photo
                     helps a lot.
                   </p>
@@ -386,10 +386,10 @@ function TriagePage() {
 
               {step === 1 && (
                 <div>
-                  <h1 className="font-display text-3xl font-bold leading-tight text-foreground">
+                  <h1 className="font-display text-3xl font-bold leading-tight text-[oklch(0.22_0.03_155)]">
                     A little context
                   </h1>
-                  <p className="mt-2 text-sm text-muted-foreground">
+                  <p className="mt-2 text-sm text-[oklch(0.4_0.02_155)]">
                     Where you were and how long this has been going on.
                   </p>
                   <div className="mt-5 space-y-7 rounded-lg border border-border bg-card p-4 sm:p-6">
@@ -615,10 +615,10 @@ function TriagePage() {
 
               {step === 2 && (
                 <div>
-                  <h1 className="font-display text-3xl font-bold leading-tight text-foreground">
+                  <h1 className="font-display text-3xl font-bold leading-tight text-[oklch(0.22_0.03_155)]">
                     Safety check
                   </h1>
-                  <p className="mt-2 text-sm text-muted-foreground">
+                  <p className="mt-2 text-sm text-[oklch(0.4_0.02_155)]">
                     Tick anything you are experiencing right now.
                   </p>
 
@@ -1083,11 +1083,11 @@ function ResultsDashboard({
           <h1
             ref={headingRef}
             tabIndex={-1}
-            className="font-display text-2xl sm:text-3xl font-bold leading-tight text-foreground outline-none"
+            className="font-display text-2xl sm:text-3xl font-bold leading-tight text-[oklch(0.22_0.03_155)] outline-none"
           >
             Diagnostic Assessment &amp; Clinical Differential
           </h1>
-          <p className="mt-1 text-sm text-muted-foreground">
+          <p className="mt-1 text-sm text-[oklch(0.4_0.02_155)]">
             Multimodal vision evaluation ranked by clinical likelihood, regional priors, and lesion
             morphology.
           </p>
