@@ -1,8 +1,21 @@
 import { CREATURE_REFERENCES } from "./creature-images";
+import biteIdIcon from "@/assets/biteid-icon.png";
+import fitz12 from "@/assets/fitz-1-2.jpg";
+import fitz34 from "@/assets/fitz-3-4.jpg";
+import fitz56 from "@/assets/fitz-5-6.jpg";
 
 export const OFFLINE_CACHE_NAME = "biteid-field-cache-v2";
 
-export const CORE_STATIC_ASSETS = ["/", "/favicon.ico", "/icon.png", "/manifest.json"];
+export const CORE_STATIC_ASSETS = [
+  "/",
+  "/favicon.ico",
+  "/icon.png",
+  "/manifest.json",
+  biteIdIcon,
+  fitz12,
+  fitz34,
+  fitz56,
+];
 
 export type CacheStatus = {
   isSupported: boolean;
@@ -15,8 +28,8 @@ export type CacheStatus = {
 /**
  * Silently warms the offline cache during browser idle time.
  * Designed so users who lose signal on a backcountry trail already have
- * all 32 vector images and critical offline resources without needing
- * to remember to click "Download Pack" in advance.
+ * all 39 vector images, tone phototype references, and critical offline
+ * resources without needing to remember to click "Download Pack" in advance.
  */
 export function startSilentCacheWarming(): void {
   if (typeof window === "undefined" || !("caches" in window)) {
@@ -108,17 +121,18 @@ export async function checkOfflineCacheStatus(): Promise<CacheStatus> {
     const lastWarmed = localStorage.getItem("biteid_cache_last_warmed_v2");
     return {
       isSupported: true,
-      isReady: cachedCount >= 20, // At least most vectors cached
+      isReady: cachedCount >= Math.floor(totalCount * 0.6), // At least 60% of vectors & core assets cached
       cachedCount,
       totalCount,
       lastWarmed: lastWarmed ? new Date(Number(lastWarmed)).toLocaleDateString() : undefined,
     };
   } catch {
+    const fallbackTotal = Object.values(CREATURE_REFERENCES).length + CORE_STATIC_ASSETS.length;
     return {
       isSupported: true,
       isReady: false,
       cachedCount: 0,
-      totalCount: 36,
+      totalCount: fallbackTotal,
     };
   }
 }

@@ -260,6 +260,50 @@ for (const vId of vectorIds) {
   assert(culpritSpecies.has(vId), `KnownCulpritModal categorises vector: ${vId}`);
 }
 
+console.log("\n[Suite 7] Health Data Hygiene, Storage Key Alignment & Backcountry Filter Parity");
+// 1. Storage key alignment
+const triageTsContent = fs.readFileSync(path.join(ROOT, "src", "lib", "triage.ts"), "utf-8");
+assert(triageTsContent.includes('export const RASH_JOURNAL_STORAGE_KEY = "biteid_rash_journal_record_v2";'), "triage.ts exports canonical RASH_JOURNAL_STORAGE_KEY");
+
+const privacyModalContent = fs.readFileSync(path.join(ROOT, "src", "components", "triage", "PrivacySanitizationModal.tsx"), "utf-8");
+assert(privacyModalContent.includes("RASH_JOURNAL_STORAGE_KEY"), "PrivacySanitizationModal references RASH_JOURNAL_STORAGE_KEY");
+
+// 2. Auto-retention purge simulation
+function simulatePurge(items, maxDays = 30) {
+  const cutoffTime = Date.now() - maxDays * 24 * 60 * 60 * 1000;
+  return items.filter((item) => {
+    const timeStr = item.date || item.timestamp;
+    if (!timeStr) return false;
+    const itemTime = new Date(timeStr).getTime();
+    return !isNaN(itemTime) && itemTime >= cutoffTime;
+  });
+}
+
+const nowIso = new Date().toISOString();
+const fortyDaysAgoIso = new Date(Date.now() - 40 * 24 * 60 * 60 * 1000).toISOString();
+
+const mockJournals = [
+  { id: "fresh-1", date: nowIso, diameterMm: 22 },
+  { id: "stale-1", date: fortyDaysAgoIso, diameterMm: 45 },
+];
+const purgedJournals = simulatePurge(mockJournals, 30);
+assert(purgedJournals.length === 1, "Auto-retention purge successfully removes entries older than 30 days");
+assert(purgedJournals[0].id === "fresh-1", "Auto-retention purge preserves fresh entries (< 30 days)");
+
+const mockIntakes = [
+  { id: "fresh-intake", timestamp: nowIso },
+  { id: "stale-intake", timestamp: fortyDaysAgoIso },
+];
+const purgedIntakes = simulatePurge(mockIntakes, 30);
+assert(purgedIntakes.length === 1, "Auto-retention purge successfully removes stashed intakes older than 30 days");
+assert(purgedIntakes[0].id === "fresh-intake", "Auto-retention purge preserves recent offline intakes");
+
+// 3. Offline Field Kit Indoor filter coverage
+const fieldKitContent = fs.readFileSync(path.join(ROOT, "src", "components", "triage", "OfflineFieldKitModal.tsx"), "utf-8");
+assert(fieldKitContent.includes('v.id === "bird_rodent_mite"'), "Offline Field Kit indoor filter includes bird/rodent mites");
+assert(fieldKitContent.includes('v.id === "lice"'), "Offline Field Kit indoor filter includes head/body lice");
+assert(fieldKitContent.includes('v.id === "brown_dog_tick"'), "Offline Field Kit indoor filter includes indoor brown dog tick");
+
 console.log("\n=======================================================");
 console.log(`  Results: ${passedTests} passed, ${failedTests} failed out of ${totalTests} assertions.`);
 console.log("=======================================================\n");

@@ -98,7 +98,10 @@ export function OfflineFieldKitModal({
         (v.habitatScores?.["bed"] ?? 0) >= 0.5 ||
         v.id === "bed_bug" ||
         v.id === "brown_recluse" ||
-        v.id === "scabies"
+        v.id === "scabies" ||
+        v.id === "bird_rodent_mite" ||
+        v.id === "lice" ||
+        v.id === "brown_dog_tick"
       );
     return true;
   });
@@ -201,7 +204,7 @@ export function OfflineFieldKitModal({
               }`}
             >
               <Compass className="size-4" />
-              <span>32-Species Vector Atlas</span>
+              <span>{vectors.length}-Species Vector Atlas</span>
             </button>
             <button
               type="button"
@@ -674,7 +677,7 @@ export function OfflineFieldKitModal({
                   <Search className="absolute left-3 top-2.5 size-4 text-muted-foreground" />
                   <input
                     type="text"
-                    placeholder="Search 32 species, diseases..."
+                    placeholder={`Search ${vectors.length} species, diseases...`}
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                     className="w-full rounded-xl border border-border bg-card pl-9 pr-3 py-2 text-xs text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary"
@@ -682,7 +685,7 @@ export function OfflineFieldKitModal({
                 </div>
                 <div className="flex gap-1.5 overflow-x-auto w-full sm:w-auto">
                   {[
-                    { id: "all", label: "All (32)" },
+                    { id: "all", label: `All (${vectors.length})` },
                     { id: "woods", label: "Woods & Trails" },
                     { id: "yard", label: "Yard & Garden" },
                     { id: "water", label: "Water & Coastal" },

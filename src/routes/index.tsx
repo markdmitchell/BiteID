@@ -139,6 +139,19 @@ function TriagePage() {
     if (typeof window === "undefined") return false;
     return localStorage.getItem("biteid_high_contrast") === "true";
   });
+
+  const toggleHighContrast = () => {
+    setHighContrastMode((prev) => {
+      const next = !prev;
+      try {
+        localStorage.setItem("biteid_high_contrast", String(next));
+      } catch {
+        // Ignore localStorage quota or disabled errors
+      }
+      return next;
+    });
+  };
+
   const resultsHeadingRef = useRef<HTMLHeadingElement>(null);
 
   // Silently warm offline cache, run auto-retention purge, and verify legal safe harbor consent
@@ -849,11 +862,31 @@ function TriagePage() {
               type="button"
               variant="ghost"
               size="sm"
+              onClick={toggleHighContrast}
+              className={cn(
+                "text-xs flex items-center gap-1.5 transition-colors",
+                highContrastMode
+                  ? "text-amber-400 font-bold hover:text-amber-300"
+                  : "text-muted-foreground hover:text-foreground",
+              )}
+              aria-label={
+                highContrastMode
+                  ? "Switch to standard contrast"
+                  : "Switch to high-contrast outdoor mode"
+              }
+            >
+              <Sun className="size-3.5 text-amber-500" />
+              <span>{highContrastMode ? "Standard View" : "Outdoor High-Contrast"}</span>
+            </Button>
+            <Button
+              type="button"
+              variant="ghost"
+              size="sm"
               onClick={() => setReleaseNotesOpen(true)}
               className="text-xs text-muted-foreground hover:text-foreground flex items-center gap-1.5"
             >
               <Sparkles className="size-3.5 text-primary" />
-              <span>Release Notes (v1.2)</span>
+              <span>Release Notes (v1.3)</span>
             </Button>
             <Button
               type="button"

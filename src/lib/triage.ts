@@ -342,6 +342,8 @@ export function nameOf(item: TriageResultItem): string {
   return item.name ?? item.condition ?? item.label ?? "Unnamed finding";
 }
 
+export const RASH_JOURNAL_STORAGE_KEY = "biteid_rash_journal_record_v2";
+
 /** 1-click full privacy sanitization: wipes all local stored health data, journals, and cached photos */
 export function clearAllBiteIdLocalData(): void {
   if (typeof window === "undefined") return;
@@ -370,26 +372,33 @@ export function purgeExpiredHealthData(maxDays = 30): {
   const cutoffTime = Date.now() - maxDays * 24 * 60 * 60 * 1000;
 
   try {
-    // 1. Check rash tracker entries
-    const trackerRaw = localStorage.getItem("biteid_rash_entries_v2");
+    // 1. Check rash tracker entries (both current v2 journal record and legacy entry keys)
+    const trackerRaw =
+      localStorage.getItem(RASH_JOURNAL_STORAGE_KEY) ||
+      localStorage.getItem("biteid_rash_entries_v2");
     if (trackerRaw) {
-      const parsed = JSON.parse(trackerRaw) as Array<{ timestamp: string }>;
+      const parsed = JSON.parse(trackerRaw) as Array<{ date?: string; timestamp?: string }>;
       const valid = parsed.filter((item) => {
-        const itemTime = new Date(item.timestamp).getTime();
+        const timeStr = item.date || item.timestamp;
+        if (!timeStr) return false;
+        const itemTime = new Date(timeStr).getTime();
         return !isNaN(itemTime) && itemTime >= cutoffTime;
       });
       purgedJournals = parsed.length - valid.length;
       if (purgedJournals > 0) {
-        localStorage.setItem("biteid_rash_entries_v2", JSON.stringify(valid));
+        localStorage.setItem(RASH_JOURNAL_STORAGE_KEY, JSON.stringify(valid));
+        localStorage.removeItem("biteid_rash_entries_v2");
       }
     }
 
     // 2. Check offline queue
     const queueRaw = localStorage.getItem("biteid_offline_intake_queue");
     if (queueRaw) {
-      const parsed = JSON.parse(queueRaw) as Array<{ timestamp: string }>;
+      const parsed = JSON.parse(queueRaw) as Array<{ timestamp?: string; date?: string }>;
       const valid = parsed.filter((item) => {
-        const itemTime = new Date(item.timestamp).getTime();
+        const timeStr = item.timestamp || item.date;
+        if (!timeStr) return false;
+        const itemTime = new Date(timeStr).getTime();
         return !isNaN(itemTime) && itemTime >= cutoffTime;
       });
       purgedOffline = parsed.length - valid.length;

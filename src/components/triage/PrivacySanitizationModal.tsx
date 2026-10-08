@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { ShieldCheck, Trash2, X, AlertTriangle, HardDrive, CheckCircle2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
-import { clearAllBiteIdLocalData } from "@/lib/triage";
+import { clearAllBiteIdLocalData, RASH_JOURNAL_STORAGE_KEY } from "@/lib/triage";
 
 type PrivacySanitizationModalProps = {
   open: boolean;
@@ -20,7 +20,10 @@ export function PrivacySanitizationModal({ open, onOpenChange }: PrivacySanitiza
       return;
     }
     try {
-      const journalRaw = localStorage.getItem("biteid_rash_entries_v2");
+      const journalRaw =
+        localStorage.getItem(RASH_JOURNAL_STORAGE_KEY) ||
+        localStorage.getItem("biteid_rash_entries_v2") ||
+        localStorage.getItem("biteid_rash_journal_record");
       const journals = journalRaw ? JSON.parse(journalRaw) : [];
       setJournalCount(Array.isArray(journals) ? journals.length : 0);
 

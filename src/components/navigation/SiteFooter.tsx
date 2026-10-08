@@ -114,7 +114,7 @@ export function SiteFooter() {
             <ul className="space-y-2 text-xs text-muted-foreground">
               <li>
                 <Link to="/about" className="hover:text-primary transition-colors">
-                  20-Species Vector Atlas
+                  39-Species Vector Atlas
                 </Link>
               </li>
               <li>

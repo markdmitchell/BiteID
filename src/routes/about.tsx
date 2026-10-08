@@ -95,7 +95,7 @@ function AboutPage() {
             <p className="text-xs leading-relaxed text-muted-foreground">
               Most venomous snakebites, scorpion stings, and tick attachments occur deep in
               wilderness areas with zero cellular bars. BiteID uses advanced Progressive Web App
-              (PWA) service workers to pre-cache the 20-species visual atlas, emergency first-aid
+              (PWA) service workers to pre-cache the 39-species visual atlas, emergency first-aid
               protocols, and offline intake queues so you are never left without guidance.
             </p>
           </div>
