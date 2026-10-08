@@ -58,6 +58,7 @@ const HAZARD_CATEGORIES: HazardCategory[] = [
       "coral_snake",
       "scorpion",
       "black_widow",
+      "brown_widow",
       "brown_recluse",
       "giant_centipede",
     ],
@@ -79,9 +80,13 @@ const HAZARD_CATEGORIES: HazardCategory[] = [
       "lone_star_tick",
       "dog_tick",
       "brown_dog_tick",
+      "wood_tick",
+      "gulf_coast_tick",
+      "pacific_coast_tick",
       "soft_tick",
       "kissing_bug",
       "scabies",
+      "bird_rodent_mite",
     ],
   },
   {
@@ -89,7 +94,14 @@ const HAZARD_CATEGORIES: HazardCategory[] = [
     label: "Stings & Severe Allergens",
     icon: "🐝",
     badgeClass: "bg-orange-500/15 text-orange-700 dark:text-orange-300 border-orange-500/30",
-    speciesIds: ["wasp", "honey_bee", "fire_ant", "asp_caterpillar", "velvet_ant"],
+    speciesIds: [
+      "wasp",
+      "honey_bee",
+      "fire_ant",
+      "asp_caterpillar",
+      "saddleback_caterpillar",
+      "velvet_ant",
+    ],
   },
   {
     id: "nuisance_blister",
@@ -99,6 +111,7 @@ const HAZARD_CATEGORIES: HazardCategory[] = [
     speciesIds: [
       "minute_pirate_bug",
       "yellow_sac_spider",
+      "wolf_spider",
       "wheel_bug",
       "blister_beetle",
       "mosquito",
@@ -169,6 +182,16 @@ const CREATURE_MYTH_BUSTERS: Record<string, { myth: string; fact: string }[]> = 
       fact: "Topical pastes cannot penetrate the deep dermis where venom is deposited. Focus on stinger removal, cold pack, and oral antihistamines.",
     },
   ],
+  wasp: [
+    {
+      myth: "Wasps only sting once like honey bees.",
+      fact: "Wasps and yellow jackets have smooth, unbarbed stingers and can sting repeatedly, injecting venom with every strike.",
+    },
+    {
+      myth: "If you don't feel dizzy in the first 5 minutes, you're safe from anaphylaxis.",
+      fact: "Biphasic anaphylactic reactions can occur up to 4–8 hours after multiple stings. Keep an epinephrine auto-injector accessible if previously allergic.",
+    },
+  ],
   wasp_yellow_jacket: [
     {
       myth: "Wasps only sting once like honey bees.",
@@ -177,6 +200,30 @@ const CREATURE_MYTH_BUSTERS: Record<string, { myth: string; fact: string }[]> = 
     {
       myth: "If you don't feel dizzy in the first 5 minutes, you're safe from anaphylaxis.",
       fact: "Biphasic anaphylactic reactions can occur up to 4–8 hours after multiple stings. Keep an epinephrine auto-injector accessible if previously allergic.",
+    },
+  ],
+  pacific_coast_tick: [
+    {
+      myth: "The dark crusty scab that developed after the tick detached is a brown recluse bite or mole.",
+      fact: "The painless black eschar (tache noire) is the hallmark inoculation site of Rickettsia 364D (Pacific Coast tick fever). Do not pick or debride it; see a clinician for oral doxycycline.",
+    },
+  ],
+  bird_rodent_mite: [
+    {
+      myth: "You must cover your whole body in prescription permethrin cream every night.",
+      fact: "Bird and rodent mites cannot reproduce on human blood and do not burrow in skin. Repeated scabicides cause severe chemical dermatitis. You must locate and remove the abandoned animal nest in window AC units or eaves.",
+    },
+  ],
+  wolf_spider: [
+    {
+      myth: "Wolf spiders cause flesh-eating necrotic wounds.",
+      fact: "Wolf spiders are non-necrotic. Bites cause localized stinging pain and mild swelling that resolves within 24–48 hours. Most alleged spider necrosis is bacterial MRSA.",
+    },
+  ],
+  saddleback_caterpillar: [
+    {
+      myth: "Rub the stinging area vigorously with a washcloth or towel to wipe off the venom.",
+      fact: "Vigorous rubbing breaks the hollow urticating spines and drives them deeper into tissue. Use Scotch tape or adhesive tape to gently lift and strip the spines out, then apply ice and baking soda paste.",
     },
   ],
   fire_ant: [

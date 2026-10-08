@@ -174,38 +174,182 @@ const CLINICAL_PAIR_DISCRIMINATORS: Record<string, CuratedPairConfig> = {
     },
   },
 
-  "brown_recluse-mrsa_furuncle": {
+  "bird_rodent_mite-scabies": {
     differentiator:
-      "Brown recluse lesions characteristically sink centrally with ischemic blanching and necrosis ('red, white, and blue' sign), whereas MRSA abscesses are fluctuant, warm, and produce purulent pus.",
+      "Bird and rodent mites produce widespread pinpoint micro-papules from environmental nesting sources (window AC, eaves, attics) without burrowing, whereas Scabies mites burrow into skin crevices (finger webs, wrists, groin) with classic S-shaped tracks and severe nocturnal pruritus.",
     primaryFavoredReasons: [
-      "Central violaceous bleb or sinking dusky eschar surrounded by blanching erythema.",
-      "Severe localized tissue ischemia secondary to sphingomyelinase D cytotoxic enzyme activity.",
-      "Absence of pointing yellow pustular head or purulent drainage.",
+      "Bites appear suddenly as widespread pinpoint micro-papules (1–2 mm) with crawling sensations.",
+      "Mites do NOT burrow beneath the stratum corneum and cannot reproduce on humans.",
+      "Clear epidemiological link to birds or rodents: abandoned nests in eaves, attic spaces, window air conditioning units, or chimney flues.",
+      "Poor or no response to topical permethrin/scabicides until the environmental nesting host is cleared.",
     ],
     secondaryDisadvantagedReasons: [
-      "Over 80% of self-diagnosed 'spider bites' evaluated in urgent care are bacterial MRSA or Staph aureus abscesses.",
-      "Bacterial abscesses present with a focal fluctuant core and purulence; recluse bites are initially non-purulent.",
+      "Classic scabies produces linear or serpiginous burrows predominantly in warm interdigital web spaces, volar wrists, and flexor folds.",
+      "Scabies transmission occurs via prolonged direct skin-to-skin contact with an infected individual.",
     ],
     clinicalConfirmation: [
-      "Do NOT incise or squeeze a suspected necrotic spider bite (exacerbates ulceration).",
-      "If fluctuance or purulent exudate develops, obtain bacterial wound culture to guide oral antibiotic coverage.",
+      "Perform mineral oil skin scraping to definitively visualize Sarcoptes scabiei mites, eggs, or scybala.",
+      "Inspect window AC units, attic spaces, and eaves above bedrooms for abandoned bird or rodent nests.",
     ],
     forkQuestion: {
-      question: "Does the wound have a soft liquid pus center, or a flat sinking dark purple bruise?",
-      primaryTitle: "Flat, sinking blue-purple center without liquid pus or whitehead",
+      question: "Are the lesions pinpoint dots all over with nearby bird/rodent nests, or burrow lines between your fingers?",
+      primaryTitle: "Pinpoint red micro-dots with bird/nest or attic exposure (No finger web burrows)",
       primaryClues: [
-        "Center is dark purple, violaceous, or sinking below the skin surface",
-        "No visible liquid pus, whitehead, or yellow discharge",
-        "Severe deep aching pain that began hours after the bite occurred",
+        "Tiny pinpoint red bites (1–2 mm) scattered over arms, neck, torso, or under waistband",
+        "Sensory feeling of microscopic bugs actively crawling on skin",
+        "Bed is near a window with an AC unit, roof eave with bird nests, or recent attic rodent activity",
       ],
-      primarySignificance: "Favors Brown Recluse: microvascular ischemic infarction.",
-      secondaryTitle: "Warm, swollen red boil with a yellow/white pus core (fluctuant)",
+      primarySignificance: "Favors Bird/Rodent Mites: non-burrowing avian/rodent parasites requiring nest remediation.",
+      secondaryTitle: "Intense itching with wavy burrow lines between fingers, wrists, or groin",
       secondaryClues: [
-        "Warm, tender, raised red nodule that feels like a large inflamed pimple or boil",
-        "Contains visible yellow or cloudy liquid pus, or has spontaneous purulent drainage",
-        "Occurred without seeing any spider (common staph bacterial skin colonization)",
+        "Visible thin, wavy, thread-like lines (burrows) in web spaces between fingers or on inner wrists",
+        "Itching becomes intensely unbearable at night after getting under warm blankets",
+        "Close household or intimate contact experiencing identical symptoms",
       ],
-      secondarySignificance: "Favors MRSA Bacterial Furuncle: requires antibiotic or drainage evaluation.",
+      secondarySignificance: "Favors Scabies: obligate burrowing mite requiring prescribed topical permethrin 5% or oral ivermectin.",
+    },
+  },
+
+  "fire_ant-wasp": {
+    differentiator:
+      "Fire ants anchor with mandibles and deliver multiple stings resulting in pathognomonic sterile pustules within 24 hours, whereas wasps/yellowjackets deliver solitary or few high-volume envenomations causing large, painful, non-pustular erythematous wheals.",
+    primaryFavoredReasons: [
+      "Multiple clustered or semicircular punctate lesions on lower extremities (feet, ankles, legs).",
+      "Evolution into characteristic sterile, non-follicular pustules within 12–24 hours secondary to piperidine alkaloids.",
+      "History of stepping on or disturbing an outdoor ground mound or lawn turf.",
+    ],
+    secondaryDisadvantagedReasons: [
+      "Wasp and yellowjacket stings cause immediate, agonizing stinging pain with extensive local edema (often >5–10 cm) without sterile pustule formation.",
+      "Wasps typically sting upper extremities, neck, or face during aerial flight or food disturbance.",
+    ],
+    clinicalConfirmation: [
+      "Do NOT pop, squeeze, or scratch fire ant pustules (high secondary bacterial infection risk).",
+      "Monitor for large local reactions (LLR) or systemic IgE-mediated anaphylaxis (urticaria, dyspnea, wheezing).",
+    ],
+    forkQuestion: {
+      question: "Did the stings form small whitehead pustules, or large swollen red patches without pustules?",
+      primaryTitle: "Multiple tiny whitehead bumps/pustules after disturbing the ground",
+      primaryClues: [
+        "Multiple grouped stings on feet, ankles, or lower calves after standing on grass or dirt",
+        "Developed small, cloudy whitehead pustules 12 to 24 hours after the fiery sting",
+        "Intense fiery burning followed by persistent itchy pustules that stay sterile if unpopped",
+      ],
+      primarySignificance: "Favors Fire Ant: piperidine alkaloid sterile pustule evolution.",
+      secondaryTitle: "Single or few large swollen painful red welts without white pustules",
+      secondaryClues: [
+        "Instant sharp stabbing pain from a flying insect near food, garbage, shrubs, or eaves",
+        "Large, warm, tender red swelling (size of an orange or larger) without white pustules",
+        "Single puncture mark in the center of broad diffuse edema",
+      ],
+      secondarySignificance: "Favors Wasp / Yellow Jacket: proteinaceous venom causing extensive local histamine release.",
+    },
+  },
+
+  "lone_star_tick-blacklegged_tick": {
+    differentiator:
+      "Lone star ticks are aggressive fast-moving biters causing Southern Tick-Associated Rash Illness (STARI) and Alpha-gal meat allergy in Southeastern/Midwest states, distinguished by a prominent white dorsal spot on females, whereas Blacklegged (Deer) ticks transmit Borrelia burgdorferi (Lyme disease) in Northeast/Mid-Atlantic/Upper Midwest forests.",
+    primaryFavoredReasons: [
+      "Attached tick had a distinct central silver-white dot or star on its dorsal shield (female Amblyomma americanum).",
+      "Very fast, aggressive tick encountered in brush or pine forests in the Southeast, Midwest, or Mid-Atlantic.",
+      "Associated with STARI (circular rash mimicking Lyme) and potential delayed red meat / dairy allergy (Alpha-gal).",
+    ],
+    secondaryDisadvantagedReasons: [
+      "Blacklegged ticks are tiny, dark-legged, slow-crawling parasites lacking any white dot markings.",
+      "Primary vector of Borrelia burgdorferi, Anaplasma phagocytophilum, and Babesia microti.",
+      "Centrifugally expanding Erythema Migrans rash >5 cm with standard antibiotic indication.",
+    ],
+    clinicalConfirmation: [
+      "Preserve the tick in a sealed container or photograph its dorsal scutum for species identification.",
+      "If gastrointestinal distress or urticaria develops 3–6 hours after eating beef/pork, order serum Alpha-gal IgE testing.",
+    ],
+    forkQuestion: {
+      question: "Did the tick have a visible white spot on its back, and which region did exposure occur in?",
+      primaryTitle: "Fast-moving tick with white dot on back (Southeast / Mid-Atlantic / Midwest)",
+      primaryClues: [
+        "Tick had a noticeable bright white or silver dot in the middle of its back (female Lone Star tick)",
+        "Exposure occurred in brushy fields, scrub, or deer trails in the Southeast, Ozarks, or Mid-Atlantic",
+        "Active, aggressive biter; possible new delayed digestive or allergic reaction hours after eating mammalian meat",
+      ],
+      primarySignificance: "Favors Lone Star Tick: vector of STARI and trigger for Alpha-gal mammalian meat allergy.",
+      secondaryTitle: "Tiny dark tick without white markings (Northeast / Upper Midwest / Pacific)",
+      secondaryClues: [
+        "Tiny sesame-seed-sized dark tick with dark brown/black legs and no white dorsal dot",
+        "Wooded or leaf litter habitat in New England, Mid-Atlantic, or Upper Midwest",
+        "Slowly expanding annular rash >5 cm (Erythema Migrans) developing 3 to 30 days after detachment",
+      ],
+      secondarySignificance: "Favors Blacklegged (Deer) Tick: primary vector of Lyme disease spirochetes (Borrelia burgdorferi).",
+    },
+  },
+
+  "kissing_bug-bed_bug": {
+    differentiator:
+      "Kissing bugs (Triatominae, 15–25 mm) are large nocturnal vectors causing painless facial or periorbital bites (Romana's sign) with Chagas disease risk in the Southern US, whereas Bed Bugs (Cimex, 4–5 mm) are small domestic parasites causing linear rows of pruritic papules on torso and limbs.",
+    primaryFavoredReasons: [
+      "Bite occurred on or near the face, lips, or eyelids (often leading to unilateral periorbital edema / Romaña sign).",
+      "Large specimen (about 1 inch / 20 mm long) with elongated cone-shaped head and orange/red striped abdomen margins.",
+      "High geographical correlation with the Southern border states, Southwest, and rural dwellings.",
+      "Associated with Trypanosoma cruzi pathogen transmission via insect fecal contamination into bite wound.",
+    ],
+    secondaryDisadvantagedReasons: [
+      "Bed bugs measure only 4–5 mm (apple-seed size) and lack striped abdominal margins.",
+      "Bed bug bites are concentrated on arms, legs, or torso in distinct clusters of 2–3 rather than solitary facial plaques.",
+      "Bed bugs do NOT transmit Chagas disease or any bloodborne systemic pathogens.",
+    ],
+    clinicalConfirmation: [
+      "Do NOT rub or scratch the bite site (reduces risk of rubbing infectious triatomine feces into the wound).",
+      "Wash bite site thoroughly with antiseptic soap and consult infectious disease specialist for T. cruzi serology if in endemic zone.",
+    ],
+    forkQuestion: {
+      question: "Are the bites on your face/eyes from a large 1-inch bug, or small itchy rows on your body?",
+      primaryTitle: "Bite on face/eyelid with painless swelling or large 1-inch striped bug seen",
+      primaryClues: [
+        "Bite located on face, near lips, or around one eye with painless puffy swelling (Romaña's sign)",
+        "Spotted a large dark insect (about 1 inch long) with orange or yellow stripes along the edge of its abdomen",
+        "Exposure in the Southern US, Texas, Arizona, Florida, or rural rustic lodging",
+      ],
+      primarySignificance: "Favors Kissing Bug: vector of Chagas disease (Trypanosoma cruzi); requires soap washing and medical evaluation.",
+      secondaryTitle: "Small itchy bumps in rows of 2–3 on arms/trunk from apple-seed-sized bugs",
+      secondaryClues: [
+        "Multiple small itchy bumps clustered in lines of 2 or 3 ('breakfast, lunch, dinner') on arms, legs, or back",
+        "Found tiny flat oval bugs (size of an apple seed, 4–5 mm) in mattress seams or bedsheets",
+        "No severe unilateral facial edema or striped cone-nosed bugs",
+      ],
+      secondarySignificance: "Favors Bed Bug: non-pathogen-transmitting domestic pest requiring mattress and pest remediation.",
+    },
+  },
+
+  "blister_beetle-fire_ant": {
+    differentiator:
+      "Blister beetle lesions are caused by chemical cantharidin contact resulting in broad, painless, flaccid bullae (blisters) hours after crushing the beetle, whereas fire ants deliver painful venomous stings causing punctate, sterile pustules on erythematous bases within 24 hours.",
+    primaryFavoredReasons: [
+      "Painless or mild burning blister that formed hours after being outdoors or in vegetation.",
+      "Broad, flaccid, clear-fluid blister (bulla) without a fiery initial sting.",
+      "Cantharidin vesicant toxin induced by brushing, crushing, or pressing a beetle against bare skin.",
+    ],
+    secondaryDisadvantagedReasons: [
+      "Fire ants cause an immediate intense fiery stinging pain that burns like a match.",
+      "Develops into tiny, discrete, firm pustules with a white-yellow center, typically on feet and ankles.",
+    ],
+    clinicalConfirmation: [
+      "Keep blister roof intact; apply sterile cool compresses and wash skin thoroughly to remove residual cantharidin.",
+      "If secondary bacterial impetiginization occurs from open blister unroofing, topical mupirocin may be indicated.",
+    ],
+    forkQuestion: {
+      question: "Is the lesion a broad clear blister from touching a beetle, or multiple fiery pustules on your feet?",
+      primaryTitle: "Large clear painless blister from brushing against outdoor vegetation/beetle",
+      primaryClues: [
+        "Large, broad blister (bulla) filled with clear fluid that appeared hours after outdoor activity",
+        "Did not feel an acute stinging pinch when it happened; painless or mild burning sensation",
+        "Contact with alfalfa, hay, tall flowers, or garden vegetation where elongated beetles feed",
+      ],
+      primarySignificance: "Favors Blister Beetle: cantharidin chemical contact blistering.",
+      secondaryTitle: "Multiple tiny fiery whitehead bumps on feet/ankles from ground mounds",
+      secondaryClues: [
+        "Felt an immediate, intense, fiery needle-like sting that caused immediate burning pain",
+        "Multiple tiny white pustules clustered on ankles, feet, or lower legs",
+        "Disturbed an outdoor ant mound or stood in lawn grass",
+      ],
+      secondarySignificance: "Favors Fire Ant: alkaloid venom causing sterile pustule formation.",
     },
   },
 

@@ -805,10 +805,18 @@ function TriagePage() {
                     <ArrowRight className="size-4" />
                   </Button>
                   {!canContinue && (
-                    <p id="continue-help" className="mt-2 max-w-56 text-xs text-muted-foreground">
+                    <p id="continue-help" className="mt-2 max-w-64 text-xs text-muted-foreground">
                       {step === 0
                         ? "Add a skin lesion photo to continue."
-                        : "Complete the required exposure details to continue."}
+                        : step === 1
+                          ? !form.environment
+                            ? "Select an environment to continue."
+                            : !form.usState
+                              ? "Select a US state to continue."
+                              : !form.duration
+                                ? "Select duration to continue."
+                                : "Complete required exposure details to continue."
+                          : "Complete the safety check to continue."}
                     </p>
                   )}
                 </div>

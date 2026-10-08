@@ -45,14 +45,14 @@ export function PediatricDosingModal({
   const isUnder2Yr = ageTier === "under_6mo" || ageTier === "6_to_23mo";
 
   // Precision Weight-Based Calculations
-  // Acetaminophen (160 mg / 5 mL = 32 mg/mL) -> 10 to 15 mg/kg per dose
-  const tylenolMinMg = Math.round(effectiveWeightKg * 10);
-  const tylenolMaxMg = Math.round(effectiveWeightKg * 15);
+  // Acetaminophen (160 mg / 5 mL = 32 mg/mL) -> 10 to 15 mg/kg per dose (Max single pediatric dose: 650 mg)
+  const tylenolMinMg = Math.min(650, Math.round(effectiveWeightKg * 10));
+  const tylenolMaxMg = Math.min(650, Math.round(effectiveWeightKg * 15));
   const tylenolMinMl = (tylenolMinMg / 32).toFixed(1);
   const tylenolMaxMl = (tylenolMaxMg / 32).toFixed(1);
 
-  // Ibuprofen (100 mg / 5 mL = 20 mg/mL) -> 10 mg/kg per dose (only >= 6 months)
-  const motrinMg = Math.round(effectiveWeightKg * 10);
+  // Ibuprofen (100 mg / 5 mL = 20 mg/mL) -> 10 mg/kg per dose (only >= 6 months, Max single pediatric dose: 400 mg)
+  const motrinMg = Math.min(400, Math.round(effectiveWeightKg * 10));
   const motrinMl = (motrinMg / 20).toFixed(1);
 
   // Cetirizine (5 mg / 5 mL = 1 mg/mL)
