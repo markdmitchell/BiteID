@@ -2,7 +2,7 @@
 
 **BiteID** is an AI-assisted dermatological and entomological triage web application designed to help individuals quickly assess unknown insect, spider, and arthropod bites, stings, and skin reactions. 
 
-It bridges visual analysis with geographic epidemiology and safety-first clinical triage—helping users understand what likely bit them, how to administer immediate first aid, and when to seek emergency medical attention.
+It bridges visual analysis with geographic epidemiology and safety-first clinical triage, helping users understand what likely bit them, how to administer immediate first aid, and when to seek emergency medical attention.
 
 ---
 
@@ -16,9 +16,9 @@ It bridges visual analysis with geographic epidemiology and safety-first clinica
 ### Key Capabilities & Workflow
 
 #### 1. Three-Step Intake Wizard
-* **Step 1: Visual Capture** — Users upload a required photo of the skin lesion and an optional photo of the captured specimen (insect/spider).
-* **Step 2: Environmental & Temporal Context** — Collects the geographic location (US state), time elapsed since onset, and the encounter environment (woods/tall grass, bed/indoors, yard/garden, water, or travel).
-* **Step 3: Clinical Safety Checklist** — Screens for severe systemic reactions before processing.
+* **Step 1: Visual Capture**: Users upload a required photo of the skin lesion and an optional photo of the captured specimen (insect/spider).
+* **Step 2: Environmental & Temporal Context**: Collects the geographic location (US state), time elapsed since onset, and the encounter environment (woods/tall grass, bed/indoors, yard/garden, water, or travel).
+* **Step 3: Clinical Safety Checklist**: Screens for severe systemic reactions before processing.
 
 #### 2. Dual-Engine Intelligence Pipeline
 * **Multimodal AI Vision Pass**: Powered by **Google Gemini** (`gemini-3.6-flash`) and Lovable AI Gateway to perform a two-part extraction:
@@ -33,9 +33,9 @@ It bridges visual analysis with geographic epidemiology and safety-first clinica
 
 #### 3. Fitzpatrick Skin Phototype Inclusivity (Types I–VI)
 Bite reactions present differently depending on melanin levels (erythema vs. hyperpigmentation or induration). The results dashboard features interactive **Fitzpatrick Skin Tone Reference Tabs**:
-* **Types I–II** (Fair/Light skin — classic erythema, pink/red borders)
-* **Types III–IV** (Medium/Olive skin — deeper red, dusky borders)
-* **Types V–VI** (Deep/Dark skin — hyperpigmentation, violaceous edges, subtle swelling)
+* **Types I–II** (Fair/Light skin: classic erythema, pink/red borders)
+* **Types III–IV** (Medium/Olive skin: deeper red, dusky borders)
+* **Types V–VI** (Deep/Dark skin: hyperpigmentation, violaceous edges, subtle swelling)
 
 #### 4. Actionable First-Aid & Red-Flag Guidance
 * **Ranked Probability Cards**: Displays the top-5 likely culprits with percentage confidence bars and matched epidemiological factors.

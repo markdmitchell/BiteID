@@ -206,7 +206,7 @@ export function FitzpatrickTabs({
               className="w-full rounded-md border border-border object-cover"
             />
             <div className="mt-2 flex flex-wrap items-center justify-between gap-2 text-xs text-muted-foreground">
-              <span>AI-generated visual reference — not confirmation or diagnosis</span>
+              <span>AI-generated visual reference (not confirmation or diagnosis)</span>
               {currentStageInfo && (
                 <span className="font-medium text-foreground">
                   Showing: {currentStageInfo.label} ({currentStageInfo.timeframe})

@@ -1011,7 +1011,7 @@ export const VECTOR_DATABASE: Record<string, VectorInfo> = {
     delayedRisks: ["Respiratory paralysis, ptosis, bulbar palsy, respiratory arrest"],
     firstAidAdvice: [
       "CRITICAL: Keep victim completely calm and still; immobilize the bitten limb at heart level.",
-      "Do NOT wait for symptoms or pain — coral snake venom causes minimal local swelling but causes delayed respiratory collapse.",
+      "Do NOT wait for symptoms or pain; coral snake venom causes minimal local swelling but causes delayed respiratory collapse.",
       "Call 911 / emergency services immediately for transport to an antivenin-capable facility (North American Coral Snake Antivenin).",
       "DO NOT cut, apply ice, tourniquet, or use suction devices.",
     ],
@@ -1122,7 +1122,7 @@ export const VECTOR_DATABASE: Record<string, VectorInfo> = {
     associatedPathogens: ["Urticating spine envenomation"],
     delayedRisks: ["Radiating neuropathic limb pain, regional lymphadenopathy, systemic shock"],
     firstAidAdvice: [
-      "DO NOT rub or brush with a cloth — this drives spines deeper and breaks off more venom sacs.",
+      "DO NOT rub or brush with a cloth; this drives spines deeper and breaks off more venom sacs.",
       "Apply adhesive tape (duct tape, cellophane tape) over the sting site and gently strip it off repeatedly to extract embedded spines.",
       "Wash area gently with soap and cool water.",
       "Apply an ice pack to suppress burning and pain; apply 1% hydrocortisone cream for itching.",

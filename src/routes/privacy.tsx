@@ -15,12 +15,16 @@ import { PageHeader } from "@/components/navigation/PageHeader";
 export const Route = createFileRoute("/privacy")({
   head: () => ({
     meta: [
-      { title: "Privacy Policy — BiteID" },
+      { title: "Privacy Policy | BiteID" },
       {
         name: "description",
         content:
           "Read BiteID's strict privacy policy: zero permanent image retention, local-device storage only, and zero third-party commercial trackers.",
       },
+      { property: "og:title", content: "Privacy Policy | BiteID" },
+      { property: "og:description", content: "Read BiteID's strict privacy policy: zero permanent image retention, local-device storage only, and zero third-party commercial trackers." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
     ],
   }),
   component: PrivacyPage,

@@ -48,7 +48,7 @@ export const VULNERABLE_GUIDANCE_MAP: Record<string, VulnerablePopulationGuidanc
       cautions: [
         "A child's small body weight creates a 5x–10x higher venom-to-mass concentration than in adults.",
         "Rapid onset of systemic coagulopathy, severe hypotension, and compartment syndrome.",
-        "Initial antivenom (CroFab / Anavip) is NEVER weight-reduced — children receive the full adult starting dose (10 vials) because antivenom neutralizes a fixed mass of circulating venom molecules.",
+        "Initial antivenom (CroFab / Anavip) is NEVER weight-reduced; children receive the full adult starting dose (10 vials) because antivenom neutralizes a fixed mass of circulating venom molecules.",
       ],
       blackBoxWarning:
         "DO NOT use tourniquets, ice packs, incisions, or suction devices. These cause devastating localized tissue necrosis and limb ischemia in pediatric limbs.",
@@ -1118,7 +1118,7 @@ export const VULNERABLE_GUIDANCE_MAP: Record<string, VulnerablePopulationGuidanc
     pediatric: {
       cautions: [
         "Infants and toddlers present with extensive excoriated papules on covered trunk and extremities.",
-        "Crucial: Do NOT repeatedly apply neurotoxic permethrin 5% cream — bird/rodent mites do not burrow in human tissue like scabies.",
+        "Crucial: Do NOT repeatedly apply neurotoxic permethrin 5% cream; bird/rodent mites do not burrow in human tissue like scabies.",
         "Primary resolution is environmental: identify and remove bird nests in roof eaves, chimneys, or window AC units, or exterminate rodents.",
       ],
       blackBoxWarning:

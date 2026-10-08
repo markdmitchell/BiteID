@@ -846,7 +846,8 @@ function buildDynamicFork(
   runnerUpVector: VectorInfo | undefined,
   topId: string,
   runnerUpId: string,
-): ForkInTheRoad["question"] & {
+): {
+  question: string;
   primaryTitle: string;
   primaryClues: string[];
   primarySignificance: string;

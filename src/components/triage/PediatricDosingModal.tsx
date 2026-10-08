@@ -280,7 +280,7 @@ export function PediatricDosingModal({
                 <div className="flex items-center justify-between border-b border-destructive/20 pb-1.5">
                   <span className="font-bold text-destructive text-xs uppercase flex items-center gap-1.5">
                     <AlertOctagon className="size-3.5 text-destructive" />
-                    Ibuprofen (Motrin) — LOCKED
+                    Ibuprofen (Motrin) (LOCKED)
                   </span>
                   <span className="text-[10px] font-bold text-destructive uppercase">
                     Contraindicated
@@ -332,7 +332,7 @@ export function PediatricDosingModal({
                 <div className="flex items-center justify-between border-b border-border/60 pb-1.5">
                   <span className="font-bold text-muted-foreground text-xs uppercase flex items-center gap-1.5">
                     <Pill className="size-3.5 text-muted-foreground" />
-                    Cetirizine (Zyrtec) — LOCKED
+                    Cetirizine (Zyrtec) (LOCKED)
                   </span>
                   <span className="text-[10px] text-muted-foreground font-mono">Under 2 Years</span>
                 </div>
@@ -372,7 +372,7 @@ export function PediatricDosingModal({
                 <div className="flex items-center justify-between border-b border-amber-500/20 pb-1.5">
                   <span className="font-bold text-amber-900 dark:text-amber-200 text-xs uppercase flex items-center gap-1.5">
                     <AlertOctagon className="size-3.5 text-amber-600" />
-                    Diphenhydramine — LOCKED
+                    Diphenhydramine (LOCKED)
                   </span>
                   <span className="text-[10px] font-bold text-amber-700 dark:text-amber-300 uppercase">
                     &lt; 2 Years

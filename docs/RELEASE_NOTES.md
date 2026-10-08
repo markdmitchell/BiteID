@@ -1,10 +1,10 @@
-# BiteID — Release & Version Notes
+# BiteID: Release & Version Notes
 
 This document provides a chronological record of clinical decision support (CDS) updates, vector database revisions, photographic atlas milestones, and architectural safety locks for BiteID.
 
 ---
 
-## [v1.2.0] — September 2026
+## [v1.2.0]: September 2026
 
 ### **Ethical Library Expansion & 100% Multi-Tone Verification**
 
@@ -35,7 +35,7 @@ Following our **4-Pillar Clinical Decision Support Framework**, candidate specie
 
 ---
 
-## [v1.1.0] — September 2026
+## [v1.1.0]: September 2026
 
 ### **Backcountry 0-Cell Kit, Pediatric Dosing Locks & Rabies Screener**
 
@@ -49,7 +49,7 @@ Following our **4-Pillar Clinical Decision Support Framework**, candidate specie
 
 ---
 
-## [v1.0.0] — September 2026
+## [v1.0.0]: September 2026
 
 ### **Initial Alpha Architecture**
 
