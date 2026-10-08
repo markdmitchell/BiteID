@@ -1,4 +1,4 @@
-import { Sparkles, CheckCircle2, ShieldAlert, Cpu, Layers, BookOpen, Bug, ChevronRight } from "lucide-react";
+import { Sparkles, CheckCircle2, ShieldAlert, Cpu, Layers, BookOpen, Bug, ChevronRight, Compass } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogTitle } from "@/components/ui/dialog";
 
@@ -22,7 +22,7 @@ export function ReleaseNotesModal({ open, onOpenChange }: ReleaseNotesModalProps
                   BiteID Changelog
                 </span>
                 <span className="rounded-full bg-primary/15 px-2 py-0.5 text-[10px] font-bold text-primary">
-                  v1.2.0 • Latest
+                  v1.3.0 • Latest
                 </span>
               </div>
               <DialogTitle className="font-display text-xl sm:text-2xl font-bold leading-tight text-foreground">
@@ -37,11 +37,58 @@ export function ReleaseNotesModal({ open, onOpenChange }: ReleaseNotesModalProps
           </DialogDescription>
 
           <div className="space-y-6">
-            {/* Version 1.2.0 */}
+            {/* Version 1.3.0 */}
             <div className="rounded-xl border border-primary/30 bg-primary/5 p-4 sm:p-5 space-y-4">
               <div className="flex flex-wrap items-center justify-between gap-2 border-b border-primary/15 pb-3">
                 <div className="flex items-center gap-2">
                   <span className="rounded-md bg-primary text-primary-foreground px-2 py-0.5 text-xs font-bold">
+                    v1.3.0
+                  </span>
+                  <span className="font-display text-sm font-bold text-foreground">
+                    Dynamic &ldquo;Fork-in-the-Road&rdquo; Clinical Tie-Breaker
+                  </span>
+                </div>
+                <span className="text-[11px] text-muted-foreground">October 2026</span>
+              </div>
+
+              <div className="space-y-3 text-xs leading-relaxed">
+                <div className="flex items-start gap-2.5">
+                  <Compass className="size-4 text-primary shrink-0 mt-0.5" />
+                  <div>
+                    <strong className="text-foreground">Interactive Differential Tie-Breaker:</strong>
+                    <p className="text-muted-foreground mt-0.5">
+                      Dramatically improves diagnostic resolution for visual mimics (e.g. Bed Bugs vs. Fleas, Brown Recluse vs. MRSA cellulitis, Lyme Tick vs. Mosquito). When top suspects have overlapping confidence, BiteID surfaces key historical clues (distribution patterns, bite sensations, symptom onset speed).
+                    </p>
+                  </div>
+                </div>
+
+                <div className="flex items-start gap-2.5">
+                  <Cpu className="size-4 text-primary shrink-0 mt-0.5" />
+                  <div>
+                    <strong className="text-foreground">Real-Time Bayesian Recalibration:</strong>
+                    <p className="text-muted-foreground mt-0.5">
+                      Selecting Option A or Option B interactively updates differential probabilities, promoting the clinically favored suspect to rank 0 and dynamically updating primary first-aid directives, warning signs, and skin-tone references, with 1-click &ldquo;Reset to AI Baseline&rdquo;.
+                    </p>
+                  </div>
+                </div>
+
+                <div className="flex items-start gap-2.5">
+                  <CheckCircle2 className="size-4 text-primary shrink-0 mt-0.5" />
+                  <div>
+                    <strong className="text-foreground">Physician SBAR &amp; ER Triage Integration:</strong>
+                    <p className="text-muted-foreground mt-0.5">
+                      The patient-confirmed tie-breaker rationale is automatically integrated into the Clinical Handoff Memo (SBAR memo, ER rapid triage presentation, and printable summary) to ensure attending clinicians have full exposure history context.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Version 1.2.0 */}
+            <div className="rounded-xl border border-border/80 bg-card p-4 sm:p-5 space-y-4">
+              <div className="flex flex-wrap items-center justify-between gap-2 border-b border-border/60 pb-3">
+                <div className="flex items-center gap-2">
+                  <span className="rounded-md bg-muted text-foreground px-2 py-0.5 text-xs font-bold">
                     v1.2.0
                   </span>
                   <span className="font-display text-sm font-bold text-foreground">

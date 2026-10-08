@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useEffect, useReducer, useRef, useState } from "react";
+import { useEffect, useReducer, useRef, useState, useMemo } from "react";
 import {
   Activity,
   AlertCircle,
@@ -50,6 +50,7 @@ import { StepNav } from "@/components/triage/StepNav";
 import { EmergencyModal } from "@/components/triage/EmergencyModal";
 import { ProbabilityCard } from "@/components/triage/ProbabilityCard";
 import { ClinicalDiscriminatorCard } from "@/components/triage/ClinicalDiscriminatorCard";
+import { applyForkInTheRoad, type ForkOption } from "@/lib/clinical-discriminator";
 import { FitzpatrickTabs } from "@/components/triage/FitzpatrickTabs";
 import { ClinicalSummaryModal } from "@/components/triage/ClinicalSummaryModal";
 import { UrgentCareLocator } from "@/components/triage/UrgentCareLocator";
@@ -962,6 +963,14 @@ function ResultsDashboard({
   const [activeProfile, setActiveProfile] = useState<PatientVulnerabilityProfile>(
     form.patientProfile ?? "standard_adult",
   );
+  const [forkChoice, setForkChoice] = useState<"primary" | "secondary" | "neutral">("neutral");
+  const [activeForkOption, setActiveForkOption] = useState<ForkOption | undefined>(undefined);
+
+  useEffect(() => {
+    setForkChoice("neutral");
+    setActiveForkOption(undefined);
+  }, [response]);
+
   const { isSpeaking, isSupported: speechSupported, toggle: toggleSpeech } = useSpeechGuidance();
 
   if (response.isOfflineQueued) {
@@ -1044,7 +1053,21 @@ function ResultsDashboard({
     );
   }
 
-  const results = normalizeResults(response);
+  const baselineResults = useMemo(() => normalizeResults(response), [response]);
+  const baselineTop = baselineResults[0];
+  const baselineRunnerUp = baselineResults[1];
+
+  const effectiveResults = useMemo(() => {
+    if (!baselineTop || !baselineRunnerUp) return baselineResults;
+    return applyForkInTheRoad(
+      baselineResults,
+      forkChoice,
+      baselineTop.id ?? "",
+      baselineRunnerUp.id ?? "",
+    );
+  }, [baselineResults, forkChoice, baselineTop, baselineRunnerUp]);
+
+  const results = effectiveResults;
   const rawGuidance = response.guidance ?? response.advice;
   const topResult = results[0];
   const secondaryResults = results.slice(1);
@@ -1511,12 +1534,17 @@ function ResultsDashboard({
             />
           </div>
 
-          {secondaryResults.length > 0 && (
+          {baselineResults.length > 1 && baselineTop && baselineRunnerUp && (
             <ClinicalDiscriminatorCard
-              topResult={topResult}
-              runnerUpResult={secondaryResults[0]}
+              topResult={baselineTop}
+              runnerUpResult={baselineRunnerUp}
               response={response}
               form={form}
+              forkChoice={forkChoice}
+              onForkChoiceChange={(choice, option) => {
+                setForkChoice(choice);
+                setActiveForkOption(option);
+              }}
             />
           )}
 
@@ -1916,6 +1944,11 @@ function ResultsDashboard({
         form={form}
         isErythemaMigrans={isErythemaMigrans}
         patientProfile={activeProfile}
+        effectiveResults={effectiveResults}
+        forkDetails={{
+          choice: forkChoice,
+          activeOption: activeForkOption,
+        }}
       />
 
       <UrgentCareLocator

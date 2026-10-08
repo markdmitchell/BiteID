@@ -16,11 +16,13 @@ import {
   Eye,
   Activity,
   Waves,
+  Compass,
 } from "lucide-react";
 import {
   type TriageResponse,
   type TriageFormState,
   type PatientVulnerabilityProfile,
+  type TriageResultItem,
   normalizeResults,
   BODY_LOCATION_OPTIONS,
   SENSATION_OPTIONS,
@@ -31,6 +33,7 @@ import {
 import { stateLabel } from "@/lib/us-states";
 import { getLookalikeDifferentials } from "@/lib/lookalikes";
 import { PATIENT_PERSONAS } from "./PatientProfileSelector";
+import type { ForkOption } from "@/lib/clinical-discriminator";
 
 import type { ProgressionEvaluation } from "@/lib/progression-engine.server";
 
@@ -41,6 +44,11 @@ type ClinicalSummaryModalProps = {
   form: TriageFormState;
   isErythemaMigrans: boolean;
   patientProfile?: PatientVulnerabilityProfile;
+  effectiveResults?: TriageResultItem[];
+  forkDetails?: {
+    choice: "primary" | "secondary" | "neutral";
+    activeOption?: ForkOption;
+  };
 };
 
 export function ClinicalSummaryModal({
@@ -50,6 +58,8 @@ export function ClinicalSummaryModal({
   form,
   isErythemaMigrans,
   patientProfile,
+  effectiveResults,
+  forkDetails,
 }: ClinicalSummaryModalProps) {
   const [lesionUrl, setLesionUrl] = useState<string | null>(null);
   const [bugUrl, setBugUrl] = useState<string | null>(null);
@@ -123,7 +133,10 @@ export function ClinicalSummaryModal({
     }
   }, [open]);
 
-  const results = normalizeResults(response);
+  const results =
+    effectiveResults && effectiveResults.length > 0
+      ? effectiveResults
+      : normalizeResults(response);
   const topResult = results[0];
   const secondaryResults = results.slice(1);
 
@@ -173,6 +186,7 @@ ${effectiveProfile === "infant_toddler" || effectiveProfile === "child" ? "- Ped
 [A] ASSESSMENT / ALGORITHMIC DIFFERENTIAL
 - Top Differential Hypothesis: ${topResult?.name ?? "Unknown"} (${topResult?.scientificName ?? ""}) — Likelihood: ${Math.round(topResult?.confidence ?? topResult?.probability ?? 0)}%
 ${topResult?.associatedPathogens?.length ? `- Associated Pathogens: ${topResult.associatedPathogens.join(", ")}` : ""}
+${forkDetails?.choice && forkDetails.choice !== "neutral" && forkDetails.activeOption ? `- Clinical Tie-Breaker Discriminator: Patient confirmed presentation matching "${forkDetails.activeOption.title}". Recalibrated model favors ${forkDetails.activeOption.vectorName} (${forkDetails.activeOption.clinicalSignificance}).` : ""}
 ${isErythemaMigrans ? "- CLINICAL ALERT: Strong visual & epidemiological concordance for ERYTHEMA MIGRANS (early Lyme disease). CDC guidelines advise clinical diagnosis & standard antibiotic evaluation without awaiting delayed serology." : ""}
 ${response.dermatologicalFindings ? `- Morphology: Pattern: ${response.dermatologicalFindings.pattern}, Primary: ${response.dermatologicalFindings.primaryLesion ?? "n/a"}, Central: ${response.dermatologicalFindings.centralFeatures}, Size: ${response.dermatologicalFindings.estimatedDiameter ?? "n/a"}` : ""}
 ${secondaryResults.length > 0 ? `- Secondary Differentials: ${secondaryResults.map((s) => `${s.name} (${Math.round(s.confidence ?? s.probability ?? 0)}%)`).join(", ")}` : ""}
@@ -429,6 +443,24 @@ ${
                   </p>
                 )}
               </div>
+
+              {forkDetails?.choice && forkDetails.choice !== "neutral" && forkDetails.activeOption && (
+                <div className="rounded-xl border border-primary/30 bg-primary/10 p-3 text-xs flex items-start gap-2.5">
+                  <Compass className="size-4 text-primary shrink-0 mt-0.5" />
+                  <div className="space-y-0.5">
+                    <div className="font-bold text-foreground flex items-center gap-1.5">
+                      <span>Clinical Tie-Breaker Active</span>
+                      <span className="text-[10px] px-1.5 py-0.5 rounded bg-primary/20 text-primary font-semibold uppercase">
+                        Recalibrated
+                      </span>
+                    </div>
+                    <p className="text-muted-foreground text-xs leading-relaxed">
+                      Patient confirmed hallmark presentation: <strong>&ldquo;{forkDetails.activeOption.title}&rdquo;</strong>.
+                      Favors <strong>{forkDetails.activeOption.vectorName}</strong>.
+                    </p>
+                  </div>
+                </div>
+              )}
 
               {/* Patient Exposure & Vitals Grid */}
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
@@ -904,6 +936,19 @@ ${
                 ranked by likelihood model
               </span>
             </h3>
+
+            {forkDetails?.choice && forkDetails.choice !== "neutral" && forkDetails.activeOption && (
+              <div className="rounded border border-primary/40 bg-primary/5 p-2.5 text-xs text-foreground space-y-1">
+                <div className="flex items-center gap-1.5 font-bold text-primary">
+                  <Compass className="size-3.5" />
+                  <span>Clinical Tie-Breaker Recalibration Active</span>
+                </div>
+                <p className="text-[11px] text-muted-foreground leading-relaxed">
+                  Patient confirmed hallmark presentation: <strong>&ldquo;{forkDetails.activeOption.title}&rdquo;</strong>.
+                  Differential ranking recalibrated in favor of <strong>{forkDetails.activeOption.vectorName}</strong>. {forkDetails.activeOption.clinicalSignificance}
+                </p>
+              </div>
+            )}
 
             {topResult && (
               <div className="rounded border border-border/80 p-3 bg-muted/10 space-y-2">
