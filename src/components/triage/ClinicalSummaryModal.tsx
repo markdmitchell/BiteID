@@ -184,7 +184,7 @@ Date/Time: ${nowDate || new Date().toLocaleString()}
 ${effectiveProfile === "infant_toddler" || effectiveProfile === "child" ? "- Pediatric Safety: ASPIRIN/PEPTO-BISMOL STRICTLY CONTRAINDICATED (Reye's syndrome risk). Dose weight-based oral analgesics via oral syringe. Antivenom is not weight-reduced." : ""}${effectiveProfile === "pregnant_nursing" ? "- Pregnancy Safety: DOXYCYCLINE & IVERMECTIN CONTRAINDICATED. Safe Lyme alternative: Amoxicillin. Continuous fetal monitoring required if pit viper envenomation." : ""}${effectiveProfile === "geriatric_immune" ? "- Geriatric Safety: DIPHENHYDRAMINE CONTRAINDICATED per Beers criteria (delirium & fall fractures). High secondary infection/cellulitis vulnerability." : ""}
 
 [A] ASSESSMENT / ALGORITHMIC DIFFERENTIAL
-- Top Differential Hypothesis: ${topResult?.name ?? "Unknown"} (${topResult?.scientificName ?? ""}) — Likelihood: ${Math.round(topResult?.confidence ?? topResult?.probability ?? 0)}%
+- Top Differential Hypothesis: ${topResult?.name ?? "Unknown"} (${topResult?.scientificName ?? ""}): Likelihood: ${Math.round(topResult?.confidence ?? topResult?.probability ?? 0)}%
 ${topResult?.associatedPathogens?.length ? `- Associated Pathogens: ${topResult.associatedPathogens.join(", ")}` : ""}
 ${forkDetails?.choice && forkDetails.choice !== "neutral" && forkDetails.activeOption ? `- Clinical Tie-Breaker Discriminator: Patient confirmed presentation matching "${forkDetails.activeOption.title}". Recalibrated model favors ${forkDetails.activeOption.vectorName} (${forkDetails.activeOption.clinicalSignificance}).` : ""}
 ${isErythemaMigrans ? "- CLINICAL ALERT: Strong visual & epidemiological concordance for ERYTHEMA MIGRANS (early Lyme disease). CDC guidelines advise clinical diagnosis & standard antibiotic evaluation without awaiting delayed serology." : ""}
@@ -616,7 +616,7 @@ ${
                 </span>
               </div>
               <p className="text-xs text-muted-foreground mt-0.5">
-                AI Vision & Epidemiological Screening Memo — Formulated for Clinician Review
+                AI Vision & Epidemiological Screening Memo: Formulated for Clinician Review
               </p>
             </div>
             <div className="text-right text-xs space-y-0.5">

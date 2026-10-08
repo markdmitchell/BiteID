@@ -13,12 +13,16 @@ import { PageHeader } from "@/components/navigation/PageHeader";
 export const Route = createFileRoute("/terms")({
   head: () => ({
     meta: [
-      { title: "Terms of Service — BiteID" },
+      { title: "Terms of Service | BiteID" },
       {
         name: "description",
         content:
           "Review BiteID's Terms of Service: non-diagnostic alpha prototype agreement, emergency redirection, and limitation of liability.",
       },
+      { property: "og:title", content: "Terms of Service | BiteID" },
+      { property: "og:description", content: "Review BiteID's Terms of Service: non-diagnostic alpha prototype agreement, emergency redirection, and limitation of liability." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
     ],
   }),
   component: TermsPage,

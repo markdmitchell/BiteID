@@ -308,7 +308,7 @@ function TriagePage() {
           >
             <AlertTriangle className="mt-0.5 size-5 shrink-0" />
             <p className="text-sm font-medium">
-              You reported an emergency symptom. Get urgent medical care now — do not rely on this
+              You reported an emergency symptom. Get urgent medical care now. Do not rely on this
               assessment.
             </p>
           </div>
@@ -669,7 +669,7 @@ function TriagePage() {
                             }
                           />
                           <span className="text-xs font-semibold text-destructive">
-                            Yes — Potential bat or wild mammal exposure (Immediate Emergency Rabies
+                            Yes: Potential bat or wild mammal exposure (Immediate Emergency Rabies
                             PEP required)
                           </span>
                         </label>
@@ -852,7 +852,7 @@ function TriagePage() {
 
         <div className="mt-8 border-t border-border pt-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <p className="text-xs leading-relaxed text-muted-foreground flex-1">
-            <span className="font-semibold text-foreground">Alpha version — for testing only.</span>{" "}
+            <span className="font-semibold text-foreground">Alpha version: for testing only.</span>{" "}
             BiteID is an unfinished prototype and is not a medical service. This tool provides
             general information only and is not a diagnosis. Always consult a qualified clinician
             about a bite, sting or changing skin lesion.

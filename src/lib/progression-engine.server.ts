@@ -192,7 +192,7 @@ export function evaluateProgressionRuleBased(intake: ProgressionIntake): Progres
       },
       clinicalAction: {
         urgency: "routine_home_care",
-        urgencyTitle: "Favorable Trajectory — Continue Supportive Home Care",
+        urgencyTitle: "Favorable Trajectory: Continue Supportive Home Care",
         recommendations: [
           "Continue gentle cleansing with mild soap and water.",
           "Apply cool compresses or topical hydrocortisone 1% / calamine for residual pruritus.",
@@ -233,7 +233,7 @@ export function evaluateProgressionRuleBased(intake: ProgressionIntake): Progres
       urgencyTitle:
         hasSeverePain || hasWarmth
           ? "Surveillance with Clinical Vigilance"
-          : "Stable — Monitor with Next Photo in 24 Hours",
+          : "Stable: Monitor with Next Photo in 24 Hours",
       recommendations: [
         "Mark the current perimeter with a pen to establish an accurate baseline for the next 24 hours.",
         "Take a follow-up photo in 24 hours under the same lighting conditions.",

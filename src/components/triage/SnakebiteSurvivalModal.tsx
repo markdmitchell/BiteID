@@ -455,7 +455,7 @@ export function SnakebiteSurvivalModal({ open, onOpenChange }: SnakebiteSurvival
                     <p className="mt-1 text-muted-foreground">
                       Decapitated snake heads have reflexive biting mechanisms that remain lethal
                       for over an hour after decapitation. Emergency doctors do not need the
-                      physical carcass—they identify venom syndromes clinically.
+                      physical carcass. They identify venom syndromes clinically.
                     </p>
                   </div>
                 </div>
