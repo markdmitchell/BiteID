@@ -17,7 +17,7 @@ export function TriageErrorFallback({ error, reset }: { error: unknown; reset: (
     <main className="flex min-h-[70vh] items-center justify-center bg-background px-4 py-12">
       <div role="alert" className="w-full max-w-md rounded-lg border border-border bg-card p-6 text-center shadow-sm">
         <span className="inline-block rounded-full border border-amber-500/40 bg-amber-500/10 px-2.5 py-0.5 text-xs font-medium text-amber-800 dark:text-amber-200">
-          BiteID Alpha — testing only
+          BiteID Alpha: testing only
         </span>
         <AlertTriangle className="mx-auto mt-4 size-8 text-muted-foreground" aria-hidden />
         <h1 ref={headingRef} tabIndex={-1} className="mt-3 text-xl font-semibold text-foreground outline-none">

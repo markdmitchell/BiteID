@@ -19,12 +19,16 @@ import { PageHeader } from "@/components/navigation/PageHeader";
 export const Route = createFileRoute("/about")({
   head: () => ({
     meta: [
-      { title: "About BiteID — Clinical Rationale & Mission" },
+      { title: "About BiteID | Clinical Rationale & Mission" },
       {
         name: "description",
         content:
           "Discover BiteID's clinical mission: evidence-based outdoor bite & sting triage, Fitzpatrick tone calibration, and zero-connectivity backcountry safety.",
       },
+      { property: "og:title", content: "About BiteID | Clinical Rationale & Mission" },
+      { property: "og:description", content: "Discover BiteID's clinical mission: evidence-based outdoor bite & sting triage, Fitzpatrick tone calibration, and zero-connectivity backcountry safety." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
     ],
   }),
   component: AboutPage,

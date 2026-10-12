@@ -93,7 +93,7 @@ export type EngineResponse = {
 };
 
 const DISCLAIMER =
-  "Alpha version — for testing only. BiteID is not a medical service and does not provide a diagnosis. Always consult a clinician.";
+  "Alpha version: for testing only. BiteID is not a medical service and does not provide a diagnosis. Always consult a clinician.";
 
 /** Intake environment values -> engine habitat keys. */
 const LOCATION_MAP: Record<string, string> = {
@@ -574,7 +574,7 @@ export async function analyseIntake(intake: EngineIntake): Promise<EngineRespons
     effectiveReading.pattern === "annular_target"
   ) {
     guidanceLines.push(
-      "An expanding ring-shaped rash in this region is treated as time-sensitive — have a clinician review it promptly.",
+      "An expanding ring-shaped rash in this region is treated as time-sensitive. Have a clinician review it promptly.",
     );
   }
 

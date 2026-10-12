@@ -734,7 +734,7 @@ export function RashExpansionTracker({
                         >
                           {entriesWithPhotos.map((e) => (
                             <option key={e.id} value={e.id}>
-                              {e.dayLabel} — {e.diameterMm} mm (
+                              {e.dayLabel}: {e.diameterMm} mm (
                               {new Date(e.date).toLocaleDateString()})
                             </option>
                           ))}
@@ -768,7 +768,7 @@ export function RashExpansionTracker({
                         >
                           {entriesWithPhotos.map((e) => (
                             <option key={e.id} value={e.id}>
-                              {e.dayLabel} — {e.diameterMm} mm (
+                              {e.dayLabel}: {e.diameterMm} mm (
                               {new Date(e.date).toLocaleDateString()})
                             </option>
                           ))}

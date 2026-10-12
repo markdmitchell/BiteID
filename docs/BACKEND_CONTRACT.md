@@ -1,4 +1,4 @@
-# BiteID — Analysis pipeline contract
+# BiteID: Analysis pipeline contract
 
 Analysis now runs **inside this app**. There is no external endpoint and no
 `VITE_API_URL`. The browser never sees prompts, scoring data, or API keys.
@@ -30,9 +30,9 @@ client  submitTriage(state)                    src/lib/triage.ts
 
 ## Server-side steps
 
-1. **Emergency gate** — any `symptoms` entry returns `emergencyResponse()`
+1. **Emergency gate**: any `symptoms` entry returns `emergencyResponse()`
    immediately: no model call, empty `results`, urgent-care guidance.
-2. **Vision pass** — one streamed Responses-API call with the lesion image and,
+2. **Vision pass**: one streamed Responses-API call with the lesion image and,
    when present, the arthropod image. It conducts a structured 3-part evaluation
    (entomology, Fitzpatrick-calibrated dermatology morphology, and differential
    mimicker screening). It returns JSON only:
@@ -40,7 +40,7 @@ client  submitTriage(state)                    src/lib/triage.ts
    `centralFeatures`, `primaryReaction`, `primarySensation`, `estimatedDiameter`,
    `mimickerCondition`, `mimickerConfidence`, `mimickerExplanation`, `lesionDescription`.
    Every enum value is clamped to the allowed list before use.
-3. **Ranking** — `evaluateRegionalLikelihood(context, morphology, bugTaxonomy)`: state
+3. **Ranking**: `evaluateRegionalLikelihood(context, morphology, bugTaxonomy)`: state
    endemicity, monthly activity, habitat, sensation, bug-taxonomy overrides,
    fine-grained morphology multipliers (including `twin_punctures`, `sterile_pustule`,
    `vesicle_bulla`, `estimatedDiameter`), targetoid-rash priors, and the hard Mid-Atlantic
@@ -80,7 +80,7 @@ client  submitTriage(state)                    src/lib/triage.ts
     "explanation": ""
   },
   "guidance": "Shown under \"What to do next\". Newlines preserved.",
-  "disclaimer": "Alpha version — for testing only…",
+  "disclaimer": "Alpha version: for testing only…",
   "isEmergencyRedirect": false,
   "culpritDetectedFromPhoto": true
 }
@@ -92,13 +92,13 @@ the general three-image skin-tone set. The reference lookup is display-only and 
 not alter ranking or diagnosis. `confidence`
 is a percentage (0–100). `src/lib/triage.ts` still tolerates the
 older aliases (`predictions`, `condition`/`label`, `probability`/`score`,
-`summary`, `advice`) and sorts by confidence descending — no other interpretation
+`summary`, `advice`) and sorts by confidence descending; no other interpretation
 happens in the client.
 
 ## Failure behaviour
 
-Nothing throws and no error banner exists. Any failure — missing
-`LOVABLE_API_KEY`, gateway error, unparsable model output, RPC failure — returns
+Nothing throws and no error banner exists. Any failure (missing
+`LOVABLE_API_KEY`, gateway error, unparsable model output, RPC failure) returns
 `unavailableResponse()` / `FALLBACK_RESPONSE`: empty `results` plus neutral
 guidance and the alpha disclaimer.
 

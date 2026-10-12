@@ -234,14 +234,14 @@ export type TriageResponse = {
 
 /**
  * Neutral placeholder shown when the analysis cannot be completed. Contains no
- * findings, scoring or interpretation — only generic safety guidance.
+ * findings, scoring or interpretation: only generic safety guidance.
  */
 export const FALLBACK_RESPONSE: TriageResponse = {
   results: [],
   guidance:
     "The assessment could not be completed for this intake. Please try again in a moment, and speak with a clinician if anything about the area is worsening.",
   disclaimer:
-    "Alpha version — for testing only. BiteID is not a medical service and does not provide a diagnosis.",
+    "Alpha version: for testing only. BiteID is not a medical service and does not provide a diagnosis.",
 };
 
 import { compressImageFile } from "./image-compressor";
@@ -273,7 +273,7 @@ export async function submitTriage(state: TriageFormState): Promise<TriageRespon
         isOfflineQueued: true,
         guidance:
           "You are currently in offline backcountry mode with zero cellular or Wi-Fi connectivity. Your intake, answers, and lesion photos have been securely preserved on your device.\n\nImmediate Field Action: Open the Backcountry Field Kit below for species-specific first aid, venomous snake/scorpion emergency protocols, and CDC tick extraction techniques. When your device reconnects to cell service, BiteID will notify you to submit for full AI analysis.",
-        disclaimer: "BiteID Offline Field Kit — Backcountry emergency guidance.",
+        disclaimer: "BiteID Offline Field Kit: Backcountry emergency guidance.",
       };
     }
 
@@ -318,7 +318,7 @@ export async function submitTriage(state: TriageFormState): Promise<TriageRespon
           isOfflineQueued: true,
           guidance:
             "Cellular connectivity dropped during submission. Your intake, photos, and answers have been safely preserved in your device's backcountry queue.\n\nUse the Backcountry Field Kit below for immediate emergency first-aid protocols, envenomation guidelines, and species identification.",
-          disclaimer: "BiteID Offline Field Kit — Backcountry emergency guidance.",
+          disclaimer: "BiteID Offline Field Kit: Backcountry emergency guidance.",
         };
       }
     } catch {

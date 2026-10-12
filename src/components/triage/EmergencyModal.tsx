@@ -150,7 +150,7 @@ export function EmergencyModal({
             onClick={onDismiss}
             className="mt-6 w-full bg-destructive-foreground/20 text-destructive-foreground border border-destructive-foreground/40 hover:bg-destructive-foreground/30 font-medium"
           >
-            I understand these life-critical instructions — close alert
+            Close alert: I understand these life-critical instructions
           </Button>
         </div>
       </DialogContent>

@@ -1,4 +1,4 @@
-# BiteID — Architecture
+# BiteID: Architecture
 
 BiteID is an **alpha** app for bite / sting / rash intake. The browser stays a *dumb
 client*: it collects photos and answers, hands them to one server function, and renders
@@ -8,7 +8,7 @@ what comes back. All medical logic, prompts, priors, and secrets live server-sid
 
 ## Stack
 
-- TanStack Start v1 (React 19, file-based routing) on Vite 7 — **not** Next.js.
+- TanStack Start v1 (React 19, file-based routing) on Vite 7: **not** Next.js.
 - Tailwind CSS v4 via `src/styles.css` (`@theme` tokens, no `tailwind.config.js`).
 - shadcn/Radix primitives in `src/components/ui`.
 - lucide-react icons.
@@ -22,7 +22,7 @@ what comes back. All medical logic, prompts, priors, and secrets live server-sid
 | `src/routes/index.tsx` | The whole app: 3-step wizard + results dashboard. Owns all state. |
 | `src/routes/__root.tsx` | App shell, font `<link>` tags, base metadata. |
 | `src/lib/triage.ts` | Options, state reducer, `submitTriage()` (files → data URLs → server fn), response helpers. |
-| `src/lib/triage.functions.ts` | `analyseIntakeFn` — the only client→server entry point. |
+| `src/lib/triage.functions.ts` | `analyseIntakeFn`: the only client→server entry point. |
 | `src/lib/triage-engine.server.ts` | Emergency gate, vision pass, ranking, guidance. Server only. |
 | `src/lib/geo-pest.server.ts` | Vector database + `evaluateRegionalLikelihood()` (geo/season/habitat priors). |
 | `src/lib/ai-gateway.server.ts` | Lovable AI Gateway provider (Responses API, run-id passthrough). |
@@ -41,7 +41,7 @@ what comes back. All medical logic, prompts, priors, and secrets live server-sid
 ## State
 
 All wizard state lives in one reducer (`triageReducer` in `src/lib/triage.ts`) held by
-`TriagePage` via `useReducer`. Step components are presentational — they receive values
+`TriagePage` via `useReducer`. Step components are presentational; they receive values
 and a change callback, never their own copy of the data.
 
 Local `useState` in `TriagePage` covers UI-only concerns: `step`, `modalOpen`,

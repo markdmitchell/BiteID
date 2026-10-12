@@ -17,12 +17,16 @@ import { PageHeader } from "@/components/navigation/PageHeader";
 export const Route = createFileRoute("/contact")({
   head: () => ({
     meta: [
-      { title: "Contact & Feedback — BiteID" },
+      { title: "Contact & Feedback | BiteID" },
       {
         name: "description",
         content:
           "Submit feedback, report a clinical inaccuracy, or contact the BiteID team for research and partnerships.",
       },
+      { property: "og:title", content: "Contact & Feedback | BiteID" },
+      { property: "og:description", content: "Submit feedback, report a clinical inaccuracy, or contact the BiteID team for research and partnerships." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
     ],
   }),
   component: ContactPage,
