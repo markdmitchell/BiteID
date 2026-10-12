@@ -4,6 +4,38 @@ This document provides a chronological record of clinical decision support (CDS)
 
 ---
 
+## [v1.3.0]: October 2026
+
+### **Dynamic Clinical Tie-Breaker, Pediatric Dosing Caps & 100% Vector Parity**
+
+#### 1. Dynamic "Fork-in-the-Road" Clinical Tie-Breaker
+- **Interactive Pairwise Clinical Discriminators**: Introduced targeted clinical tie-breakers for close lookalikes (Bed Bug vs. Flea, Brown Recluse vs. MRSA cellulitis, Lyme Tick vs. Mosquito, Chigger vs. Scabies, Fire Ant vs. Wasp, etc.) when top suspects have overlapping confidence.
+- **Real-Time Bayesian Recalibration**: Selecting a clinically favored option dynamically recalibrates differential probabilities, promoting the selected culprit to rank 0, and instantly updates first-aid directives, warning signs, and skin-tone references with 1-click "Reset to AI Baseline".
+- **Physician SBAR & ER Triage Integration**: Patient-confirmed tie-breaker rationale is automatically integrated into the Clinical Handoff Memo (SBAR memo, ER rapid triage presentation, and printable summary) to provide attending clinicians with full exposure history context.
+
+#### 2. Pediatric Dosing Safety Hardening
+- **Single-Dose Ceiling Caps**: Enforced strict clinical single-dose ceiling caps to eliminate supratherapeutic overdose risk for older or heavier children:
+  - Acetaminophen capped at 650 mg per dose.
+  - Ibuprofen capped at 400 mg per dose.
+  - Diphenhydramine capped at 50 mg per dose.
+- **Immutable Safety Locks Maintained**: Preserved strict renal safety block for Ibuprofen in infants `< 6 months` and respiratory depression lock for Antihistamines in children `< 2 years`.
+
+#### 3. 100% Vector Browseability in "I Know What Bit Me"
+- Expanded `KnownCulpritModal` to achieve 100% browseable coverage across all 39 vectors in the database, categorized across 9 hazard domains.
+- Added comprehensive evidence-based folklore myth-busters and first-aid steps for all 39 species.
+
+#### 4. Backcountry Offline Field Kit & Data Hygiene
+- **Dynamic 39-Species Atlas**: Updated offline field kit and search queries to dynamically reflect the active 39-vector database.
+- **Indoor Pest Filtering**: Added bird/rodent mites, lice, and indoor brown dog ticks to backcountry indoor habitat filters.
+- **Tone Reference Pre-Caching**: Bundled Fitzpatrick tone reference images and core app icons into background service-worker cache warming for zero-connectivity backcountry use.
+- **Health Data Hygiene & Sanitization**: Unified rash journal storage keys (`biteid_rash_journal_record_v2`) and updated auto-retention purge to clean up records older than 30 days while accurately reporting stored entries in the device privacy sanitization modal.
+
+#### 5. Outdoor High-Contrast Mode & Comprehensive Testing
+- Restored an unobtrusive High-Contrast Outdoor Glare mode toggle in the footer actions bar for clear visibility in direct sunlight.
+- Expanded automated test suite (`scripts/test-clinical-logic.mjs`) to verify diagnostic integrity, reducer invariants, dosing caps, and storage hygiene across **809 total passing assertions**.
+
+---
+
 ## [v1.2.0]: September 2026
 
 ### **Ethical Library Expansion & 100% Multi-Tone Verification**
