@@ -8,6 +8,6 @@
 
 ## Sage Lab readability review
 
-- [ ] Review intake steps and results with the current palette
-- [ ] Correct low-contrast text and control states without changing medical logic
-- [ ] Verify the assessment flow and updated appearance
+- [x] Review intake steps and results with the current palette
+- [x] Correct low-contrast text and control states without changing medical logic
+- [x] Verify the assessment flow and updated appearance
