@@ -248,7 +248,7 @@ function TriagePage() {
       )}
     >
       <header className="border-b border-border bg-card/90 backdrop-blur">
-        <div className="mx-auto flex max-w-3xl items-center justify-between gap-3 px-5 py-3.5">
+        <div className="mx-auto flex max-w-3xl flex-wrap items-center justify-between gap-3 px-5 py-3.5">
           <div className="flex min-w-0 items-center gap-3">
             <Link
               to="/"
@@ -269,14 +269,14 @@ function TriagePage() {
               </div>
             </Link>
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex w-full items-center gap-2 min-[480px]:w-auto">
             <Button
               type="button"
               variant="outline"
               size="sm"
               aria-label="Open snakebite emergency guidance"
               onClick={() => setSnakebiteOpen(true)}
-              className="flex items-center gap-1.5 border-destructive/40 text-xs font-semibold text-destructive hover:bg-destructive/10"
+              className="flex flex-1 items-center gap-1.5 border-destructive/40 text-xs font-semibold text-destructive hover:bg-destructive/10 min-[480px]:flex-none"
             >
               <ShieldAlert className="size-3.5 text-destructive" />
               <span>Snakebite SOS</span>
@@ -287,7 +287,7 @@ function TriagePage() {
               size="sm"
               aria-label="Open field kit"
               onClick={() => setFieldKitOpen(true)}
-              className="flex items-center gap-1.5 border-primary/30 text-xs font-semibold text-primary hover:bg-primary/10"
+              className="flex flex-1 items-center gap-1.5 border-primary/30 text-xs font-semibold text-primary hover:bg-primary/10 min-[480px]:flex-none"
             >
               <Compass className="size-3.5 text-primary" />
               <span>Field Kit</span>
@@ -1156,7 +1156,7 @@ function ResultsDashboard({
             morphology.
           </p>
         </div>
-        <div className="grid grid-cols-2 gap-2 sm:flex sm:flex-wrap sm:justify-end">
+        <div className="grid grid-cols-2 gap-2 sm:flex sm:flex-wrap sm:justify-end [&>button]:h-auto [&>button]:min-h-11 [&>button]:min-w-0 [&>button]:whitespace-normal [&>button]:py-2 [&>button]:text-center [&>button_svg]:shrink-0">
           {onOpenKnownCulprit && (
             <Button
               variant="outline"
