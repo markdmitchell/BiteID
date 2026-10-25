@@ -17,3 +17,5 @@ Read these before changing app code:
 - [docs/BACKEND_CONTRACT.md](docs/BACKEND_CONTRACT.md): the in-app analysis pipeline: server-function input, vision + geo ranking steps, and response shape.
 
 Framework note: this is TanStack Start + Vite, not Next.js. Client config comes from `import.meta.env.VITE_*`; server secrets from `process.env` inside server functions.
+
+Theme rule: keep the document in light mode and scope outdoor contrast to semantic token overrides on the intake wrapper, so light surfaces never inherit dark-mode foregrounds.

@@ -86,7 +86,7 @@
   --caution: oklch(0.62 0.14 70);
   --caution-foreground: oklch(0.42 0.1 65);
   --border: #C9DAD2;
-  --input: #BFD2C9;
+  --input: oklch(0.53 0.035 160);
   --ring: #17695A;
   --chart-1: #17695A;
   --chart-2: oklch(0.6 0.1 185);
@@ -102,6 +102,30 @@
   --sidebar-border: #C9DAD2;
   --sidebar-ring: #17695A;
   color-scheme: light;
+}
+
+/* Outdoor mode overrides the same roles so cards and page text remain paired. */
+.outdoor-contrast {
+  --background: oklch(0.13 0.01 155);
+  --foreground: oklch(0.97 0.035 90);
+  --card: oklch(0.19 0.015 155);
+  --card-foreground: var(--foreground);
+  --primary: oklch(0.87 0.15 90);
+  --primary-foreground: oklch(0.16 0.015 155);
+  --secondary: oklch(0.28 0.02 155);
+  --secondary-foreground: var(--foreground);
+  --muted: oklch(0.25 0.015 155);
+  --muted-foreground: oklch(0.87 0.025 90);
+  --accent: oklch(0.3 0.025 155);
+  --accent-foreground: var(--foreground);
+  --border: oklch(0.57 0.025 155);
+  --input: oklch(0.68 0.025 155);
+  --ring: var(--primary);
+  --caution: oklch(0.8 0.14 75);
+  --caution-foreground: oklch(0.9 0.1 85);
+  --destructive: oklch(0.71 0.18 25);
+  --destructive-foreground: oklch(0.13 0.01 25);
+  color-scheme: dark;
 }
 
 @layer base {
