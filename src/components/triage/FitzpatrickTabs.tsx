@@ -8,19 +8,19 @@ const STANDARD_TONES = [
   {
     value: "i-ii",
     label: "Types I–II",
-    swatch: "#f2d3c2",
+    swatch: "bg-skin-fair",
     note: "Very fair to fair skin. Reactions usually read as bright pink or red.",
   },
   {
     value: "iii-iv",
     label: "Types III–IV",
-    swatch: "#c99a70",
+    swatch: "bg-skin-medium",
     note: "Medium to olive skin. Redness can look tan, brown or subtly dusky.",
   },
   {
     value: "v-vi",
     label: "Types V–VI",
-    swatch: "#6b4030",
+    swatch: "bg-skin-deep",
     note: "Deep brown to dark skin. Reactions often appear violet, grey or darker than the surrounding skin.",
   },
 ];
@@ -29,19 +29,19 @@ const ERYTHEMA_MIGRANS_TONES = [
   {
     value: "i-ii",
     label: "Types I–II",
-    swatch: "#f2d3c2",
+    swatch: "bg-skin-fair",
     note: "Fair skin: Classic bright red circular plaque with distinct central clearing (bullseye). Readily evident.",
   },
   {
     value: "iii-iv",
     label: "Types III–IV",
-    swatch: "#c99a70",
+    swatch: "bg-skin-medium",
     note: "Medium to olive skin: Expanding dusky red, tan, or brownish ring. Central clearing may be less distinct or slightly shaded.",
   },
   {
     value: "v-vi",
     label: "Types V–VI",
-    swatch: "#6b4030",
+    swatch: "bg-skin-deep",
     note: "Dark skin: Expanding slate-gray, violaceous (purple), or dark brown ring. Often lacks bright redness and can be mistaken for hyperpigmentation, bruising, or ringworm. Palpation often reveals warmth or a subtly indurated border.",
   },
 ];
@@ -161,7 +161,7 @@ export function FitzpatrickTabs({
                   <span className="text-xs leading-tight">{stage.label}</span>
                   <span
                     className={cn(
-                      "text-[10px] opacity-80",
+                      "text-xs",
                       isSelected ? "text-primary-foreground" : "text-muted-foreground",
                     )}
                   >
@@ -182,12 +182,11 @@ export function FitzpatrickTabs({
       )}
 
       <Tabs defaultValue="i-ii" className="mt-4">
-        <TabsList className="w-full">
+        <TabsList className="h-11 w-full">
           {tones.map((tone) => (
-            <TabsTrigger key={tone.value} value={tone.value} className="flex-1 gap-2">
+            <TabsTrigger key={tone.value} value={tone.value} className="min-h-9 min-w-0 flex-1 gap-1 px-1 sm:gap-2 sm:px-3 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
               <span
-                className="size-3 rounded-full ring-1 ring-black/10"
-                style={{ backgroundColor: tone.swatch }}
+                className={cn("size-3 shrink-0 rounded-full ring-1 ring-border", tone.swatch)}
                 aria-hidden
               />
               <span className="text-xs sm:text-sm">{tone.label}</span>

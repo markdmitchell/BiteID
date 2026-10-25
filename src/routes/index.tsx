@@ -243,12 +243,12 @@ function TriagePage() {
       className={cn(
         "min-h-screen pb-20 font-sans transition-colors duration-200",
         highContrastMode
-          ? "bg-black text-amber-300 contrast-125 selection:bg-amber-400 selection:text-black"
+          ? "outdoor-contrast dark bg-background text-foreground selection:bg-primary selection:text-primary-foreground"
           : "bg-background text-foreground",
       )}
     >
       <header className="border-b border-border bg-card/90 backdrop-blur">
-        <div className="mx-auto flex max-w-3xl items-center justify-between gap-3 px-5 py-3.5">
+        <div className="mx-auto flex max-w-3xl flex-wrap items-center justify-between gap-3 px-5 py-3.5">
           <div className="flex min-w-0 items-center gap-3">
             <Link
               to="/"
@@ -269,14 +269,14 @@ function TriagePage() {
               </div>
             </Link>
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex w-full items-center gap-2 min-[480px]:w-auto">
             <Button
               type="button"
               variant="outline"
               size="sm"
               aria-label="Open snakebite emergency guidance"
               onClick={() => setSnakebiteOpen(true)}
-              className="flex items-center gap-1.5 border-destructive/40 text-xs font-semibold text-destructive hover:bg-destructive/10"
+              className="flex flex-1 items-center gap-1.5 border-destructive/40 text-xs font-semibold text-destructive hover:bg-destructive/10 min-[480px]:flex-none"
             >
               <ShieldAlert className="size-3.5 text-destructive" />
               <span>Snakebite SOS</span>
@@ -287,7 +287,7 @@ function TriagePage() {
               size="sm"
               aria-label="Open field kit"
               onClick={() => setFieldKitOpen(true)}
-              className="flex items-center gap-1.5 border-primary/30 text-xs font-semibold text-primary hover:bg-primary/10"
+              className="flex flex-1 items-center gap-1.5 border-primary/30 text-xs font-semibold text-primary hover:bg-primary/10 min-[480px]:flex-none"
             >
               <Compass className="size-3.5 text-primary" />
               <span>Field Kit</span>
@@ -866,7 +866,7 @@ function TriagePage() {
               className={cn(
                 "text-xs flex items-center gap-1.5 transition-colors",
                 highContrastMode
-                  ? "text-amber-400 font-bold hover:text-amber-300"
+                  ? "text-primary font-bold hover:text-foreground"
                   : "text-muted-foreground hover:text-foreground",
               )}
               aria-label={
@@ -875,7 +875,7 @@ function TriagePage() {
                   : "Switch to high-contrast outdoor mode"
               }
             >
-              <Sun className="size-3.5 text-amber-500" />
+              <Sun className="size-3.5 text-caution-foreground" />
               <span>{highContrastMode ? "Standard View" : "Outdoor High-Contrast"}</span>
             </Button>
             <Button
@@ -1156,7 +1156,7 @@ function ResultsDashboard({
             morphology.
           </p>
         </div>
-        <div className="grid grid-cols-2 gap-2 sm:flex sm:flex-wrap sm:justify-end">
+        <div className="grid grid-cols-2 gap-2 sm:flex sm:flex-wrap sm:justify-end [&>button]:h-auto [&>button]:min-h-11 [&>button]:min-w-0 [&>button]:whitespace-normal [&>button]:py-2 [&>button]:text-center [&>button_svg]:shrink-0">
           {onOpenKnownCulprit && (
             <Button
               variant="outline"
@@ -1233,7 +1233,7 @@ function ResultsDashboard({
             )}
             <a
               href="tel:18002221222"
-              className="inline-flex items-center gap-1.5 rounded-full border border-emerald-500/30 bg-emerald-500/10 px-3 py-1 text-xs font-semibold text-emerald-700 dark:text-emerald-300 hover:bg-emerald-500/20"
+              className="inline-flex items-center gap-1.5 rounded-full border border-primary/30 bg-primary/10 px-3 py-1 text-xs font-semibold text-primary hover:bg-primary/20"
             >
               <PhoneCall className="size-3" />
               <span>Poison Help: 1-800-222-1222</span>
@@ -1435,9 +1435,9 @@ function ResultsDashboard({
               <div className="rounded-xl border-2 border-primary/30 bg-primary/5 p-4 sm:p-5 shadow-xs space-y-3">
                 <div className="flex items-center justify-between border-b border-primary/20 pb-2">
                   <div className="flex items-center gap-2">
-                    {isPed && <Baby className="size-4 text-rose-600 dark:text-rose-400" />}
-                    {isPreg && <Heart className="size-4 text-purple-600 dark:text-purple-400" />}
-                    {isGeri && <ShieldAlert className="size-4 text-blue-600 dark:text-blue-400" />}
+                    {isPed && <Baby className="size-4 text-primary" />}
+                    {isPreg && <Heart className="size-4 text-primary" />}
+                    {isGeri && <ShieldAlert className="size-4 text-primary" />}
                     <h3 className="text-xs font-bold uppercase tracking-wider text-foreground">
                       Personalized Safety Directives for{" "}
                       {PATIENT_PERSONAS.find((p) => p.key === activeProfile)?.label}
@@ -1460,7 +1460,7 @@ function ResultsDashboard({
                       </div>
                     )}
                     {guidance.pediatric.atypicalPresentation && (
-                      <div className="rounded-lg border border-amber-500/30 bg-amber-500/10 p-3 text-amber-900 dark:text-amber-200">
+                      <div className="rounded-lg border border-caution/30 bg-caution/10 p-3 text-caution-foreground">
                         <span className="font-bold flex items-center gap-1.5 mb-1">
                           <Sparkles className="size-4 shrink-0" />
                           &quot;DO NOT MISS&quot; ATYPICAL PRESENTATION:
@@ -1507,7 +1507,7 @@ function ResultsDashboard({
                         </div>
                       )}
                     {guidance.pregnancy.safeAlternatives && (
-                      <div className="rounded-lg border border-emerald-500/30 bg-emerald-500/10 p-3 text-emerald-900 dark:text-emerald-200">
+                      <div className="rounded-lg border border-primary/30 bg-primary/10 p-3 text-foreground">
                         <span className="font-bold flex items-center gap-1.5 mb-1">
                           <CheckCircle2 className="size-4 shrink-0" />
                           Safe First-Line Alternatives:
@@ -1517,7 +1517,7 @@ function ResultsDashboard({
                     )}
                     {guidance.pregnancy.fetalRisks && (
                       <div className="rounded-lg border border-border bg-card p-3 text-foreground">
-                        <span className="font-bold flex items-center gap-1.5 text-purple-600 mb-1">
+                        <span className="font-bold flex items-center gap-1.5 text-primary mb-1">
                           <Heart className="size-4 shrink-0" />
                           Maternal-Fetal Considerations:
                         </span>
@@ -1530,7 +1530,7 @@ function ResultsDashboard({
                 {isGeri && guidance.geriatric && (
                   <div className="space-y-2.5 text-xs">
                     {guidance.geriatric.beersCriteriaWarning && (
-                      <div className="rounded-lg border border-amber-500/40 bg-amber-500/10 p-3 text-amber-900 dark:text-amber-200">
+                      <div className="rounded-lg border border-caution/40 bg-caution/10 p-3 text-caution-foreground">
                         <span className="font-bold flex items-center gap-1.5 mb-1">
                           <Pill className="size-4 shrink-0" />
                           BEERS CRITERIA MEDICATION PRECAUTION:
