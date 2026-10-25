@@ -1,6 +1,6 @@
 import { describe, expect, test } from "bun:test";
 import { readFileSync } from "node:fs";
-import { progressionInputSchema } from "./progression-input";
+import { progressionInputSchema } from "../src/lib/progression-input";
 
 const valid = {
   baselineImage: "data:image/jpeg;base64,YQ==",
@@ -39,7 +39,7 @@ describe("progression request validation", () => {
 });
 
 describe("model instruction boundary", () => {
-  const source = readFileSync(new URL("./progression-engine.server.ts", import.meta.url), "utf8");
+  const source = readFileSync(new URL("../src/lib/progression-engine.server.ts", import.meta.url), "utf8");
   test("both providers use static server-owned instructions", () => {
     const instructions = source.match(/const instructions = `([\s\S]*?)`;/)?.[1];
     expect(instructions).toBeDefined();
