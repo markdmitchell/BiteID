@@ -92,7 +92,7 @@ export function ClinicalDiscriminatorCard({
                   Dynamic Fork in the Road: Break the Differential Tie
                 </h3>
                 {fork.isAmbiguous ? (
-                  <span className="rounded-full bg-amber-500/15 border border-amber-500/30 px-2 py-0.5 text-[10px] font-bold text-amber-700 dark:text-amber-300">
+                  <span className="rounded-full bg-caution/15 border border-caution/30 px-2 py-0.5 text-[10px] font-bold text-caution-foreground">
                     Close Match ({fork.probabilityDelta}% delta)
                   </span>
                 ) : (
@@ -134,11 +134,11 @@ export function ClinicalDiscriminatorCard({
 
         {/* Active Fork Alert Feedback */}
         {isForkActive && activeOption && (
-          <div className="rounded-xl border border-emerald-500/40 bg-emerald-500/10 p-3 text-xs flex items-center justify-between gap-3 animate-in fade-in-50 duration-200">
+          <div className="rounded-xl border border-primary/40 bg-primary/10 p-3 text-xs flex items-center justify-between gap-3 animate-in fade-in-50 duration-200">
             <div className="flex items-center gap-2">
-              <CheckCircle2 className="size-4 text-emerald-600 dark:text-emerald-400 shrink-0" />
+              <CheckCircle2 className="size-4 text-primary shrink-0" />
               <p className="text-foreground leading-tight">
-                <strong className="text-emerald-700 dark:text-emerald-300">
+                <strong className="text-primary">
                   Tie-Breaker Active:
                 </strong>{" "}
                 Differential recalibrated to favor{" "}
@@ -162,7 +162,7 @@ export function ClinicalDiscriminatorCard({
             className={cn(
               "rounded-xl border-2 p-4 text-xs transition-all space-y-3 cursor-pointer flex flex-col justify-between",
               forkChoice === "primary"
-                ? "border-emerald-500 bg-emerald-500/10 ring-2 ring-emerald-500/20 shadow-xs"
+                ? "border-primary bg-primary/10 ring-2 ring-primary/20 shadow-xs"
                 : "border-border/80 bg-card hover:border-primary/50 hover:bg-muted/30",
             )}
             onClick={() => handleSelectFork("primary")}
@@ -181,7 +181,7 @@ export function ClinicalDiscriminatorCard({
                   Option A • Correlates with {fork.primaryOption.vectorName}
                 </span>
                 {forkChoice === "primary" ? (
-                  <span className="inline-flex items-center gap-1 rounded-full bg-emerald-500 text-white px-2 py-0.5 text-[10px] font-bold">
+                  <span className="inline-flex items-center gap-1 rounded-full bg-primary text-primary-foreground px-2 py-0.5 text-[10px] font-bold">
                     <Check className="size-3" /> Selected
                   </span>
                 ) : (
@@ -211,7 +211,7 @@ export function ClinicalDiscriminatorCard({
                 variant={forkChoice === "primary" ? "default" : "outline"}
                 className={cn(
                   "w-full text-xs font-semibold h-8",
-                  forkChoice === "primary" && "bg-emerald-600 hover:bg-emerald-700 text-white border-transparent",
+                  forkChoice === "primary" && "bg-primary hover:bg-primary/90 text-primary-foreground border-transparent",
                 )}
                 onClick={(e) => {
                   e.stopPropagation();
@@ -235,7 +235,7 @@ export function ClinicalDiscriminatorCard({
             className={cn(
               "rounded-xl border-2 p-4 text-xs transition-all space-y-3 cursor-pointer flex flex-col justify-between",
               forkChoice === "secondary"
-                ? "border-emerald-500 bg-emerald-500/10 ring-2 ring-emerald-500/20 shadow-xs"
+                ? "border-primary bg-primary/10 ring-2 ring-primary/20 shadow-xs"
                 : "border-border/80 bg-card hover:border-primary/50 hover:bg-muted/30",
             )}
             onClick={() => handleSelectFork("secondary")}
@@ -254,7 +254,7 @@ export function ClinicalDiscriminatorCard({
                   Option B • Correlates with {fork.secondaryOption.vectorName}
                 </span>
                 {forkChoice === "secondary" ? (
-                  <span className="inline-flex items-center gap-1 rounded-full bg-emerald-500 text-white px-2 py-0.5 text-[10px] font-bold">
+                  <span className="inline-flex items-center gap-1 rounded-full bg-primary text-primary-foreground px-2 py-0.5 text-[10px] font-bold">
                     <Check className="size-3" /> Selected
                   </span>
                 ) : (
@@ -284,7 +284,7 @@ export function ClinicalDiscriminatorCard({
                 variant={forkChoice === "secondary" ? "default" : "outline"}
                 className={cn(
                   "w-full text-xs font-semibold h-8",
-                  forkChoice === "secondary" && "bg-emerald-600 hover:bg-emerald-700 text-white border-transparent",
+                  forkChoice === "secondary" && "bg-primary hover:bg-primary/90 text-primary-foreground border-transparent",
                 )}
                 onClick={(e) => {
                   e.stopPropagation();
@@ -331,11 +331,11 @@ export function ClinicalDiscriminatorCard({
         <div className="space-y-4 pt-1 border-t border-border/60 animate-in fade-in-50 duration-200">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5">
             {/* Column 1: Primary Suspect */}
-            <div className="rounded-xl border border-emerald-500/30 bg-emerald-500/5 p-3.5 space-y-2.5 text-xs">
-              <div className="flex items-center justify-between border-b border-emerald-500/20 pb-2">
+            <div className="rounded-xl border border-primary/30 bg-primary/5 p-3.5 space-y-2.5 text-xs">
+              <div className="flex items-center justify-between border-b border-primary/20 pb-2">
                 <div>
                   <div className="flex items-center gap-1.5">
-                    <CheckCircle2 className="size-3.5 text-emerald-600 dark:text-emerald-400 shrink-0" />
+                    <CheckCircle2 className="size-3.5 text-primary shrink-0" />
                     <span className="font-bold text-foreground text-xs">
                       #{comparison.primarySuspect.name}
                     </span>
@@ -346,18 +346,18 @@ export function ClinicalDiscriminatorCard({
                     </span>
                   )}
                 </div>
-                <span className="rounded-full bg-emerald-500/15 px-2 py-0.5 text-[10px] font-bold text-emerald-700 dark:text-emerald-300">
+                <span className="rounded-full bg-primary/15 px-2 py-0.5 text-[10px] font-bold text-primary">
                   {comparison.primarySuspect.probability}% Likelihood
                 </span>
               </div>
               <div>
-                <p className="text-[10px] font-bold text-emerald-800 dark:text-emerald-300 uppercase tracking-wide mb-1.5">
+                <p className="text-[10px] font-bold text-primary uppercase tracking-wide mb-1.5">
                   Rule-In Clinical Evidence:
                 </p>
                 <ul className="space-y-1.5 text-muted-foreground text-[11px]">
                   {comparison.primarySuspect.ruleInRationale.map((reason, idx) => (
                     <li key={idx} className="flex items-start gap-1.5">
-                      <span className="size-1 rounded-full bg-emerald-500 shrink-0 mt-1.5" />
+                      <span className="size-1 rounded-full bg-primary shrink-0 mt-1.5" />
                       <span>{reason}</span>
                     </li>
                   ))}
@@ -403,8 +403,8 @@ export function ClinicalDiscriminatorCard({
 
           {/* Mimicker Alert if present */}
           {comparison.mimickerRuleOut && (
-            <div className="rounded-xl border border-amber-500/30 bg-amber-500/10 p-3.5 text-xs space-y-1">
-              <div className="flex items-center gap-1.5 font-bold text-amber-800 dark:text-amber-300 text-[11px]">
+            <div className="rounded-xl border border-caution/30 bg-caution/10 p-3.5 text-xs space-y-1">
+              <div className="flex items-center gap-1.5 font-bold text-caution-foreground text-[11px]">
                 <AlertTriangle className="size-3.5 shrink-0" />
                 <span>Non-Vector Mimic Screened: {comparison.mimickerRuleOut.conditionName}</span>
               </div>
