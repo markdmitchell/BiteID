@@ -14,5 +14,5 @@
 
 ## Approved SEO foundations fix
 
-- [ ] Add a router-derived sitemap for public pages and reference it in crawler settings
-- [ ] Verify sitemap responses and record the completed SEO correction
+- [x] Add a router-derived sitemap for public pages and reference it in crawler settings
+- [x] Verify sitemap responses and record the completed SEO correction
