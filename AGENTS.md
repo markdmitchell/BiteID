@@ -21,3 +21,5 @@ Framework note: this is TanStack Start + Vite, not Next.js. Client config comes 
 Theme rule: keep the document in light mode and scope outdoor contrast to semantic token overrides on the intake wrapper, so light surfaces never inherit dark-mode foregrounds.
 
 Progression safety rule: validate progression requests with the shared schema and keep model system instructions entirely server-owned; caller observations belong only in serialized user-message data to prevent instruction injection.
+
+Progression regression tests run through `test:progression` and the default test command; mock both vision providers to verify request isolation and emergency overrides without network calls or real credentials.
