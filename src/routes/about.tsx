@@ -17,6 +17,7 @@ import { Button } from "@/components/ui/button";
 import { PageHeader } from "@/components/navigation/PageHeader";
 
 export const Route = createFileRoute("/about")({
+  staticData: { sitemap: true },
   head: () => ({
     meta: [
       { title: "About BiteID | Clinical Rationale & Mission" },

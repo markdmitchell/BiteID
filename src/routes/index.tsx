@@ -96,6 +96,7 @@ import { US_STATE_OPTIONS } from "@/lib/us-states";
 import { TriageErrorFallback } from "@/components/triage/TriageErrorFallback";
 
 export const Route = createFileRoute("/")({
+  staticData: { sitemap: true },
   head: () => ({
     meta: [
       { title: "BiteID - Identify Bites, Stings, and Skin Reactions" },

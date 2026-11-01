@@ -11,6 +11,7 @@ import {
 import { PageHeader } from "@/components/navigation/PageHeader";
 
 export const Route = createFileRoute("/terms")({
+  staticData: { sitemap: true },
   head: () => ({
     meta: [
       { title: "Terms of Service | BiteID" },

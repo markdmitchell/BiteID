@@ -13,6 +13,7 @@ import {
 import { PageHeader } from "@/components/navigation/PageHeader";
 
 export const Route = createFileRoute("/privacy")({
+  staticData: { sitemap: true },
   head: () => ({
     meta: [
       { title: "Privacy Policy | BiteID" },
