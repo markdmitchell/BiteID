@@ -63,7 +63,13 @@ describe("progression request validation", () => {
 });
 
 describe("malformed, incomplete, and boundary observations", () => {
-  test.each([null, undefined, [], "observations", 42])("rejects non-object input %j", (input) => {
+  test.each([
+    { label: "null", input: null },
+    { label: "undefined", input: undefined },
+    { label: "array", input: [] },
+    { label: "string", input: "observations" },
+    { label: "number", input: 42 },
+  ])("rejects non-object input $label", ({ input }) => {
     expect(progressionInputSchema.safeParse(input).success).toBe(false);
   });
 
