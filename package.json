@@ -11,7 +11,8 @@
     "preview": "vite preview",
     "lint": "eslint .",
     "format": "prettier --write .",
-    "test": "node scripts/test-critter-images.mjs && node scripts/test-clinical-logic.mjs",
+    "test": "node scripts/test-critter-images.mjs && node scripts/test-clinical-logic.mjs && bun run test:progression",
+    "test:progression": "bun test scripts/test-progression-input.test.ts scripts/test-progression-engine.test.ts",
     "test:logic": "node scripts/test-clinical-logic.mjs",
     "test:critters": "node scripts/test-critter-images.mjs"
   },
