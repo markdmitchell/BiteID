@@ -140,5 +140,100 @@ for (const provider of ["google", "lovable"] as const) {
       expect(await evaluateLesionProgression(intake)).toEqual(evaluateProgressionRuleBased(intake));
       expect(requests).toHaveLength(1);
     });
+
+    test("missing optional measurements serialize finite defaults and preserve red streaks", async () => {
+      enableMockProvider();
+      const { baselineDiameterMm: _baseline, followUpDiameterMm: _followUp, ...minimal } = valid;
+      const result = await evaluateLesionProgression(progressionInputSchema.parse({
+        ...minimal, reportedSymptoms: ["red_streaks"],
+      }));
+      const observations = JSON.parse(requests[0]?.messages[0]?.content[0]?.text ?? "null");
+      expect(observations.baselineDiameterMm).toBe(15);
+      expect(observations.followUpDiameterMm).toBe(15);
+      expect(observations.reportedSymptoms).toEqual(["red_streaks"]);
+      expect(result.expansionRateMmPerDay).toBe(0);
+      expect(result.clinicalAction.urgency).toBe("immediate_emergency_care");
+    });
+
+    test.each(["", "{", '{"urgency":', "not JSON"])(
+      "unparseable response %j falls back for incomplete observations", async (output) => {
+        enableMockProvider();
+        modelOutput = output;
+        const { baselineDiameterMm: _baseline, followUpDiameterMm: _followUp, ...minimal } = valid;
+        const intake = progressionInputSchema.parse(minimal);
+        const result = await evaluateLesionProgression(intake);
+        expect(requests).toHaveLength(1);
+        expect(result).toEqual(evaluateProgressionRuleBased(intake));
+        expect(result.hoursElapsed).toBe(24);
+        expect(result.expansionRateMmPerDay).toBe(0);
+        expect(result.trajectory).toBe("stable");
+      },
+    );
+
+    test.each(["{}", '{"urgency":"unknown","trajectory":"unknown","cellulitisRisk":"unknown"}'])(
+      "incomplete or invalid model enums %s retain the red-streak emergency gate", async (output) => {
+        enableMockProvider();
+        modelOutput = output;
+        const result = await evaluateLesionProgression(progressionInputSchema.parse({
+          ...valid, reportedSymptoms: ["red_streaks"],
+        }));
+        expect(requests).toHaveLength(1);
+        expect(result.clinicalAction.urgency).toBe("immediate_emergency_care");
+        expect(result.cellulitisRisk).toBe("high");
+        expect(result.trajectory).toBe("critical_infection");
+        expect(result.clinicalAction.recommendations.length).toBeGreaterThan(0);
+        expect(result.clinicalAction.redFlags.length).toBeGreaterThan(0);
+      },
+    );
+
+    test.each([
+      ["equal timestamps", valid.baselineDate, 1, 10],
+      ["one millisecond", "2026-10-24T12:00:00.001Z", 1, 10],
+      ["24 hours", valid.followUpDate, 24, 1],
+    ] as const)("%s produce finite elapsed time and expansion", async (_label, followUpDate, hours, rate) => {
+      enableMockProvider();
+      const result = await evaluateLesionProgression(progressionInputSchema.parse({
+        ...valid, followUpDate, followUpDiameterMm: 16,
+      }));
+      expect(result.hoursElapsed).toBe(hours);
+      expect(result.expansionRateMmPerDay).toBe(rate);
+      const observations = JSON.parse(requests[0]?.messages[0]?.content[0]?.text ?? "null");
+      expect(observations.hoursElapsed).toBe(hours);
+      expect(observations.daysElapsed).toBe(Math.max(0.1, hours / 24));
+    });
   });
 }
+
+describe("offline progression observation boundaries", () => {
+  test.each([
+    ["zero diameters", 0, 0, 0],
+    ["maximum diameters", 1000, 1000, 0],
+    ["full-range expansion", 0, 1000, 1000],
+    ["full-range contraction", 1000, 0, -1000],
+  ] as const)("handles %s without losing zero values", async (_label, baselineDiameterMm, followUpDiameterMm, rate) => {
+    const intake = progressionInputSchema.parse({ ...valid, baselineDiameterMm, followUpDiameterMm });
+    const result = await evaluateLesionProgression(intake);
+    expect(result).toEqual(evaluateProgressionRuleBased(intake));
+    expect(result.hoursElapsed).toBe(24);
+    expect(result.expansionRateMmPerDay).toBe(rate);
+    expect(requests).toHaveLength(0);
+  });
+
+  test("omitted follow-up diameter uses the supplied baseline, not the default", async () => {
+    const { followUpDiameterMm: _followUp, ...partial } = valid;
+    const result = await evaluateLesionProgression(progressionInputSchema.parse({ ...partial, baselineDiameterMm: 40 }));
+    expect(result.expansionRateMmPerDay).toBe(0);
+    expect(result.trajectory).toBe("stable");
+    expect(requests).toHaveLength(0);
+  });
+
+  test("a shrinking lesion still triggers emergency care when red streaks are reported", async () => {
+    const result = await evaluateLesionProgression(progressionInputSchema.parse({
+      ...valid, followUpDiameterMm: 0, reportedSymptoms: ["red_streaks"],
+    }));
+    expect(result.expansionRateMmPerDay).toBe(-15);
+    expect(result.trajectory).toBe("critical_infection");
+    expect(result.clinicalAction.urgency).toBe("immediate_emergency_care");
+    expect(requests).toHaveLength(0);
+  });
+});
