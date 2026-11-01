@@ -15,6 +15,7 @@ import { Button } from "@/components/ui/button";
 import { PageHeader } from "@/components/navigation/PageHeader";
 
 export const Route = createFileRoute("/contact")({
+  staticData: { sitemap: true },
   head: () => ({
     meta: [
       { title: "Contact & Feedback | BiteID" },
