@@ -165,6 +165,9 @@ export function SiteFooter() {
           </div>
         </div>
 
+        {/* Standard contact buttons, populated by https://www.slightlyfaster.com/connect.js */}
+        <div id="mark-connect" className="mt-10" />
+
         {/* Bottom Disclaimer & Copyright */}
         <div className="mt-12 border-t border-border pt-6 text-[11px] leading-relaxed text-muted-foreground">
           <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">

@@ -114,6 +114,11 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { rel: "icon", href: "/icon.png", type: "image/png" },
       { rel: "apple-touch-icon", href: "/icon.png" },
     ],
+    scripts: [
+      // Standard contact buttons for the site footer; loaded from one shared
+      // address so updates happen in one place. Do not vendor a local copy.
+      { src: "https://www.slightlyfaster.com/connect.js", defer: true },
+    ],
   }),
   shellComponent: RootShell,
   component: RootComponent,
