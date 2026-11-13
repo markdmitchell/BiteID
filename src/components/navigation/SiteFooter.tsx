@@ -69,6 +69,11 @@ export function SiteFooter() {
             </h4>
             <ul className="space-y-2 text-xs text-muted-foreground">
               <li>
+                <Link to="/bites" className="hover:text-primary transition-colors flex items-center gap-1.5">
+                  <span>Bite Picture Guide</span>
+                </Link>
+              </li>
+              <li>
                 <Link
                   to="/"
                   className="hover:text-primary transition-colors flex items-center gap-1.5"
